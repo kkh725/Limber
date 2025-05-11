@@ -1,4 +1,4 @@
-package com.test2.mylibrary
+package com.kkh.multimodule.mylibrary
 
 import org.junit.Test
 

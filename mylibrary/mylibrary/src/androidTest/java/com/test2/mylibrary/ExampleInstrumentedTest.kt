@@ -1,4 +1,4 @@
-package com.test2.mylibrary
+package com.kkh.multimodule.mylibrary
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.test2.mylibrary.test", appContext.packageName)
+        assertEquals("com.kkh.multimodule.mylibrary.test", appContext.packageName)
     }
 }

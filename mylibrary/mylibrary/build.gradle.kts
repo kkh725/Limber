@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.test2.mylibrary"
+    namespace = "com.kkh.multimodule.mylibrary"
     compileSdk = 35
 
     defaultConfig {

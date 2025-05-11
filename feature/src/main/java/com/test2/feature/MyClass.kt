@@ -1,4 +1,4 @@
-package com.test2.feature
+package com.kkh.multimodule.feature
 
 class MyClass {
 }

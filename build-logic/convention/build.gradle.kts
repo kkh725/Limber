@@ -24,22 +24,22 @@ gradlePlugin {
     plugins {
         register("androidApplication") {
             id = libs.plugins.multi.module.android.application.get().pluginId
-            implementationClass = "com.test2.convention.AndroidApplicationConventionPlugin"
+            implementationClass = "com.kkh.multimodule.convention.AndroidApplicationConventionPlugin"
         }
 
         register("hilt") {
             id = libs.plugins.multi.module.hilt.get().pluginId
-            implementationClass = "com.test2.convention.HiltConventionPlugin"
+            implementationClass = "com.kkh.multimodule.convention.HiltConventionPlugin"
         }
 
         register("network") {
             id = libs.plugins.multi.module.network.get().pluginId
-            implementationClass = "com.test2.convention.NetWorkConventionPlugin"
+            implementationClass = "com.kkh.multimodule.convention.NetWorkConventionPlugin"
         }
 
         register("androidLibrary") {
             id = libs.plugins.multi.module.library.get().pluginId
-            implementationClass = "com.test2.convention.AndroidLibraryConventionPlugin"
+            implementationClass = "com.kkh.multimodule.convention.AndroidLibraryConventionPlugin"
         }
     }
 }
