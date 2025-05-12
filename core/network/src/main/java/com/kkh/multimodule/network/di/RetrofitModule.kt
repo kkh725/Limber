@@ -8,13 +8,27 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
+
+
+// NetworkQualifiers.kt
+// baseUrl 이 두 개 이상일 때 retrofit을 다르게 생성 후 주입 필요.
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+internal annotation class TestApi3
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+internal annotation class TestApi2
 
 // NetworkModule.kt
 @Module
 @InstallIn(SingletonComponent::class)
 internal object RetrofitModule {
+
 
     @Provides
     @Singleton
@@ -26,7 +40,7 @@ internal object RetrofitModule {
             .build()
     }
 
-    @TestApi
+    @TestApi2
     @Provides
     @Singleton
     internal fun provideJsonPlaceholderRetrofit(): Retrofit {
@@ -37,7 +51,7 @@ internal object RetrofitModule {
             .build()
     }
 
-    @TestApi2
+    @TestApi3
     @Provides
     @Singleton
     internal fun provideAnotherApiRetrofit(): Retrofit {
@@ -49,13 +63,3 @@ internal object RetrofitModule {
     }
 }
 
-// NetworkQualifiers.kt
-// baseUrl 이 두 개 이상일 때 retrofit을 다르게 생성 후 주입 필요.
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class TestApi
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class TestApi2

@@ -6,13 +6,17 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.kkh.multimodule.feature.test.TestScreen
 
-fun NavController.navigateToTest(navOptions: NavOptions) =
-    navigate(route = "test_route", navOptions)
+object TestRoute{
+    const val ROUTE = "test"
+}
+
+fun NavController.navigateToTest() =
+    navigate(route = TestRoute.ROUTE)
 
 fun NavGraphBuilder.testScreen(
-    onClickButtonTonNavigate: () -> Unit
+    onClickButtonToNavigate: () -> Unit
 ) {
-    composable("route") {
-        TestScreen(onClickButtonTonNavigate = onClickButtonTonNavigate)
+    composable(TestRoute.ROUTE) {
+        TestScreen(onClickButtonTonNavigate = onClickButtonToNavigate)
     }
 }

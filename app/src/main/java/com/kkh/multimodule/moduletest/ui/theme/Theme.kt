@@ -36,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun ModuleTestTheme(
+fun TestModuleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -58,4 +58,6 @@ fun ModuleTestTheme(
         typography = Typography,
         content = content
     )
+
+    MaterialTheme.colorScheme.primary
 }

@@ -1,5 +1,6 @@
 package com.kkh.multimodule.network.di
 
+import com.kkh.multimodule.network.api.TestApi
 import com.kkh.multimodule.network.datasource.TestDataSource
 import com.kkh.multimodule.network.datasource.TestDataSourceImpl
 import dagger.Module
@@ -11,11 +12,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+internal object NetworkModule {
 
     @Provides
     @Singleton
-    internal fun provideTestApi(@TestApi retrofit: Retrofit): TestApi {
+    internal fun provideTestApi(@TestApi3 retrofit: Retrofit): TestApi {
         return retrofit.create(TestApi::class.java)
     }
 
@@ -28,7 +29,7 @@ object NetworkModule {
     //최종적으로 TestDataSource 만 공개함.
     @Provides
     @Singleton
-    fun provideTestDataSource(testApi: com.kkh.multimodule.network.api.TestApi) : TestDataSource {
+    fun provideTestDataSource(testApi: TestApi) : TestDataSource {
         return TestDataSourceImpl(testApi)
     }
 

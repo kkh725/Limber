@@ -34,10 +34,11 @@ datastore = "1.1.6"
 projectApplicationId = "com.kkh.multimodule.moduletest"
 projectVersionName = "1.0"
 projectVersionCode = "1"
-projectMinSdkVersion = "24"
+projectMinSdkVersion = "27"
 projectTargetSdkVersion = "35"
 projectCompileSdkVersion = "35"
 desugar_jdk_libs = "2.1.5"
+navigationComposeAndroid = "2.9.0"
 
 # libraries ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
@@ -89,6 +90,7 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 
 #datastore
 datastore = {group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore"}
+androidx-navigation-compose-android = { group = "androidx.navigation", name = "navigation-compose-android", version.ref = "navigationComposeAndroid" }
 
 # plugins ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------

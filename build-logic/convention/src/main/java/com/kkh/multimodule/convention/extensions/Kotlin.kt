@@ -19,7 +19,7 @@ internal fun Project.configureKotlinAndroid(
         compileSdk = libs.findVersion("projectCompileSdkVersion").get().toString().toInt()
 
         defaultConfig {
-            minSdk = 21
+            minSdk = libs.findVersion("projectMinSdkVersion").get().toString().toInt()
         }
 
         compileOptions {
