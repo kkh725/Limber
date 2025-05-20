@@ -1,4 +1,4 @@
-package com.kkh.multimodule.data.repository
+package com.kkh.multimodule.domain.repository
 
 interface TestRepository {
     suspend fun localDoit()
