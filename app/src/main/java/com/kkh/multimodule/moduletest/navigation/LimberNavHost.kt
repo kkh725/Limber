@@ -9,7 +9,7 @@ import com.kkh.multimodule.feature.test.navigation.navigateToTest
 import com.kkh.multimodule.feature.test.navigation.testScreen
 
 @Composable
-fun TestNavHost(
+fun LimberNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {

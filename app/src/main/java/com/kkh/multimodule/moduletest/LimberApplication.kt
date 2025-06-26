@@ -5,7 +5,7 @@ import android.util.Log
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class TestApplication : Application() {
+class LimberApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Log.d("test", "test: ")
