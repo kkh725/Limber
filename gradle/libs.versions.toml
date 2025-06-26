@@ -39,6 +39,7 @@ projectTargetSdkVersion = "35"
 projectCompileSdkVersion = "35"
 desugar_jdk_libs = "2.1.5"
 navigationComposeAndroid = "2.9.0"
+junitJupiter = "5.8.1"
 
 # libraries ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
@@ -91,6 +92,7 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 #datastore
 datastore = {group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore"}
 androidx-navigation-compose-android = { group = "androidx.navigation", name = "navigation-compose-android", version.ref = "navigationComposeAndroid" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 
 # plugins ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------

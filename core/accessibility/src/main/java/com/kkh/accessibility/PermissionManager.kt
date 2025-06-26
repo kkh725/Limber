@@ -1,12 +1,15 @@
 package com.kkh.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.app.AppOpsManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import androidx.annotation.RequiresApi
 
 object PermissionManager {
 
@@ -36,4 +39,16 @@ object PermissionManager {
             Log.e(TAG, "접근성 설정 화면 열기 실패", e)
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun hasUsageStatsPermission(context: Context): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOps.unsafeCheckOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(),
+            context.packageName
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
 }

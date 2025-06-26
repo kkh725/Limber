@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
 import kotlin.apply
@@ -55,26 +56,5 @@ class BlockedAppAccessibilityService : AccessibilityService() {
     override fun onInterrupt() {
     }
 
-    data class AppInfo(
-        val appName: String,
-        val packageName: String
-    )
-
-    @SuppressLint("QueryPermissionsNeeded")
-    fun getInstalledAppsWithNames(context: Context): List<AppInfo> {
-        val packageManager = context.packageManager
-        val packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-        val appList = mutableListOf<AppInfo>()
-        for (packageInfo in packages) {
-            // 런처에 표시되는 앱만 필터링
-            val launchIntent = packageManager.getLaunchIntentForPackage(packageInfo.packageName)
-            if (launchIntent != null) {
-                val appName = packageManager.getApplicationLabel(packageInfo).toString()
-                val packageName = packageInfo.packageName
-                appList.add(AppInfo(appName, packageName))
-            }
-        }
-        return appList
-    }
 
 }
