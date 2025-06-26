@@ -40,6 +40,7 @@ object PermissionManager {
         }
     }
 
+    // usageStats 권한 있는지 체크.
     @RequiresApi(Build.VERSION_CODES.Q)
     fun hasUsageStatsPermission(context: Context): Boolean {
         val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager

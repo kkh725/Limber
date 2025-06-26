@@ -31,6 +31,7 @@ object AppUsageStatsManager {
         }
 
         // 사용자가 사용한 앱들의 UsageStats 반환
+        // 패키지명, 사용시간, 시작시간, 종료시간, 마지막사용
         return usageStatsList
     }
 
