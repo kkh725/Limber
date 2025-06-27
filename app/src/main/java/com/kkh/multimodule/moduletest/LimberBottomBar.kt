@@ -1,15 +1,16 @@
 package com.kkh.multimodule.moduletest
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -21,9 +22,9 @@ sealed class BottomNavItem(
     val icon: ImageVector
 ) {
     object Home : BottomNavItem(BottomNavRoutes.HOME, "홈", Icons.Default.Home)
-    object Search : BottomNavItem(BottomNavRoutes.SEARCH, "검색", Icons.Default.Search)
-    object Notifications : BottomNavItem(BottomNavRoutes.NOTIFICATIONS, "알림", Icons.Default.Notifications)
-    object SETTINGS : BottomNavItem(BottomNavRoutes.SETTINGS, "프로필", Icons.Default.Person)
+    object TIMER : BottomNavItem(BottomNavRoutes.TIMER, "타이머", Icons.Default.Person)
+    object LABORATORY : BottomNavItem(BottomNavRoutes.LABORATORY, "실험실", Icons.Default.Add)
+    object MORE : BottomNavItem(BottomNavRoutes.MORE, "더보기", Icons.Default.Person)
 }
 
 @Composable
@@ -33,9 +34,9 @@ fun LimberBottomBar(
 ) {
     val screens = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Search,
-        BottomNavItem.Notifications,
-        BottomNavItem.SETTINGS
+        BottomNavItem.TIMER,
+        BottomNavItem.LABORATORY,
+        BottomNavItem.MORE
     )
     val navBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = navBackStackEntry?.destination?.route
@@ -57,7 +58,14 @@ fun LimberBottomBar(
                             restoreState = true
                         }
                     }
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color.Blue,
+                    selectedTextColor = Color.Blue,
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                )
             )
         }
     }

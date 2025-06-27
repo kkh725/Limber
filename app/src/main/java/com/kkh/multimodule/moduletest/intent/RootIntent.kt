@@ -26,15 +26,15 @@ class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
                         setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
                     }
 
-                    BottomNavRoutes.SEARCH -> {
+                    BottomNavRoutes.TIMER -> {
                         setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
                     }
 
-                    BottomNavRoutes.NOTIFICATIONS -> {
+                    BottomNavRoutes.LABORATORY -> {
                         setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
                     }
 
-                    BottomNavRoutes.SETTINGS -> {
+                    BottomNavRoutes.MORE -> {
                         setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
                     }
                 }
