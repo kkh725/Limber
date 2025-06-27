@@ -29,7 +29,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "moduletest"
+rootProject.name = "limber"
 include(":app")
 //include(":core")
 include(":core:data")
@@ -42,6 +42,6 @@ include(":core:network")
 include(":core:datastore")
 include(":feature:test")
 include(":core:domain")
-include(":feature:main")
+include(":feature:home")
 include(":core:accessibility")
 include(":core:ui")

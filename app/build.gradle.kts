@@ -9,7 +9,7 @@ plugins {
 
 dependencies {
 
-    implementation(project(":feature:main"))
+    implementation(project(":feature:home"))
     implementation(project(":feature:test"))
 
     implementation(project(":core:data"))

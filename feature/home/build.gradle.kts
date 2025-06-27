@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kkh.multimodule.feature.test"
+    namespace = "com.kkh.multimodule.feature.home"
 }
 
 dependencies {

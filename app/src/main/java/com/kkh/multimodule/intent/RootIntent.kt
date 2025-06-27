@@ -1,17 +1,18 @@
-package com.kkh.multimodule.moduletest.intent
+package com.kkh.multimodule.intent
 
+import com.kkh.multimodule.home.HomeRoute
 import com.kkh.multimodule.Reducer
 import com.kkh.multimodule.UiEvent
 import com.kkh.multimodule.UiState
 import com.kkh.multimodule.domain.model.ScreenState
-import com.kkh.multimodule.moduletest.navigation.BottomNavRoutes
+import com.kkh.multimodule.navigation.BottomNavRoutes
 
 data class RootState(
     val screenState: ScreenState
 ) : UiState {
     companion object {
         fun init() = RootState(
-            screenState = ScreenState.MAIN_SCREEN
+            screenState = ScreenState.HOME_SCREEN
         )
     }
 }
@@ -25,20 +26,20 @@ class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
         when (event) {
             is RootEvent.OnClickedBottomNaviItem -> {
                 when (event.route) {
-                    BottomNavRoutes.HOME -> {
-                        setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
+                    HomeRoute.ROUTE -> {
+                        setState(oldState.copy(screenState = ScreenState.HOME_SCREEN))
                     }
 
                     BottomNavRoutes.TIMER -> {
-                        setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
+                        setState(oldState.copy(screenState = ScreenState.TIMER_SCREEN))
                     }
 
                     BottomNavRoutes.LABORATORY -> {
-                        setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
+                        setState(oldState.copy(screenState = ScreenState.LABORATORY_SCREEN))
                     }
 
                     BottomNavRoutes.MORE -> {
-                        setState(oldState.copy(screenState = ScreenState.MAIN_SCREEN))
+                        setState(oldState.copy(screenState = ScreenState.MORE_SCREEN))
                     }
                 }
             }

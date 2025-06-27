@@ -1,4 +1,4 @@
-package com.kkh.multimodule.moduletest.navigation
+package com.kkh.multimodule.navigation
 
 object BottomNavRoutes {
     const val HOME = "home"

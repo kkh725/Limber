@@ -1,17 +1,10 @@
-package com.kkh.multimodule.moduletest
+package com.kkh.multimodule
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import com.kkh.multimodule.moduletest.navigation.LimberApp
-import com.kkh.multimodule.moduletest.navigation.LimberNavHost
-import com.kkh.multimodule.moduletest.ui.theme.TestModuleTheme
+import com.kkh.multimodule.navigation.LimberApp
+import com.kkh.multimodule.ui.theme.TestModuleTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

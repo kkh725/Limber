@@ -1,4 +1,4 @@
-package com.kkh.multimodule.moduletest
+package com.kkh.multimodule
 
 import android.app.Application
 import android.util.Log

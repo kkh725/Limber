@@ -1,4 +1,4 @@
-package com.kkh.home
+package com.kkh.multimodule.home
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

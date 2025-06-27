@@ -1,5 +1,5 @@
 package com.kkh.multimodule.domain.model
 
 enum class ScreenState{
-    MAIN_SCREEN
+    HOME_SCREEN, TIMER_SCREEN, LABORATORY_SCREEN, MORE_SCREEN
 }

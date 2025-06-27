@@ -1,4 +1,4 @@
-package com.kkh.home
+package com.kkh.multimodule.home
 
 import com.kkh.multimodule.Reducer
 import com.kkh.multimodule.UiEvent
