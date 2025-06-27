@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,8 +32,8 @@ import kotlin.random.Random
 fun RoundedCircularProgressBar(
     progress: Float, // 0.0 ~ 1.0
     modifier: Modifier = Modifier,
-    size: Dp = 150.dp,
-    strokeWidth: Dp = 16.dp,
+    size: Dp = 280.dp,
+    strokeWidth: Dp = 12.dp,
     backgroundColor: Color = Color.LightGray,
     progressColor: Color = Color(0xFF3DDC84),
     animated: Boolean = true
@@ -74,7 +75,7 @@ fun RoundedCircularProgressBar(
 @Composable
 fun CircularProgressPreview() {
     // 상태로 선언해야 변경 가능
-    var progress by remember { mutableStateOf(generateRandomProgress()) }
+    var progress by remember { mutableFloatStateOf(generateRandomProgress()) }
 
     Column(
         modifier = Modifier

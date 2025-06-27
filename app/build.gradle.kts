@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
 
+    implementation(project(":feature:block"))
     implementation(project(":feature:home"))
     implementation(project(":feature:test"))
 

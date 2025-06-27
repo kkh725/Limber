@@ -41,17 +41,28 @@ class BlockedAppAccessibilityService : AccessibilityService() {
         // 초기화 작업
     }
 
+    private var lastBlockedTime = 0L
+    private var lastBlockedPackage: String? = null
+
     private fun blockApp(packageName: String) {
-        // 차단 방법 1: 홈 화면으로 강제 이동
-        val uri = "myapp://home".toUri()
+        val now = System.currentTimeMillis()
+
+        // 1초 안에 같은 앱을 두 번 차단하지 않도록
+        if (packageName == lastBlockedPackage && now - lastBlockedTime < 1000L) return
+
+        lastBlockedPackage = packageName
+        lastBlockedTime = now
+
+        // 차단 실행
+        val uri = "limber://block".toUri()
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)
 
-        // 차단 방법 2: 사용자에게 메시지 표시 (선택사항)
         Toast.makeText(this, "$packageName 사용이 차단되었습니다", Toast.LENGTH_SHORT).show()
     }
+
 
     override fun onInterrupt() {
     }

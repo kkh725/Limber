@@ -1,16 +1,20 @@
 plugins {
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.multi.module.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.multi.module.hilt)
 }
 
-android{
-    namespace = "com.kkh.multimodule.accessibility"
+android {
+    namespace = "com.kkh.multimodule.feature.block"
 }
 
 dependencies {
 
-    implementation(project(":core:domain"))
+    api(project(":core:domain"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:accessibility"))
+
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

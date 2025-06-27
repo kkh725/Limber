@@ -1,4 +1,4 @@
-package com.kkh.multimodule
+package com.kkh.multimodule.ui
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

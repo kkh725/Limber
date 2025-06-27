@@ -1,8 +1,8 @@
 package com.kkh.multimodule.home
 
-import com.kkh.multimodule.Reducer
-import com.kkh.multimodule.UiEvent
-import com.kkh.multimodule.UiState
+import com.kkh.multimodule.ui.Reducer
+import com.kkh.multimodule.ui.UiEvent
+import com.kkh.multimodule.ui.UiState
 
 data class HomeState(
     val loadingState: String

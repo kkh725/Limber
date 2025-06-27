@@ -1,10 +1,8 @@
 package com.kkh.multimodule.feature.test
 
-import com.kkh.multimodule.Reducer
-import com.kkh.multimodule.UiEvent
-import com.kkh.multimodule.UiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.kkh.multimodule.ui.Reducer
+import com.kkh.multimodule.ui.UiEvent
+import com.kkh.multimodule.ui.UiState
 
 data class TestState(
     val loadingState: String
