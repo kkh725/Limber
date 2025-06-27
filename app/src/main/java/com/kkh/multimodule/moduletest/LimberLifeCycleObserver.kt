@@ -50,22 +50,22 @@ class LimberLifeCycleObserver(private val context: Context) : DefaultLifecycleOb
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
 
-        //접근성 관련 권한 체크
-        val isAccessibilityServiceEnabled = PermissionManager.isAccessibilityServiceEnabled(
-            context,
-            BlockedAppAccessibilityService::class.java
-        )
-        if (!isAccessibilityServiceEnabled) {
-            // 권한이 안 켜져 있으면 유도 (딱 한 번만)
-            PermissionManager.openAccessibilitySettings(context)
-        }
-
-        // usageStats관련 권한 체크.
-        val isUsageStatsPermissionGranted = PermissionManager.hasUsageStatsPermission(context)
-        if (!isUsageStatsPermissionGranted){
-            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-            context.startActivity(intent)
-        }
+//        //접근성 관련 권한 체크
+//        val isAccessibilityServiceEnabled = PermissionManager.isAccessibilityServiceEnabled(
+//            context,
+//            BlockedAppAccessibilityService::class.java
+//        )
+//        if (!isAccessibilityServiceEnabled) {
+//            // 권한이 안 켜져 있으면 유도 (딱 한 번만)
+//            PermissionManager.openAccessibilitySettings(context)
+//        }
+//
+//        // usageStats관련 권한 체크.
+//        val isUsageStatsPermissionGranted = PermissionManager.hasUsageStatsPermission(context)
+//        if (!isUsageStatsPermissionGranted){
+//            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+//            context.startActivity(intent)
+//        }
     }
 
     override fun onStart(owner: LifecycleOwner) {

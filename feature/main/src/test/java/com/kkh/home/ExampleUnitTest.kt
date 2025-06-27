@@ -1,4 +1,4 @@
-package com.kkh.main
+package com.kkh.home
 
 import org.junit.Test
 

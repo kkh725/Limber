@@ -1,7 +1,8 @@
-package com.kkh.multimodule.moduletest.intent
+package com.kkh.multimodule
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
 
 abstract class Reducer<S : UiState, E : UiEvent>(initialState: S) {
     private val _uiState = MutableStateFlow(initialState)

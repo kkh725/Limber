@@ -9,7 +9,9 @@ plugins {
 
 dependencies {
 
+    implementation(project(":feature:main"))
     implementation(project(":feature:test"))
+
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:datastore"))
