@@ -4,9 +4,6 @@
     <bytecodeTargetLevel target="21">
       <module name="build-logic.main" target="11" />
       <module name="build-logic.test" target="11" />
-      <module name="limber.core.domain" target="11" />
-      <module name="limber.core.domain.main" target="11" />
-      <module name="limber.core.domain.test" target="11" />
       <module name="moduletest.core.domain" target="11" />
       <module name="moduletest.core.domain.main" target="11" />
       <module name="moduletest.core.domain.test" target="11" />
