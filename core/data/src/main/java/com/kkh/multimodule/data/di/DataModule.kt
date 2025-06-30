@@ -1,8 +1,10 @@
 package com.kkh.multimodule.data.di
 
+import com.kkh.multimodule.data.repository.AppInfoRepository
+import com.kkh.multimodule.data.repository.AppInfoRepositoryImpl
 import com.kkh.multimodule.data.repository.TestRepositoryImpl
 import com.kkh.multimodule.datastore.datasource.LocalDataSource
-import com.kkh.multimodule.domain.repository.TestRepository
+import com.kkh.multimodule.data.repository.TestRepository
 import com.kkh.multimodule.network.datasource.TestDataSource
 import dagger.Module
 import dagger.Provides
@@ -21,6 +23,14 @@ object DataModule {
         testDataSource: TestDataSource
     ): TestRepository {
         return TestRepositoryImpl(localDataSource, testDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppInfoRepository(
+        localDataSource: LocalDataSource
+    ): AppInfoRepository {
+        return AppInfoRepositoryImpl(localDataSource)
     }
 
 }

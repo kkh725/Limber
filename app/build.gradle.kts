@@ -11,7 +11,7 @@ dependencies {
 
     implementation(project(":feature:block"))
     implementation(project(":feature:home"))
-    implementation(project(":feature:test"))
+//    implementation(project(":feature:test"))
 
     implementation(project(":core:data"))
     implementation(project(":core:domain"))

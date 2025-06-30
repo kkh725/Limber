@@ -7,8 +7,6 @@ import androidx.navigation.compose.NavHost
 import com.kkh.multimodule.home.HomeRoute
 import com.kkh.multimodule.home.homeScreen
 import com.kkh.multimodule.home.navigateToMain
-import com.kkh.multimodule.feature.test.navigation.navigateToTest
-import com.kkh.multimodule.feature.test.navigation.testScreen
 
 @Composable
 fun LimberNavHost(
@@ -20,7 +18,7 @@ fun LimberNavHost(
         startDestination = HomeRoute.ROUTE,
         modifier = modifier,
     ) {
-        testScreen (onClickButtonToNavigate = navController::navigateToMain)
-        homeScreen (onClickButtonToNavigate = navController::navigateToTest)
+//        testScreen (onClickButtonToNavigate = navController::navigateToMain)
+        homeScreen (onClickButtonToNavigate = navController::navigateToMain)
     }
 }

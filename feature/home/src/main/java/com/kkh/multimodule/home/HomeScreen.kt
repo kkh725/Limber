@@ -2,6 +2,7 @@ package com.kkh.multimodule.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,10 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -29,9 +32,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +47,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.designsystem.Gray100
 import com.kkh.multimodule.ui.component.LimberHomeTopAppBar
 
 @Composable
@@ -51,6 +58,9 @@ fun HomeScreen(
     val homeViewModel: HomeViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    val configuration = LocalConfiguration.current
+    val screenHeightDp = configuration.screenHeightDp
 
     val appInfoList = uiState.usageAppInfoList
 
@@ -72,29 +82,20 @@ fun HomeScreen(
         Box(
             Modifier
                 .fillMaxSize()
-                .background(Color.Gray)
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFFB05AF6), Color(0xFF7329AF)),
+                        start = Offset(0f, 0f), // 시작 지점
+                        end = Offset(0f, (screenHeightDp).toFloat()) // 끝 지점 (예: 대각선)
+                    )
+                )
                 .padding(paddingValues)
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(12.dp))
-                Image(
-                    painter = painterResource(R.drawable.logo_limber),
-                    contentDescription = "",
-                    modifier = Modifier.size(120.dp)
-                )
-                Spacer(Modifier.height(12.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Button")
-//                    Icon(
-//                        modifier = Modifier.size(24.dp),
-//                        painter = painterResource(R.drawable.ic_next),
-//                        contentDescription = "Arrow Forward"
-//                    )
-                }
-
+                HomeTopBackground()
             }
             // 메인 시트
             HomeMainSheet(modifier = Modifier.align(Alignment.BottomCenter), appInfoList)
@@ -134,34 +135,13 @@ fun HomeScreenPreview() {
 }
 
 @Composable
-fun DopamineAppItem(appInfo: AppInfo = AppInfo.empty) {
-
-    val bitmap = appInfo.appIcon?.toBitmap()
-    val imageBitmap = bitmap?.asImageBitmap()
-    val painter = imageBitmap?.let { BitmapPainter(it) }
-
-    Row {
-        painter?.let {
-            Image(
-                painter = it,
-                contentDescription = "App Icon",
-                modifier = Modifier.size(18.dp) // 원하는 크기 지정
-            )
-        }
-        Spacer(Modifier.width(12.dp))
-        Text(text = appInfo.usageTime.toString(), fontSize = 12.sp)
-    }
-}
-
-@Composable
 fun HomeMainSheet(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
     Box(
         modifier = modifier
             .fillMaxHeight(0.7f)
             .fillMaxWidth()
-//            .height(429.dp)
             .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)) // 위쪽만 라운드
-            .background(color = Color.Blue)
+            .background(color = Gray100)
 
     ) {
         // Content here
@@ -169,6 +149,7 @@ fun HomeMainSheet(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
             Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
+                .padding(bottom = 20.dp)
         ) {
             Spacer(Modifier.height(54.dp))
             Text("6월 20일 금요일")
@@ -274,7 +255,53 @@ fun HomeMainContent(appInfoList: List<AppInfo>) {
             }
         }
     }
+}
 
+@Preview
+@Composable
+fun HomeTopBackground() {
+    Box(
+        modifier = Modifier
+            .height(188.dp)
+            .fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(R.drawable.bg_half_circle),
+            modifier = Modifier
+                .size(286.dp, 143.dp)
+                .fillMaxSize()
+                .align(Alignment.BottomCenter),
+            contentDescription = "bg_half_circle"
+        )
+        Column(
+            modifier = Modifier
+                .size(120.dp)
+                .fillMaxSize()
+                .align(Alignment.TopCenter),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.logo_limber),
+                contentDescription = "",
+
+                )
+            Spacer(Modifier.height(14.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .wrapContentSize()
+                    .clickable(onClick = {})
+            ) {
+                Text("Button")
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(R.drawable.ic_next),
+                    contentDescription = "Arrow Forward"
+                )
+            }
+        }
+    }
 }
 
 @Composable
