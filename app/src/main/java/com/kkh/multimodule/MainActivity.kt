@@ -3,6 +3,7 @@ package com.kkh.multimodule
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.kkh.multimodule.navigation.LimberApp
 import com.kkh.multimodule.ui.theme.TestModuleTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -11,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         //lifecycleobserver 구독.
         val observer = LimberLifeCycleObserver(this)

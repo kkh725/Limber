@@ -1,5 +1,6 @@
 package com.kkh.multimodule.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.kkh.multimodule.LimberBottomBar
@@ -23,6 +25,7 @@ fun LimberApp() {
 
     // topbar는 없더라고 시스템 inset
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         bottomBar = {
             LimberBottomBar(
                 navHostController,
@@ -32,12 +35,10 @@ fun LimberApp() {
             )
         }
     ) { paddingValues ->
-
         LimberNavHost(
             navController = navHostController,
-            modifier = Modifier
+            modifier = Modifier.padding(paddingValues)
                 .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
         )
     }
 }
