@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
-import com.kkh.multimodule.ui.component.LimberButton
+import com.kkh.multimodule.ui.component.LimberSquareButton
 
 @Composable
 fun BlockScreen(
@@ -81,7 +81,7 @@ fun BlockScreenBottomBar(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        LimberButton(
+        LimberSquareButton(
             onClick = onClickUnBlock,
             text = "잠금 풀기",
             modifier = Modifier.weight(1f)
@@ -89,7 +89,7 @@ fun BlockScreenBottomBar(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        LimberButton(
+        LimberSquareButton(
             onClick = onClickContinue,
             text = "계속 집중하기",
             modifier = Modifier.weight(1f)

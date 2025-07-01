@@ -12,6 +12,7 @@ android {
 dependencies {
 
     api(project(":core:domain"))
+    implementation(project(":core:accessibility"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

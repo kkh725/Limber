@@ -16,12 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kkh.multimodule.designsystem.Gray100
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
 
 @Composable
 fun LimberChip(
     text: String,
-    isSelected: Boolean,
+    isSelected: Boolean = false,
     onClick: () -> Unit
 ) {
     val borderColor = if (isSelected) Color(0xFFEAE6ED) else Gray100

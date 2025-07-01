@@ -47,7 +47,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
-import com.kkh.multimodule.designsystem.Gray100
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
+import com.kkh.multimodule.ui.component.DopamineActBox
 import com.kkh.multimodule.ui.component.LimberHomeTopAppBar
 
 @Composable
@@ -335,46 +336,6 @@ fun FocusActBox(modifier: Modifier = Modifier) {
             Text("학습")
             Spacer(Modifier.width(10.dp))
             Text("1시간 2분")
-        }
-    }
-}
-
-@Composable
-fun DopamineActBox(
-    modifier: Modifier = Modifier,
-    appInfoList: List<AppInfo>
-) {
-    Column(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                Modifier
-                    .width(8.dp)
-                    .height(8.dp)
-                    .background(color = Color.Red, shape = RoundedCornerShape(size = 100.dp))
-            )
-            Spacer(Modifier.width(6.dp))
-            Text("도파민 활동")
-        }
-        Spacer(Modifier.height(16.5.dp))
-        LazyColumn {
-            items(appInfoList) { appInfo ->
-                val bitmap = appInfo.appIcon?.toBitmap()
-                val imageBitmap = bitmap?.asImageBitmap()
-                val painter = imageBitmap?.let { BitmapPainter(it) }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    painter?.let {
-                        Image(
-                            painter = it,
-                            contentDescription = "App Icon",
-                            modifier = Modifier.size(18.dp) // 원하는 크기 지정
-                        )
-                    }
-                    Spacer(Modifier.width(12.dp))
-                    Text(text = appInfo.usageTime.toString(), fontSize = 12.sp)
-                }
-                Spacer(Modifier.width(10.dp))
-            }
         }
     }
 }

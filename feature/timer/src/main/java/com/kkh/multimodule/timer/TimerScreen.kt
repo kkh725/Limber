@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -35,16 +39,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.accessibility.AppInfo
+import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
+import com.kkh.multimodule.ui.component.DopamineActBox
+import com.kkh.multimodule.ui.component.LimberSquareButton
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberChipWithPlus
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import java.util.Calendar
 import java.util.Timer
+import kotlin.math.abs
 
 @Composable
 fun TimerScreen() {
@@ -76,6 +90,13 @@ fun TimerScreen() {
                         )
                     )
                 })
+        },
+        bottomBar = {
+            StartButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 40.dp)
+            )
         }) { paddingValues ->
         TimerScreenContent(
             chipTexts = chipTexts,
@@ -86,7 +107,10 @@ fun TimerScreen() {
                     // 직접 선택.
                 }
             },
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            onTimeSelected = { hour, minute ->
+
+            }
         )
     }
 }
@@ -187,6 +211,8 @@ fun FocusChipRow(
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
     ) {
         texts.forEachIndexed { index, text ->
             LimberChip(
@@ -197,7 +223,6 @@ fun FocusChipRow(
                 }
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
         LimberChipWithPlus(
             "추가하기",
             isSelected = selectedIndex == 4
@@ -205,6 +230,7 @@ fun FocusChipRow(
             onSelectedChanged(4)
         }
     }
+
 }
 
 @Composable
@@ -212,7 +238,8 @@ fun TimerScreenContent(
     chipTexts: List<String>,
     selectedIndex: Int,
     onSelectedChanged: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTimeSelected: (hour: Int, minute: Int) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -235,12 +262,14 @@ fun TimerScreenContent(
 
         Text("무엇에 집중할 것이오..")
 
-        SpinnerTimePicker { hour, minute ->
+        SpinnerTimePicker(modifier = Modifier.height(224.dp)) { hour, minute ->
             println("선택된 시간: $hour:$minute")
+            onTimeSelected(hour, minute)
         }
 
     }
 }
+
 @Composable
 fun SpinnerTimePicker(
     modifier: Modifier = Modifier,
@@ -249,38 +278,51 @@ fun SpinnerTimePicker(
     val hourList = (0..23).toList()
     val minuteList = (0..59).toList()
 
-    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 8)
-    val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30)
+    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 8 + 1) // padding 1개 포함
+    val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30 + 1)
 
-    val selectedHour = remember { derivedStateOf { hourList.getOrNull(hourState.firstVisibleItemIndex + 1) ?: 0 } }
-    val selectedMinute = remember { derivedStateOf { minuteList.getOrNull(minuteState.firstVisibleItemIndex + 1) ?: 0 } }
+
+    val selectedHour =
+        remember { derivedStateOf { hourList.getOrNull(hourState.firstVisibleItemIndex + 1) ?: 0 } }
+    val selectedMinute = remember {
+        derivedStateOf {
+            minuteList.getOrNull(minuteState.firstVisibleItemIndex + 1) ?: 0
+        }
+    }
+
+    // ✅ 값이 바뀔 때마다 외부 콜백 호출
+    LaunchedEffect(selectedHour.value, selectedMinute.value) {
+        onTimeSelected(selectedHour.value, selectedMinute.value)
+    }
 
     Box(
         modifier = modifier
             .height(150.dp)
-            .padding(16.dp)
     ) {
-        // ✅ 라인 먼저 배경에 깔기 (40dp 높이)
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
                 .height(40.dp)
-                .background(Color(0xFFEAEAEA).copy(alpha = 0.3f))
+                .padding(horizontal = 27.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Primary_BG_Normal)
         )
 
-        // ✅ Row 위에 얹기
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 27.dp)
         ) {
             NumberPicker(
+                modifier = Modifier.weight(1f),
                 values = hourList,
                 listState = hourState,
-                label = "시"
+                label = "시간"
             )
             NumberPicker(
+                modifier = Modifier.weight(1f),
                 values = minuteList,
                 listState = minuteState,
                 label = "분"
@@ -291,51 +333,112 @@ fun SpinnerTimePicker(
     Spacer(modifier = Modifier.height(8.dp))
 }
 
-
+@OptIn(FlowPreview::class)
 @Composable
 fun NumberPicker(
+    modifier: Modifier = Modifier,
     values: List<Int>,
-    listState: androidx.compose.foundation.lazy.LazyListState,
+    listState: LazyListState,
     label: String
 ) {
-    Box(modifier = Modifier.width(80.dp), contentAlignment = Alignment.Center) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .height(120.dp)
-        ) {
-            itemsIndexed(listOf("") + values.map { it.toString().padStart(2, '0') } + listOf("")) { _, item ->
-                Box(
-                    modifier = Modifier
-                        .height(40.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = item,
-                        fontSize = 20.sp,
-                        color = if (item.isNotBlank()) Color.Black else Color.Transparent
-                    )
+    val itemHeight = 40.dp
+    val density = LocalDensity.current
+
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            listState.firstVisibleItemScrollOffset to listState.isScrollInProgress
+        }
+            .debounce(100) // fling 등으로 offset 변화가 잦을 때 완충
+            .filter { !it.second } // 스크롤이 멈췄을 때
+            .collect { (offset, _) ->
+                val visibleIndex = listState.firstVisibleItemIndex
+                val itemHeightPx = with(density) { itemHeight.toPx() }
+
+                val nextIndex = if (offset >= itemHeightPx / 2f) {
+                    visibleIndex + 1
+                } else {
+                    visibleIndex
+                }
+
+                val maxIndex = values.size + 1 // 패딩 포함
+
+                listState.animateScrollToItem(
+                    nextIndex.coerceIn(0, maxIndex),
+                    0
+                )
+            }
+    }
+
+    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.height(120.dp) // ← 5개 보여주려면 높이 늘려주세요
+            ) {
+                itemsIndexed(listOf("") + values.map {
+                    it.toString().padStart(2, '0')
+                } + listOf("")) { _, item ->
+                    Box(
+                        modifier = Modifier.height(itemHeight),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = item,
+                            fontSize = 20.sp,
+                            color = if (item.isNotBlank()) Color.Black else Color.Transparent
+                        )
+                    }
                 }
             }
+            Spacer(modifier = Modifier.width(22.dp))
+            Text(
+                text = label,
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 4.dp)
+            )
         }
-
-        // 가운데 강조 라인
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth()
-                .height(40.dp)
-                .background(Color(0xFFEAEAEA).copy(alpha = 0.3f))
-        )
-
-        // 고정된 label
-        Text(
-            text = label,
-            fontSize = 20.sp,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp)
-        )
     }
 }
+
+@Composable
+fun StartButton(modifier: Modifier) {
+    LimberSquareButton(onClick = {}, text = "시작하기.", modifier = modifier.height(54.dp))
+}
+
+@Composable
+fun TimerStartModal(appinfoList: List<AppInfo>) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(482.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .padding(horizontal = 16.dp, vertical = 20.dp)
+    ) {
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("1시간 4분동안\n다음의 앱을이 차단돼요")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("12개의 앱")
+                LimberChip("수정하기") {
+
+                }
+                DopamineActBox(appInfoList = appinfoList)
+            }
+            Text("바로 시작하시겠습니까?")
+            LimberSquareButton(text = "시작하기", onClick = {
+
+            })
+        }
+    }
+}
+
 
