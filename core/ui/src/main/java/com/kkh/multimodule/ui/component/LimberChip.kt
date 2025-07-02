@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontVariation.width
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
@@ -85,11 +86,9 @@ fun LimberFilterChip(
     Box(
         Modifier
             .clickable(onClick = onclick)
-            .padding(0.8.dp)
-            .height(36.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 100.dp))
             .padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 6.dp)
     ) {
-        Text(text, style = LimberTextStyle.Body2, color = textColor)
+        Text(text, style = LimberTextStyle.Body2, color = textColor, textAlign = TextAlign.Center)
     }
 }

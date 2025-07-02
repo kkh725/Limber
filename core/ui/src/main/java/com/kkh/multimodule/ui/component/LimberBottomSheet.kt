@@ -43,7 +43,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterBlockAppBottomSheet(sheetState: SheetState) {
+fun RegisterBlockAppBottomSheet(
+    modifier: Modifier = Modifier,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit
+) {
 
     var appList by remember {
         mutableStateOf(
@@ -62,17 +66,17 @@ fun RegisterBlockAppBottomSheet(sheetState: SheetState) {
 
     val scope = rememberCoroutineScope()
 
-
     ModalBottomSheet(
         onDismissRequest = {
             scope.launch {
                 sheetState.hide()
+                onDismissRequest()
             }
         },
         sheetState = sheetState
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.9f)
                 .padding(horizontal = 20.dp)
@@ -85,6 +89,7 @@ fun RegisterBlockAppBottomSheet(sheetState: SheetState) {
                 IconButton(onClick = {
                     scope.launch {
                         sheetState.hide() // ↓ 애니메이션 먼저 수행
+                        onDismissRequest()
                     }
                 }, modifier = Modifier.size(24.dp)) {
                     Icon(
