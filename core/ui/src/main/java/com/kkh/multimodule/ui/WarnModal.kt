@@ -72,7 +72,7 @@ import kotlinx.coroutines.flow.filter
 
 @Preview
 @Composable
-fun WarnModal(
+fun WarnDialog(
     appinfoList: List<AppInfo> = listOf(
         AppInfo("인스타그램", "com.app1", null, "30분"),
         AppInfo("유튜브", "com.app2", null, "45분"),
@@ -107,7 +107,7 @@ fun WarnModal(
                 Spacer(Modifier.height(56.dp))
 
                 Text(
-                    "1시간 4분동안\n다음의 앱을이 차단돼요",
+                    "1시간 4분동안\n다음의 앱들이 차단돼요",
                     modifier = Modifier.fillMaxWidth(),
                     style = LimberTextStyle.Heading2,
                     textAlign = TextAlign.Center

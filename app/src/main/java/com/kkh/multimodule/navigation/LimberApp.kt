@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kkh.multimodule.LimberBottomBar
 import com.kkh.multimodule.RootViewModel
 import com.kkh.multimodule.intent.RootEvent
-import com.kkh.multimodule.ui.WarnModal
+import com.kkh.multimodule.ui.WarnDialog
 import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import kotlinx.coroutines.launch
 

@@ -1,27 +1,34 @@
 package com.kkh.multimodule.ui.component
 
 import android.R
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
@@ -33,18 +40,20 @@ fun LimberChip(
     onClick: () -> Unit
 ) {
     val borderColor = if (isSelected) Primary_Main else Gray300
+    val backgroundColor = Color.Transparent
     val textColor = if (isSelected) Color.Black else Color.Gray
 
-    Box(
-        Modifier
-            .clickable(onClick = onClick)
-            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(100.dp))
-            .width(68.dp)
-            .height(38.dp)
-            .padding(horizontal = 20.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(100.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = backgroundColor,
+            contentColor = textColor
+        ),
+        border = BorderStroke(1.dp, borderColor),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
     ) {
-        Text(text = text, color = textColor)
+        Text(text)
     }
 }
 
@@ -54,26 +63,25 @@ fun LimberChipWithPlus(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val borderColor = if (isSelected) Color(0xFFEAE6ED) else Gray100
-    val textColor = if (isSelected) Color(0xFFEAE6ED) else Color.Black
+    val backgroundColor = LimberColorStyle.Gray200
 
-    Box(
-        Modifier
-            .clickable(onClick = onClick)
-            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(100.dp))
-            .width(68.dp)
-            .height(38.dp)
-            .padding(horizontal = 20.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(100.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = backgroundColor,
+            contentColor = Gray500 // Text 기본 컬러 (Row의 Text에 따로 색 지정할 거면 여긴 기본)
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("+", color = textColor, modifier = Modifier.padding(end = 4.dp))
-            Text(text, color = textColor)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("+", color = Gray400, modifier = Modifier.padding(end = 4.dp))
+            Text(text, color = Gray500)
         }
     }
 }
+
 
 @Preview
 @Composable

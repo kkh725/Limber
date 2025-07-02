@@ -45,7 +45,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
-import com.kkh.multimodule.ui.WarnModal
+import com.kkh.multimodule.ui.WarnDialog
 import com.kkh.multimodule.ui.component.LimberSquareButton
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberChipWithPlus
@@ -98,7 +98,7 @@ fun TimerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 40.dp),
-                onClick = {isModalVisible = true}
+                onClick = { isModalVisible = true }
             )
         }) { paddingValues ->
         TimerScreenContent(
@@ -117,14 +117,14 @@ fun TimerScreen(
         )
     }
     if (isModalVisible) {
-        Dialog({}) {
-            WarnModal(onClickModifyButton = {
+        Dialog({ isModalVisible = false }) {
+            WarnDialog(onClickModifyButton = {
                 isSheetVisible = true
             })
         }
     }
 
-    if (isSheetVisible){
+    if (isSheetVisible) {
         RegisterBlockAppBottomSheet(
             sheetState = sheetState,
             onDismissRequest = {
@@ -226,7 +226,7 @@ fun FocusChipRow(
             )
         }
         LimberChipWithPlus(
-            "추가하기",
+            "직접 추가",
             isSelected = selectedIndex == 4
         ) {
             onSelectedChanged(4)
@@ -251,8 +251,6 @@ fun TimerScreenContent(
         Spacer(modifier = Modifier.height(60.dp))
         Text("무엇에 집중할 것이오..")
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         FocusChipRow(
             texts = chipTexts,
             selectedIndex = selectedIndex,
@@ -268,7 +266,6 @@ fun TimerScreenContent(
             println("선택된 시간: $hour:$minute")
             onTimeSelected(hour, minute)
         }
-
     }
 }
 
