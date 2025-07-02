@@ -18,15 +18,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
 
 @Composable
 fun LimberSquareButton(
     onClick: () -> Unit,
-    modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier,
+    modifier: Modifier = Modifier,
     text: String,
+    textColor: Color = Color.White,
     enabled: Boolean = true,
-    containerColor: Color = Color.Blue,
+    containerColor: Color = Primary_Main,
     disabledContainerColor: Color = Color.Gray
 ) {
     Button(
@@ -40,7 +42,7 @@ fun LimberSquareButton(
             disabledContainerColor = disabledContainerColor
         )
     ) {
-        Text(text, style = LimberTextStyle.Heading4)
+        Text(text, style = LimberTextStyle.Heading4, color = textColor)
     }
 }
 

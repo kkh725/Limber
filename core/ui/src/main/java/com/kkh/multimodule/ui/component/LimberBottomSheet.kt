@@ -23,6 +23,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -40,10 +41,9 @@ import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ModalBottomSheetExample() {
+fun RegisterBlockAppBottomSheet(sheetState: SheetState) {
 
     var appList by remember {
         mutableStateOf(
@@ -61,63 +61,64 @@ fun ModalBottomSheetExample() {
     }
 
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true // true면 Half 없고 바로 Expanded
-    )
-    var showSheet by remember { mutableStateOf(true) }
 
-    if (showSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showSheet = false },
-            sheetState = sheetState
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.9f)
-                    .padding(horizontal = 20.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    IconButton(onClick = {
-                        scope.launch {
-                            sheetState.hide() // ↓ 애니메이션 먼저 수행
-                            showSheet = false // ↓ 애니메이션 끝난 뒤 컴포저블 제거
-                        }
-                    }, modifier = Modifier.size(24.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "",
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    Text(
-                        "선택 완료",
-                        modifier = Modifier.clickable(onClick = {}),
-                        style = LimberTextStyle.Body2,
-                        color = LimberColorStyle.Gray500
-                    )
 
-                }
-                Spacer(Modifier.height(20.dp))
-                Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading3)
-                Spacer(Modifier.height(11.dp))
-                Text("${checkedList.count { it }}/${appList.size}", style = LimberTextStyle.Heading3)
-                Spacer(Modifier.height(24.dp))
-
-                CheckAppList(
-                    appList = appList,
-                    checkedList = checkedList,
-                    onCheckClicked = { index ->
-                        checkedList = checkedList.toMutableList().also {
-                            it[index] = !it[index]
-                        }
-                    }
-                )
+    ModalBottomSheet(
+        onDismissRequest = {
+            scope.launch {
+                sheetState.hide()
             }
+        },
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f)
+                .padding(horizontal = 20.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = {
+                    scope.launch {
+                        sheetState.hide() // ↓ 애니메이션 먼저 수행
+                    }
+                }, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                Text(
+                    "선택 완료",
+                    modifier = Modifier.clickable(onClick = {}),
+                    style = LimberTextStyle.Body2,
+                    color = LimberColorStyle.Gray500
+                )
+
+            }
+            Spacer(Modifier.height(20.dp))
+            Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading3)
+            Spacer(Modifier.height(11.dp))
+            Text(
+                "${checkedList.count { it }}/${appList.size}",
+                style = LimberTextStyle.Heading3
+            )
+            Spacer(Modifier.height(24.dp))
+
+            CheckAppList(
+                appList = appList,
+                checkedList = checkedList,
+                onCheckClicked = { index ->
+                    checkedList = checkedList.toMutableList().also {
+                        it[index] = !it[index]
+                    }
+                }
+            )
         }
     }
 }
