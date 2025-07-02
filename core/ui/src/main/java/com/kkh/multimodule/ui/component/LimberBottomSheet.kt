@@ -4,6 +4,7 @@ import android.R.attr.onClick
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +48,8 @@ import kotlinx.coroutines.launch
 fun RegisterBlockAppBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onClickComplete: () -> Unit
 ) {
 
     var appList by remember {
@@ -98,12 +101,19 @@ fun RegisterBlockAppBottomSheet(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
-                Text(
-                    "선택 완료",
-                    modifier = Modifier.clickable(onClick = {}),
-                    style = LimberTextStyle.Body2,
-                    color = LimberColorStyle.Gray500
-                )
+                TextButton(onClick = {
+                    scope.launch {
+                        sheetState.hide()
+                        onClickComplete()
+                    }
+                }, contentPadding = PaddingValues(0.dp)) {
+                    Text(
+                        "선택 완료",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Gray500
+                    )
+                }
+
 
             }
             Spacer(Modifier.height(20.dp))

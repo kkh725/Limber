@@ -8,9 +8,7 @@ import com.kkh.multimodule.domain.model.ScreenState
 import com.kkh.multimodule.navigation.BottomNavRoutes
 
 data class RootState(
-    val screenState: ScreenState,
-    val isTimerWarnModalVisible: Boolean = false,
-    val isRegisterBottomSheetVisible: Boolean = false
+    val screenState: ScreenState
 ) : UiState {
     companion object {
         fun init() = RootState(
@@ -21,9 +19,6 @@ data class RootState(
 
 sealed class RootEvent : UiEvent {
     data class OnClickedBottomNaviItem(val route: String) : RootEvent()
-    data object OnClickStartButton : RootEvent()
-    data object OnClickModifyButton : RootEvent()
-    data object CloseBottomSheet : RootEvent()
 }
 
 class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
@@ -47,16 +42,6 @@ class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
                         setState(oldState.copy(screenState = ScreenState.MORE_SCREEN))
                     }
                 }
-            }
-            is RootEvent.OnClickStartButton -> {
-                setState(oldState.copy(isTimerWarnModalVisible = true))
-            }
-
-            is RootEvent.OnClickModifyButton -> {
-                setState(oldState.copy(isRegisterBottomSheetVisible = true))
-            }
-            is RootEvent.CloseBottomSheet -> {
-                setState(oldState.copy(isRegisterBottomSheetVisible = false))
             }
         }
     }

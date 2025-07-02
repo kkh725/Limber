@@ -24,7 +24,6 @@ fun LimberNavHost(
         modifier = modifier,
     ) {
         homeScreen(onClickButtonToNavigate = navController::navigateToMain)
-        timerScreen(
-            onClickStartButton = { rootViewModel.sendEvent(RootEvent.OnClickStartButton) })
+        timerScreen()
     }
 }

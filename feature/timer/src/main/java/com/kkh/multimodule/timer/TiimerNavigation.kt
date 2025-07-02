@@ -13,9 +13,8 @@ fun NavController.navigateToTimer() =
     navigate(route = TimerRoute.ROUTE)
 
 fun NavGraphBuilder.timerScreen(
-    onClickStartButton: () -> Unit
 ) {
     composable(TimerRoute.ROUTE) {
-        TimerScreen(onClickStartButton = onClickStartButton)
+        TimerScreen()
     }
 }

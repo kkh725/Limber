@@ -28,56 +28,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import com.kkh.multimodule.core.ui.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kkh.accessibility.AppInfo
 import com.kkh.multimodule.designsystem.LimberColorStyle
-import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
-import com.kkh.multimodule.designsystem.LimberTextStyle
-import com.kkh.multimodule.ui.component.DopamineActBox
+import com.kkh.multimodule.ui.WarnModal
 import com.kkh.multimodule.ui.component.LimberSquareButton
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberChipWithPlus
-import com.kkh.multimodule.ui.component.LimberFilterChip
+import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
-import java.util.Calendar
-import java.util.Timer
-import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerScreen(
-    onClickStartButton: () -> Unit = {}
 ) {
 
     val timerViewModel: TimerViewModel = hiltViewModel()
@@ -91,7 +70,8 @@ fun TimerScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true // true면 Half 없고 바로 Expanded
     )
-
+    var isSheetVisible by remember { mutableStateOf(false) }
+    var isModalVisible by remember { mutableStateOf(false) }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -118,7 +98,7 @@ fun TimerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 40.dp),
-                onClick = onClickStartButton
+                onClick = {isModalVisible = true}
             )
         }) { paddingValues ->
         TimerScreenContent(
@@ -133,6 +113,25 @@ fun TimerScreen(
             modifier = Modifier.padding(paddingValues),
             onTimeSelected = { hour, minute ->
 
+            }
+        )
+    }
+    if (isModalVisible) {
+        Dialog({}) {
+            WarnModal(onClickModifyButton = {
+                isSheetVisible = true
+            })
+        }
+    }
+
+    if (isSheetVisible){
+        RegisterBlockAppBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                isSheetVisible = false
+            },
+            onClickComplete = {
+                isSheetVisible = false
             }
         )
     }
@@ -153,17 +152,20 @@ fun TimerScreenTopBar(
 
     Row(
         Modifier
+            .systemBarsPadding()
             .fillMaxWidth()
             .height(56.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        StartNowButton(
+        TimerSelectorButton(
             modifier = Modifier.weight(1f),
+            text = "지금 시작",
             isSelected = selectedTimerType == TimerScreenType.Now,
             onClick = onClickStartNowBtn
         )
-        ReservationButton(
+        TimerSelectorButton(
             modifier = Modifier.weight(1f),
+            text = "예약 설정",
             isSelected = selectedTimerType == TimerScreenType.Reserved,
             onClick = onClickReservationBtn
         )
@@ -171,51 +173,28 @@ fun TimerScreenTopBar(
 }
 
 @Composable
-fun StartNowButton(
+fun TimerSelectorButton(
     modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
+    text: String,
+    isSelected: Boolean,
     onClick: () -> Unit
 ) {
     Box(
         modifier
             .fillMaxHeight()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick
+            )
     ) {
         Text(
-            "지금 시작", modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp)
-        )
-
-        HorizontalDivider(
-            color = if (isSelected) Color.Black else Color.Gray,
-            thickness = if (isSelected) 2.dp else 1.dp,
+            text = text,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-fun ReservationButton(
-    modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier
-            .fillMaxHeight()
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            "에약 설정", modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp)
         )
 
         HorizontalDivider(
-            color = if (isSelected) Color.Black else Color.Gray,
+            color = if (isSelected) LimberColorStyle.Primary_Main else Color.Gray,
             thickness = if (isSelected) 2.dp else 1.dp,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

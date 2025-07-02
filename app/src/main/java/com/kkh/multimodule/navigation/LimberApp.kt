@@ -43,7 +43,6 @@ fun LimberApp() {
         skipPartiallyExpanded = true
     )
 
-
     Box(Modifier.fillMaxSize()) {
         Scaffold(
             contentWindowInsets = WindowInsets(0.dp),
@@ -63,36 +62,6 @@ fun LimberApp() {
                     .padding(paddingValues)
                     .fillMaxSize(),
                 rootViewModel = rootViewModel
-            )
-        }
-
-        /**
-         * 아래부터는 전체화면에 사용된 모달, 알람, 팝업 및 바텀시트.
-         * 경고 알림
-         */
-        AnimatedVisibility(rootState.isTimerWarnModalVisible) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(Modifier.padding(20.dp)) {
-                    WarnModal(onClickModifyButton = {
-                        rootViewModel.sendEvent(RootEvent.OnClickModifyButton)
-                    })
-                }
-            }
-        }
-        /**
-         * 앱 차단 선택 바텀시트.
-         */
-        if (rootState.isRegisterBottomSheetVisible) {
-            RegisterBlockAppBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = {
-                    rootViewModel.sendEvent(RootEvent.CloseBottomSheet)
-                }
             )
         }
     }
