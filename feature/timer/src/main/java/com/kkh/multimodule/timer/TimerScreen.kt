@@ -118,9 +118,12 @@ fun TimerScreen(
     }
     if (isModalVisible) {
         Dialog({ isModalVisible = false }) {
-            WarnDialog(onClickModifyButton = {
-                isSheetVisible = true
-            })
+            WarnDialog(
+                onClickModifyButton = {
+                    isSheetVisible = true
+                },
+                onDismissRequest = { isModalVisible = false }
+            )
         }
     }
 
@@ -130,7 +133,10 @@ fun TimerScreen(
             onDismissRequest = {
                 isSheetVisible = false
             },
-            onClickComplete = {
+            onClickComplete = { checkedAppList ->
+                checkedAppList.forEach {
+                    println(it.appName)
+                }
                 isSheetVisible = false
             }
         )

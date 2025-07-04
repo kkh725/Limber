@@ -1,7 +1,11 @@
 package com.kkh.multimodule.ui.component
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,7 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -45,6 +53,37 @@ fun LimberSquareButton(
         Text(text, style = LimberTextStyle.Heading4, color = textColor)
     }
 }
+
+@Composable
+fun LimberGradientButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color = Color.White,
+    enabled: Boolean = true,
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2)),
+                    start = Offset(0f, 0f),
+                    end = Offset.Infinite
+                )
+            )
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(vertical = 16.dp, horizontal = 16.dp), // 원래 contentPadding
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text,
+            style = LimberTextStyle.Heading4,
+            color = textColor
+        )
+    }
+}
+
 
 @Composable
 fun LimberFloatingButton(onClick: () -> Unit) {

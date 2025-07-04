@@ -1,6 +1,8 @@
 package com.kkh.multimodule.ui.component
 
 import android.R.attr.onClick
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -36,27 +40,33 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.accessibility.AppInfo
+import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.designsystem.LimberColorStyle
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterBlockAppBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onClickComplete: () -> Unit
+    onClickComplete: (List<AppInfo>) -> Unit // ✅ 변경: 선택된 리스트를 넘겨줌
 ) {
-
     var appList by remember {
         mutableStateOf(
             listOf(
-                AppInfo("카카오톡", "com.kakao.talk", null, "6시간"),
-                AppInfo("인스타그램", "com.instagram.android", null, "3시간"),
+                AppInfo("카카오톡", "com.kakao.talk", null, "6시간 30분"),
+                AppInfo("인스타그램", "com.instagram.android", null, "3시간 20분"),
                 AppInfo("유튜브", "com.google.android.youtube", null, "5시간"),
                 AppInfo("슬랙", "com.slack", null, "1시간")
             )
@@ -70,6 +80,8 @@ fun RegisterBlockAppBottomSheet(
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
+        modifier = modifier,
+        containerColor = Color.White,
         onDismissRequest = {
             scope.launch {
                 sheetState.hide()
@@ -91,33 +103,35 @@ fun RegisterBlockAppBottomSheet(
             ) {
                 IconButton(onClick = {
                     scope.launch {
-                        sheetState.hide() // ↓ 애니메이션 먼저 수행
+                        sheetState.hide()
                         onDismissRequest()
                     }
                 }, modifier = Modifier.size(24.dp)) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "",
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        tint = Gray400
                     )
                 }
                 TextButton(onClick = {
+                    // ✅ 선택된 앱 리스트 추출
+                    val selectedApps = appList.filterIndexed { index, _ -> checkedList[index] }
+
                     scope.launch {
                         sheetState.hide()
-                        onClickComplete()
+                        onClickComplete(selectedApps) // ✅ 선택된 리스트를 넘김
                     }
                 }, contentPadding = PaddingValues(0.dp)) {
                     Text(
                         "선택 완료",
                         style = LimberTextStyle.Body2,
-                        color = LimberColorStyle.Gray500
+                        color = LimberColorStyle.Primary_Main
                     )
                 }
-
-
             }
             Spacer(Modifier.height(20.dp))
-            Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading3)
+            Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray500)
             Spacer(Modifier.height(11.dp))
             Text(
                 "${checkedList.count { it }}/${appList.size}",
@@ -139,6 +153,7 @@ fun RegisterBlockAppBottomSheet(
 }
 
 
+
 @Composable
 fun CheckAppItem(
     appInfo: AppInfo,
@@ -148,38 +163,77 @@ fun CheckAppItem(
     Column {
         Row(
             modifier = Modifier
+                .clickable(onClick = onCheckClick)
                 .fillMaxWidth()
-                .height(48.dp)
-                .padding(vertical = 13.dp),
+                .height(56.dp)
+                .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            LimberCheckButton(isChecked = isChecked, onClick = onCheckClick)
-            Text(appInfo.appName, style = LimberTextStyle.Heading3)
-            Text(appInfo.usageTime, style = LimberTextStyle.Heading3)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LimberCheckButton(isChecked = isChecked, onClick = onCheckClick)
+                Text(appInfo.appName, style = LimberTextStyle.Body2)
+            }
+            Text(appInfo.usageTime, style = LimberTextStyle.Body2, color = Gray600)
         }
-
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             color = LimberColorStyle.Gray400
         )
     }
 }
-
+// 10개 이상인 경우는 체크 불가능
 @Composable
 fun CheckAppList(
     appList: List<AppInfo>,
     checkedList: List<Boolean>,
     onCheckClicked: (Int) -> Unit
 ) {
+    val checkedCount = checkedList.count { it }
+
     LazyColumn {
+        item {
+            RegisterAppNotice()
+        }
         itemsIndexed(appList) { index, item ->
+            val canCheck = checkedCount < 10 || checkedList[index] // 이미 선택된 경우는 해제할 수 있어야 함
+
             CheckAppItem(
                 appInfo = item,
                 isChecked = checkedList[index],
-                onCheckClick = { onCheckClicked(index) }
+                onCheckClick = {
+                    if (canCheck) {
+                        onCheckClicked(index)
+                    }
+                }
             )
         }
+    }
+}
+
+
+@Composable
+fun RegisterAppNotice() {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Gray100)
+            .padding(start = 12.dp, end = 16.dp)
+            ,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(painter = painterResource(R.drawable.ic_info), contentDescription = null)
+        Spacer(Modifier.width(8.dp))
+        Text(
+            "최근 한 달 동안 하루 평균 사용 시간이 많은 순서예요",
+            style = LimberTextStyle.Body2,
+            color = Gray600
+        )
     }
 }
 
