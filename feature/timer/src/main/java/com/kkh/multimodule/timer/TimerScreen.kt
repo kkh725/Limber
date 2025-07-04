@@ -40,15 +40,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.designsystem.LimberColorStyle
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
+import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.WarnDialog
 import com.kkh.multimodule.ui.component.LimberSquareButton
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberChipWithPlus
+import com.kkh.multimodule.ui.component.LimberGradientButton
 import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -65,7 +69,7 @@ fun TimerScreen(
     val selectedFocusChipIndex = uiState.selectedFocusChipIndex
     val timerScreenState = uiState.timerScreenState
 
-    val chipTexts = listOf("하나", "둘", "셋", "넷")
+    val chipList = uiState.chipList
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true // true면 Half 없고 바로 Expanded
@@ -73,36 +77,30 @@ fun TimerScreen(
     var isSheetVisible by remember { mutableStateOf(false) }
     var isModalVisible by remember { mutableStateOf(false) }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            TimerScreenTopBar(
-                selectedTimerType = timerScreenState,
-                onClickStartNowBtn = {
-                    timerViewModel.sendEvent(
-                        TimerEvent.OnClickTimerScreenButton(
-                            TimerScreenType.Now
-                        )
-                    )
-                },
-                onClickReservationBtn = {
-                    timerViewModel.sendEvent(
-                        TimerEvent.OnClickTimerScreenButton(
-                            TimerScreenType.Reserved
-                        )
-                    )
-                })
-        },
-        bottomBar = {
-            StartButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 40.dp),
-                onClick = { isModalVisible = true }
+    Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
+        TimerScreenTopBar(selectedTimerType = timerScreenState, onClickStartNowBtn = {
+            timerViewModel.sendEvent(
+                TimerEvent.OnClickTimerScreenButton(
+                    TimerScreenType.Now
+                )
             )
-        }) { paddingValues ->
+        }, onClickReservationBtn = {
+            timerViewModel.sendEvent(
+                TimerEvent.OnClickTimerScreenButton(
+                    TimerScreenType.Reserved
+                )
+            )
+        })
+    }, bottomBar = {
+        StartButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 40.dp),
+            enabled = uiState.selectedFocusChipIndex != -1,
+            onClick = { isModalVisible = true })
+    }) { paddingValues ->
         TimerScreenContent(
-            chipTexts = chipTexts,
+            chipTexts = chipList,
             selectedIndex = selectedFocusChipIndex,
             onSelectedChanged = { newIndex ->
                 timerViewModel.sendEvent(TimerEvent.OnClickFocusChip(newIndex))
@@ -113,33 +111,25 @@ fun TimerScreen(
             modifier = Modifier.padding(paddingValues),
             onTimeSelected = { hour, minute ->
 
-            }
-        )
+            })
     }
     if (isModalVisible) {
         Dialog({ isModalVisible = false }) {
-            WarnDialog(
-                onClickModifyButton = {
-                    isSheetVisible = true
-                },
-                onDismissRequest = { isModalVisible = false }
-            )
+            WarnDialog(onClickModifyButton = {
+                isSheetVisible = true
+            }, onDismissRequest = { isModalVisible = false })
         }
     }
 
     if (isSheetVisible) {
-        RegisterBlockAppBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = {
-                isSheetVisible = false
-            },
-            onClickComplete = { checkedAppList ->
-                checkedAppList.forEach {
-                    println(it.appName)
-                }
-                isSheetVisible = false
+        RegisterBlockAppBottomSheet(sheetState = sheetState, onDismissRequest = {
+            isSheetVisible = false
+        }, onClickComplete = { checkedAppList ->
+            checkedAppList.forEach {
+                println(it.appName)
             }
-        )
+            isSheetVisible = false
+        })
     }
 }
 
@@ -180,10 +170,7 @@ fun TimerScreenTopBar(
 
 @Composable
 fun TimerSelectorButton(
-    modifier: Modifier = Modifier,
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
+    modifier: Modifier = Modifier, text: String, isSelected: Boolean, onClick: () -> Unit
 ) {
     Box(
         modifier
@@ -193,8 +180,7 @@ fun TimerSelectorButton(
             )
     ) {
         Text(
-            text = text,
-            modifier = Modifier
+            text = text, modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp)
         )
@@ -224,22 +210,25 @@ fun FocusChipRow(
     ) {
         texts.forEachIndexed { index, text ->
             LimberChip(
-                text = text,
-                isSelected = selectedIndex == index,
-                onClick = {
-                    onSelectedChanged(index)
-                }
-            )
+                text = text, isSelected = selectedIndex == index, onClick = {
+                    if (selectedIndex == index) {
+                        onSelectedChanged(-1) // 같은 칩 다시 클릭 시 해제
+                    } else {
+                        onSelectedChanged(index) // 선택
+                    }
+                })
         }
         LimberChipWithPlus(
-            "직접 추가",
-            isSelected = selectedIndex == 4
-        ) {
-            onSelectedChanged(4)
-        }
+            "직접 추가", isSelected = selectedIndex == 4, onClick = {
+                if (selectedIndex == 4) {
+                    onSelectedChanged(-1) // 같은 칩 다시 클릭 시 해제
+                } else {
+                    onSelectedChanged(4)
+                }
+            })
     }
-
 }
+
 
 @Composable
 fun TimerScreenContent(
@@ -255,7 +244,13 @@ fun TimerScreenContent(
             .padding(horizontal = 20.dp)
     ) {
         Spacer(modifier = Modifier.height(60.dp))
-        Text("무엇에 집중할 것이오..")
+        Text(
+            "무엇에 집중하고 싶으신가요?",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = LimberTextStyle.Heading3,
+            color = Gray800
+        )
 
         FocusChipRow(
             texts = chipTexts,
@@ -266,7 +261,13 @@ fun TimerScreenContent(
 
         Spacer(modifier = Modifier.height(52.dp))
 
-        Text("무엇에 집중할 것이오..")
+        Text(
+            "얼마나 집중하시겠어요?",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = LimberTextStyle.Heading3,
+            color = Gray800
+        )
 
         SpinnerTimePicker(modifier = Modifier.height(224.dp)) { hour, minute ->
             println("선택된 시간: $hour:$minute")
@@ -277,8 +278,7 @@ fun TimerScreenContent(
 
 @Composable
 fun SpinnerTimePicker(
-    modifier: Modifier = Modifier,
-    onTimeSelected: (hour: Int, minute: Int) -> Unit
+    modifier: Modifier = Modifier, onTimeSelected: (hour: Int, minute: Int) -> Unit
 ) {
     val hourList = (0..23).toList()
     val minuteList = (0..59).toList()
@@ -301,8 +301,7 @@ fun SpinnerTimePicker(
     }
 
     Box(
-        modifier = modifier
-            .height(150.dp)
+        modifier = modifier.height(150.dp)
     ) {
         Box(
             modifier = Modifier
@@ -341,10 +340,7 @@ fun SpinnerTimePicker(
 @OptIn(FlowPreview::class)
 @Composable
 fun NumberPicker(
-    modifier: Modifier = Modifier,
-    values: List<Int>,
-    listState: LazyListState,
-    label: String
+    modifier: Modifier = Modifier, values: List<Int>, listState: LazyListState, label: String
 ) {
     val itemHeight = 40.dp
     val density = LocalDensity.current
@@ -352,8 +348,7 @@ fun NumberPicker(
     LaunchedEffect(listState) {
         snapshotFlow {
             listState.firstVisibleItemScrollOffset to listState.isScrollInProgress
-        }
-            .debounce(100) // fling 등으로 offset 변화가 잦을 때 완충
+        }.debounce(100) // fling 등으로 offset 변화가 잦을 때 완충
             .filter { !it.second } // 스크롤이 멈췄을 때
             .collect { (offset, _) ->
                 val visibleIndex = listState.firstVisibleItemIndex
@@ -368,8 +363,7 @@ fun NumberPicker(
                 val maxIndex = values.size + 1 // 패딩 포함
 
                 listState.animateScrollToItem(
-                    nextIndex.coerceIn(0, maxIndex),
-                    0
+                    nextIndex.coerceIn(0, maxIndex), 0
                 )
             }
     }
@@ -377,15 +371,13 @@ fun NumberPicker(
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             LazyColumn(
-                state = listState,
-                modifier = Modifier.height(120.dp) // ← 5개 보여주려면 높이 늘려주세요
+                state = listState, modifier = Modifier.height(120.dp) // ← 5개 보여주려면 높이 늘려주세요
             ) {
                 itemsIndexed(listOf("") + values.map {
                     it.toString().padStart(2, '0')
                 } + listOf("")) { _, item ->
                     Box(
-                        modifier = Modifier.height(itemHeight),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.height(itemHeight), contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = item,
@@ -408,13 +400,10 @@ fun NumberPicker(
 
 @Composable
 fun StartButton(
-    modifier: Modifier,
-    onClick: () -> Unit
+    modifier: Modifier, onClick: () -> Unit, enabled: Boolean = false
 ) {
-    LimberSquareButton(
-        onClick = onClick,
-        text = "시작하기",
-        modifier = modifier.height(54.dp)
+    LimberGradientButton(
+        onClick = onClick, enabled = enabled, text = "시작하기", modifier = modifier.height(54.dp)
     )
 }
 

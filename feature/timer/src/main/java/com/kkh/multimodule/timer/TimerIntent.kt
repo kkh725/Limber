@@ -15,12 +15,14 @@ import kotlinx.coroutines.withContext
 
 data class TimerState(
     val timerScreenState: TimerScreenType,
-    val selectedFocusChipIndex : Int
+    val selectedFocusChipIndex : Int,
+    val chipList : List<String>
 ) : UiState {
     companion object {
         fun init() = TimerState(
             timerScreenState = TimerScreenType.Now,
-            selectedFocusChipIndex = 0
+            selectedFocusChipIndex = -1,
+            chipList = listOf("하나", "둘", "셋", "넷")
         )
     }
 }

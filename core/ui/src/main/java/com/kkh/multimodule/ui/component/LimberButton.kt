@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
 
@@ -62,16 +63,18 @@ fun LimberGradientButton(
     textColor: Color = Color.White,
     enabled: Boolean = true,
 ) {
+    val backgroundModifier = if (enabled) Modifier.background(
+        brush = Brush.linearGradient(
+            colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2)),
+            start = Offset(0f, 0f),
+            end = Offset.Infinite
+        )
+    ) else Modifier.background(Gray300)
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2)),
-                    start = Offset(0f, 0f),
-                    end = Offset.Infinite
-                )
-            )
+            .then(backgroundModifier) // ✅ 여기서 붙여준다!
             .clickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 16.dp, horizontal = 16.dp), // 원래 contentPadding
         contentAlignment = Alignment.Center

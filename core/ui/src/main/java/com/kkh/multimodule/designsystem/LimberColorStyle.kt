@@ -10,9 +10,11 @@ object LimberColorStyle {
     val Gray400 = Color(0xFFB0ABB2)
     val Gray500 = Color(0xFF938F96)
     val Gray600 = Color(0xFF625F66)
+    val Gray800 = Color(0xFF1D1A22)
 
 
     val Primary_Main = Color(0xFFB05AF6)
+    val Primary_Background_Dark = Color(0xFFF6EAFF)
     val Secondary = Color(0xFFFF725E)
 
     val Primary_BG_Normal = Color(0xFFF5EBFE)
