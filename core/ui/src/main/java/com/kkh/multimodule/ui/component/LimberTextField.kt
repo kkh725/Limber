@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.VisualTransformation
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.designsystem.LimberTextStyle
 
 @Composable
@@ -36,6 +37,7 @@ fun LimberOutlinedTextField(
     label: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
+    placeholder: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -43,19 +45,20 @@ fun LimberOutlinedTextField(
     maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = MaterialTheme.shapes.small,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = Gray300,
+        focusedBorderColor = Gray300
+    )
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.padding(16.dp),
+        modifier = modifier,
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
         label = label,
-        placeholder = {
-            Text("텍스트를 입력해주세요.", style = LimberTextStyle.Body1)
-        },
+        placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = {
             if (value.isNotEmpty()) {

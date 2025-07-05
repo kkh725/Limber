@@ -5,11 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -27,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
 
@@ -127,9 +130,9 @@ fun LimberFloatingButton(onClick: () -> Unit) {
 @Composable
 fun LimberCheckButton(
     isChecked: Boolean = false,
-    onClick: () -> Unit
+    onClick: (Boolean) -> Unit
 ) {
-    IconButton(onClick = onClick, modifier = Modifier.size(24.dp)) {
+    IconButton(onClick = { onClick(!isChecked) }, modifier = Modifier.size(24.dp)) {
         Crossfade(targetState = isChecked, label = "CheckIconCrossfade") { checked ->
             val imageResource = if (checked) R.drawable.ic_checked else R.drawable.ic_unchecked
             val painter = painterResource(imageResource)
@@ -141,5 +144,21 @@ fun LimberCheckButton(
                 tint = Color.Unspecified
             )
         }
+    }
+}
+
+@Composable
+fun LimberCloseButton(modifier: Modifier = Modifier,onClick: () -> Unit){
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+            .size(24.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize(),
+            tint = Gray400
+        )
     }
 }

@@ -158,12 +158,12 @@ fun RegisterBlockAppBottomSheet(
 fun CheckAppItem(
     appInfo: AppInfo,
     isChecked: Boolean,
-    onCheckClick: () -> Unit
+    onCheckClick: (Boolean) -> Unit
 ) {
     Column {
         Row(
             modifier = Modifier
-                .clickable(onClick = onCheckClick)
+                .clickable { onCheckClick(!isChecked) }
                 .fillMaxWidth()
                 .height(56.dp)
                 .padding(vertical = 16.dp),
