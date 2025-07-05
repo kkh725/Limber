@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,7 @@ import com.kkh.multimodule.ui.component.LimberGradientButton
 @Preview
 @Composable
 fun EndTimerContent(onClickBack: () -> Unit,onClickClose: () -> Unit) {
-    Scaffold(topBar = {
+    Scaffold(containerColor = Color.White,topBar = {
         Box(
             Modifier
                 .fillMaxWidth()

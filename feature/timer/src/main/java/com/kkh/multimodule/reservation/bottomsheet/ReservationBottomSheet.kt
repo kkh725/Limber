@@ -1,5 +1,10 @@
 package com.kkh.multimodule.reservation.bottomsheet
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,7 +64,6 @@ fun ReservationBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onClickComplete: (List<AppInfo>) -> Unit // ✅ 변경: 선택된 리스트를 넘겨줌
 ) {
 
     val scope = rememberCoroutineScope()
@@ -69,67 +74,82 @@ fun ReservationBottomSheet(
     val chipList = uiState.chipList
 
     ModalBottomSheet(
-        modifier = modifier,
         containerColor = Color.White,
+        modifier = modifier,
         onDismissRequest = {
         },
         sheetState = sheetState
     ) {
-        when (bottomSheetState) {
-            BottomSheetState.Idle -> {
-                ReservationBottomSheetContent(
-                    onClickTimerButton = { buttonIndex ->
-                        val targetState = when (buttonIndex) {
-                            0 -> BottomSheetState.Start
-                            1 -> BottomSheetState.End
-                            2 -> BottomSheetState.Repeat
-                            else -> BottomSheetState.Idle
-                        }
-                        reservationViewModel.sendEvent(
-                            ReservationEvent.BottomSheet.NavigateTo(targetState)
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f)
+        ) {
+            AnimatedContent(
+                targetState = bottomSheetState,
+                transitionSpec = {
+                    fadeIn(tween(200)) togetherWith fadeOut(tween(200))
+                },
+                label = "BottomSheetContentAnimation"
+            ) { state ->
+                when (state) {
+                    BottomSheetState.Idle -> {
+                        ReservationBottomSheetContent(
+                            onClickTimerButton = { buttonIndex ->
+                                val targetState = when (buttonIndex) {
+                                    0 -> BottomSheetState.Start
+                                    1 -> BottomSheetState.End
+                                    2 -> BottomSheetState.Repeat
+                                    else -> BottomSheetState.Idle
+                                }
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.NavigateTo(targetState)
+                                )
+                            },
+                            onClickClose = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                            },
+                            chipList = chipList,
+                            onSelectedChanged = {}
                         )
-                    },
-                    onClickClose = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
-                    },
-                    chipList = chipList,
-                    onSelectedChanged = {})
+                    }
+
+                    BottomSheetState.Start -> {
+                        StartTimerContent(
+                            onClickBack = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
+                            },
+                            onClickClose = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                            }
+                        )
+                    }
+
+                    BottomSheetState.End -> {
+                        EndTimerContent(
+                            onClickBack = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
+                            },
+                            onClickClose = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                            }
+                        )
+                    }
+
+                    BottomSheetState.Repeat -> {
+                        RepeatTimerContent(
+                            onClickBack = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
+                            },
+                            onClickClose = {
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                            }
+                        )
+                    }
+                }
             }
 
-            BottomSheetState.Start -> {
-                StartTimerContent(
-                    onClickBack = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
-                    },
-                    onClickClose = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
-                    }
-                )
-            }
-
-            BottomSheetState.End -> {
-                EndTimerContent(
-                    onClickBack = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
-                    },
-                    onClickClose = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
-                    }
-                )
-            }
-
-            BottomSheetState.Repeat -> {
-                RepeatTimerContent(
-                    onClickBack = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
-                    },
-                    onClickClose = {
-                        reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
-                    }
-                )
-            }
         }
-
     }
 }
 
@@ -153,7 +173,6 @@ fun ReservationBottomSheetPreview() {
                 sheetState.hide()
             }
         },
-        onClickComplete = {}
     )
 }
 
@@ -166,37 +185,43 @@ fun ReservationBottomSheetContent(
     onSelectedChanged: (String) -> Unit = {},
     onClickTimerButton: (Int) -> Unit = {}
 ) {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        ReservationTopBar(onClickClose = onClickClose)
-        Spacer(Modifier.height(33.dp))
-        ReservationSetting(
-            value = "",
-            onValueChange = {}
-        )
-        Spacer(Modifier.height(20.dp))
-        HorizontalDivider(thickness = 4.dp, color = Gray200)
-        Spacer(Modifier.height(40.dp))
+    Box(Modifier.fillMaxSize()){
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            ReservationTopBar(onClickClose = onClickClose)
+            Spacer(Modifier.height(33.dp))
+            ReservationSetting(
+                value = "",
+                onValueChange = {}
+            )
+            Spacer(Modifier.height(20.dp))
+            HorizontalDivider(thickness = 4.dp, color = Gray200)
+            Spacer(Modifier.height(40.dp))
 
-        ReservationFocusSection(
-            chipList = chipList,
-            onSelectedChanged = onSelectedChanged
-        )
+            ReservationFocusSection(
+                chipList = chipList,
+                onSelectedChanged = onSelectedChanged
+            )
 
-        ReservationTimerSection(onClickButton = onClickTimerButton)
+            ReservationTimerSection(onClickButton = onClickTimerButton)
+            Spacer(Modifier.height(120.dp))
 
-        Spacer(Modifier.weight(1f))
+        }
+    }
+    Box(Modifier.fillMaxSize()){
         LimberGradientButton(
             onClick = {},
             modifier = Modifier
+                .align (Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 20.dp),
             text = "예약하기"
         )
     }
+
 }
 
 @Composable

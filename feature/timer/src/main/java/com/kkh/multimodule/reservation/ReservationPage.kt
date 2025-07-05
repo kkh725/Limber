@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,9 +28,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,12 +60,15 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.designsystem.gradientModifier
+import com.kkh.multimodule.reservation.bottomsheet.ReservationBottomSheet
 import com.kkh.multimodule.timer.ReservationScreenState
+import com.kkh.multimodule.timer.TimerEvent
 import com.kkh.multimodule.ui.component.LimberCheckButton
 import com.kkh.multimodule.ui.component.LimberFilterChip
 import com.kkh.multimodule.ui.component.LimberRoundButton
 import com.kkh.multimodule.ui.component.LimberSquareButton
 import com.kkh.multimodule.ui.component.LimberToggle
+import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 
 data class ReservationInfo(
     val id: Int,
@@ -79,15 +85,22 @@ fun ReservationListScreenPreview() {
     ReservationPage()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationPage(modifier: Modifier = Modifier) {
     val reservationViewModel: ReservationViewModel = hiltViewModel()
     val uiState by reservationViewModel.uiState.collectAsState()
 
+    val bottomSheetVisible = uiState.isSheetVisible
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            ReservationFloatingBtn(onClick = {})
+            ReservationFloatingBtn(onClick = {
+                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Show(true))
+            })
         },
         topBar = {
             AnimatedContent(
@@ -133,11 +146,26 @@ fun ReservationPage(modifier: Modifier = Modifier) {
                     reservationViewModel.sendEvent(ReservationEvent.OnToggleChanged(id, checked))
                 },
                 onCheckButtonClicked = { id, checked ->
-                    reservationViewModel.sendEvent(ReservationEvent.OnRemoveCheckChanged(id, checked))
+                    reservationViewModel.sendEvent(
+                        ReservationEvent.OnRemoveCheckChanged(
+                            id,
+                            checked
+                        )
+                    )
                 }
             )
         }
     }
+
+    if (bottomSheetVisible) {
+        ReservationBottomSheet(
+            modifier = Modifier,
+            sheetState = sheetState,
+            onDismissRequest = {
+                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+            })
+    }
+
 }
 
 @Composable
