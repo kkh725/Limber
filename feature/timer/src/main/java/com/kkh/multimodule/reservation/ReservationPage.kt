@@ -93,6 +93,7 @@ fun ReservationPage(modifier: Modifier = Modifier) {
 
     val bottomSheetVisible = uiState.isSheetVisible
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val isClickedAllSelect = uiState.isClickedAllSelected
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -121,8 +122,10 @@ fun ReservationPage(modifier: Modifier = Modifier) {
 
                     else -> {
                         ReservationModifyTopBar(
-                            isAllCheckButtonChecked = true,
-                            onClickSelectAll = {},
+                            isAllCheckButtonChecked = isClickedAllSelect,
+                            onClickSelectAll = {
+                                reservationViewModel.sendEvent(ReservationEvent.OnClickAllSelected)
+                            },
                             onClickRemove = {},
                             onClickComplete = {
                                 reservationViewModel.sendEvent(ReservationEvent.OnClickModifyCompleteButton)

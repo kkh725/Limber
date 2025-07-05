@@ -32,7 +32,12 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.LimberGradientButton
 
 @Composable
-fun StartTimerContent(onClickBack: () -> Unit,onClickClose: () -> Unit){
+fun StartTimerContent(
+    head: String,
+    onClickBack: () -> Unit,
+    onClickClose: () -> Unit,
+    onClickComplete: () -> Unit = {}
+){
     Scaffold(containerColor = Color.White, topBar = {
         Box(
             Modifier
@@ -42,12 +47,12 @@ fun StartTimerContent(onClickBack: () -> Unit,onClickClose: () -> Unit){
             StartTimerTopBar(
                 onClickBack = onClickBack,
                 onClickClose = onClickClose,
-                text = "시작 시간"
+                text = head
             )
         }
     }, bottomBar = {
         LimberGradientButton(
-            onClick = {},
+            onClick = onClickComplete,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 20.dp),

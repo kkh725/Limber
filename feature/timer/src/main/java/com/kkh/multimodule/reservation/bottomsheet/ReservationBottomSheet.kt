@@ -1,6 +1,9 @@
 package com.kkh.multimodule.reservation.bottomsheet
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,7 +36,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +63,7 @@ import com.kkh.multimodule.timer.FocusChipRow
 import com.kkh.multimodule.ui.component.LimberCloseButton
 import com.kkh.multimodule.ui.component.LimberGradientButton
 import com.kkh.multimodule.ui.component.LimberOutlinedTextField
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,18 +80,46 @@ fun ReservationBottomSheet(
     val uiState by reservationViewModel.uiState.collectAsState()
     val bottomSheetState = uiState.reservationBottomSheetState
     val chipList = uiState.chipList
+    val repeatOptionList = uiState.repeatOptionList
+    val dayList = uiState.dayList
+
+    val targetHeightFraction = when (bottomSheetState) {
+        BottomSheetState.Idle -> 0.9f
+        BottomSheetState.Start -> 0.5f
+        BottomSheetState.End -> 0.5f
+        BottomSheetState.Repeat -> 0.5f
+    }
+
+    // 이전 값을 기억하기 위해 remember 사용
+    var previousHeightFraction by remember { mutableFloatStateOf(targetHeightFraction) }
+
+    val animatedHeightFraction by animateFloatAsState(
+        targetValue = targetHeightFraction,
+        animationSpec = if (targetHeightFraction > previousHeightFraction) {
+            // 올라갈 때
+            tween(durationMillis = 300, easing = FastOutSlowInEasing)
+        } else {
+            // 내려갈 때
+            tween(durationMillis = 300, easing = FastOutLinearInEasing)
+        },
+        label = "BottomSheetHeightAnimation"
+    )
+
+    // 새로운 값이 들어오면 이전 값 업데이트
+    LaunchedEffect(targetHeightFraction) {
+        previousHeightFraction = targetHeightFraction
+    }
 
     ModalBottomSheet(
         containerColor = Color.White,
         modifier = modifier,
-        onDismissRequest = {
-        },
+        onDismissRequest = onDismissRequest,
         sheetState = sheetState
     ) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f)
+                .fillMaxHeight(animatedHeightFraction)
         ) {
             AnimatedContent(
                 targetState = bottomSheetState,
@@ -107,7 +143,10 @@ fun ReservationBottomSheet(
                                 )
                             },
                             onClickClose = {
-                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                                scope.launch {
+                                    sheetState.hide()
+                                    reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                                }
                             },
                             chipList = chipList,
                             onSelectedChanged = {}
@@ -120,8 +159,19 @@ fun ReservationBottomSheet(
                                 reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
                             },
                             onClickClose = {
-                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
-                            }
+                                scope.launch {
+                                    sheetState.hide()
+                                    reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                                }
+                            },
+                            onClickComplete = {
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.NavigateTo(
+                                        BottomSheetState.Idle
+                                    )
+                                )
+                            },
+                            head = "반복 설정"
                         )
                     }
 
@@ -131,24 +181,59 @@ fun ReservationBottomSheet(
                                 reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
                             },
                             onClickClose = {
-                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
-                            }
+                                scope.launch {
+                                    sheetState.hide()
+                                    reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                                }
+                            },
+                            onClickComplete = {
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.NavigateTo(
+                                        BottomSheetState.Idle
+                                    )
+                                )
+                            },
+                            head = "반복 설정"
                         )
                     }
 
                     BottomSheetState.Repeat -> {
                         RepeatTimerContent(
+                            repeatOptionList = repeatOptionList,
+                            dayList = dayList,
                             onClickBack = {
                                 reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Back)
                             },
                             onClickClose = {
-                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                                scope.launch {
+                                    sheetState.hide()
+                                    reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
+                                }
+                            },
+                            head = "반복 설정",
+                            onClickComplete = {
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.OnClickRepeatOptionCompleteButton
+                                )
+                            },
+                            onClickOption = { chipText ->
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.OnClickRepeatOptionChip(
+                                        chipText
+                                    )
+                                )
+                            },
+                            onClickDay = { day ->
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.OnClickDayChip(
+                                        day
+                                    )
+                                )
                             }
                         )
                     }
                 }
             }
-
         }
     }
 }
@@ -185,7 +270,7 @@ fun ReservationBottomSheetContent(
     onSelectedChanged: (String) -> Unit = {},
     onClickTimerButton: (Int) -> Unit = {}
 ) {
-    Box(Modifier.fillMaxSize()){
+    Box(Modifier.fillMaxSize()) {
         Column(
             Modifier
                 .fillMaxSize()
@@ -211,11 +296,11 @@ fun ReservationBottomSheetContent(
 
         }
     }
-    Box(Modifier.fillMaxSize()){
+    Box(Modifier.fillMaxSize()) {
         LimberGradientButton(
             onClick = {},
             modifier = Modifier
-                .align (Alignment.BottomCenter)
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 20.dp),
             text = "예약하기"

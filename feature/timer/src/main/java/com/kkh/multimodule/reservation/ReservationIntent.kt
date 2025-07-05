@@ -16,13 +16,17 @@ sealed class BottomSheetState {
 data class ReservationState(
     val reservationScreenState: ReservationScreenState,
     val reservationItemList: List<ReservationInfo>,
+    val isClickedAllSelected: Boolean,
     val reservationBottomSheetState: BottomSheetState,
+    val repeatOptionList: List<ChipInfo>,
     val isSheetVisible: Boolean = false,
-    val chipList: List<ChipInfo>
+    val chipList: List<ChipInfo>,
+    val dayList: List<ChipInfo>
 ) : UiState {
     companion object {
         fun init() = ReservationState(
             reservationScreenState = ReservationScreenState.Idle,
+            isClickedAllSelected = false,
             reservationItemList = listOf(
                 ReservationInfo(1, "포트폴리오 작업하기", "매일 오전 8시에 업데이트", "작업", false),
                 ReservationInfo(2, "운동 루틴", "매주 월, 수, 금 알림", "건강", true),
@@ -38,7 +42,21 @@ data class ReservationState(
                 ChipInfo("넷"),
                 ChipInfo("직접 추가")
             ),
-            reservationBottomSheetState = BottomSheetState.Idle
+            repeatOptionList = listOf(
+                ChipInfo("매일"),
+                ChipInfo("평일"),
+                ChipInfo("주말"),
+            ),
+            reservationBottomSheetState = BottomSheetState.Idle,
+            dayList = listOf(
+                ChipInfo("월"),
+                ChipInfo("화"),
+                ChipInfo("수"),
+                ChipInfo("목"),
+                ChipInfo("금"),
+                ChipInfo("토"),
+                ChipInfo("일")
+            )
         )
     }
 }
@@ -49,12 +67,16 @@ sealed class ReservationEvent : UiEvent {
     data object OnClickModifyCompleteButton : ReservationEvent()
     data class OnRemoveCheckChanged(val id: Int, val checked: Boolean) : ReservationEvent()
     data class OnClickFocusChip(val chipText: String) : ReservationEvent()
+    data object OnClickAllSelected : ReservationEvent()
 
     sealed class BottomSheet : ReservationEvent() {
         data class NavigateTo(val state: BottomSheetState) : BottomSheet()
         data object Back : BottomSheet()
         data object Close : BottomSheet()
         data class Show(val isVisible: Boolean) : BottomSheet()
+        data class OnClickRepeatOptionChip(val chipText: String) : BottomSheet()
+        data class OnClickDayChip(val chipText: String) : BottomSheet()
+        data object OnClickRepeatOptionCompleteButton : BottomSheet()
     }
 }
 
@@ -80,6 +102,22 @@ class ReservationReducer(state: ReservationState) :
                 setState(oldState.copy(reservationItemList = newList))
             }
 
+            // 수정페이지 전체선택.
+            is ReservationEvent.OnClickAllSelected -> {
+                val newAllSelected = !oldState.isClickedAllSelected
+                var newList = oldState.reservationItemList
+                if (newAllSelected){
+                    newList = oldState.reservationItemList.map {
+                        it.copy(isRemoveChecked = true)
+                    }
+                } else {
+                    newList = oldState.reservationItemList.map {
+                        it.copy(isRemoveChecked = false)
+                    }
+                }
+                setState(oldState.copy(reservationItemList = newList, isClickedAllSelected = newAllSelected))
+            }
+
             is ReservationEvent.OnClickModifyCompleteButton -> {
                 val newList = oldState.reservationItemList.map {
                     it.copy(isRemoveChecked = false)
@@ -87,11 +125,13 @@ class ReservationReducer(state: ReservationState) :
                 setState(
                     oldState.copy(
                         reservationScreenState = ReservationScreenState.Idle,
-                        reservationItemList = newList
+                        reservationItemList = newList,
+                        isClickedAllSelected = false
                     )
                 )
             }
 
+            // 집중 칩 선택
             is ReservationEvent.OnClickFocusChip -> {
                 val newChipList = oldState.chipList.map { chip ->
                     chip.copy(isSelected = chip.text == event.chipText)
@@ -99,14 +139,27 @@ class ReservationReducer(state: ReservationState) :
                 setState(oldState.copy(chipList = newChipList))
             }
 
+            // 바텀시트 화면이동
             is ReservationEvent.BottomSheet.NavigateTo -> {
                 setState(oldState.copy(reservationBottomSheetState = event.state))
             }
 
+            // 바텀시트 back
             is ReservationEvent.BottomSheet.Back -> {
-                setState(oldState.copy(reservationBottomSheetState = BottomSheetState.Idle))
+                // 반복 옵션 선택했던 것들 초기화.
+                val newList = oldState.repeatOptionList.map { chip ->
+                    chip.copy(isSelected = false)
+                }
+
+                setState(
+                    oldState.copy(
+                        reservationBottomSheetState = BottomSheetState.Idle,
+                        repeatOptionList = newList
+                    )
+                )
             }
 
+            // 바텀시트 닫기
             is ReservationEvent.BottomSheet.Close -> {
                 setState(
                     oldState.copy(
@@ -116,8 +169,87 @@ class ReservationReducer(state: ReservationState) :
                 )
             }
 
+            // 바텀시트 오픈
             is ReservationEvent.BottomSheet.Show -> {
                 setState(oldState.copy(isSheetVisible = event.isVisible))
+            }
+
+            is ReservationEvent.BottomSheet.OnClickRepeatOptionChip -> {
+                val isAlreadySelected =
+                    oldState.repeatOptionList.any { it.text == event.chipText && it.isSelected }
+
+                if (isAlreadySelected) {
+                    // 이미 선택된 상태에서 다시 누르면 모두 해제
+                    val newRepeatOptionList =
+                        oldState.repeatOptionList.map { it.copy(isSelected = false) }
+                    val newDayList = oldState.dayList.map { it.copy(isSelected = false) }
+
+                    setState(
+                        oldState.copy(
+                            repeatOptionList = newRepeatOptionList,
+                            dayList = newDayList
+                        )
+                    )
+                } else {
+                    // 선택 안 된 상태면 기존 로직 적용
+                    val newRepeatOptionList = oldState.repeatOptionList.map { chip ->
+                        chip.copy(isSelected = chip.text == event.chipText)
+                    }
+
+                    val newDayList = when (event.chipText) {
+                        "매일" -> oldState.dayList.map { it.copy(isSelected = true) }
+                        "평일" -> oldState.dayList.map {
+                            val isWeekday = it.text in listOf("월", "화", "수", "목", "금")
+                            it.copy(isSelected = isWeekday)
+                        }
+
+                        "주말" -> oldState.dayList.map {
+                            val isWeekend = it.text in listOf("토", "일")
+                            it.copy(isSelected = isWeekend)
+                        }
+
+                        else -> oldState.dayList.map { it.copy(isSelected = false) }
+                    }
+
+                    setState(
+                        oldState.copy(
+                            repeatOptionList = newRepeatOptionList,
+                            dayList = newDayList
+                        )
+                    )
+                }
+            }
+
+            // 바텀시트 day 클릭이벤트. 여러개 클릭가능
+            is ReservationEvent.BottomSheet.OnClickDayChip -> {
+                val newList = oldState.dayList.map { chip ->
+                    if (chip.text == event.chipText) {
+                        chip.copy(isSelected = !chip.isSelected) // 내가 누른 것만 토글
+                    } else {
+                        chip
+                    }
+                }
+                val newOptionList = oldState.repeatOptionList.map { option ->
+                    option.copy(isSelected = false)
+                }
+                setState(oldState.copy(repeatOptionList = newOptionList, dayList = newList))
+            }
+
+            is ReservationEvent.BottomSheet.OnClickRepeatOptionCompleteButton -> {
+                val initRepeatOption = oldState.repeatOptionList.map { it.copy(isSelected = false) }
+                val initDayOption = oldState.dayList.map { it.copy(isSelected = false) }
+
+                val selectedOption = oldState.dayList.find { it.isSelected }
+                if (selectedOption != null) {
+                    // todo 반복설정 데이터에 저장.
+                }
+                setState(
+                    oldState.copy(
+                        repeatOptionList = initRepeatOption,
+                        dayList = initDayOption,
+                        reservationBottomSheetState = BottomSheetState.Idle
+                    )
+                )
             }
         }
     }
