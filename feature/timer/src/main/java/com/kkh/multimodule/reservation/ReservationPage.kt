@@ -1,0 +1,340 @@
+package com.kkh.multimodule.reservation
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.designsystem.LimberColorStyle
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray200
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
+import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
+import com.kkh.multimodule.designsystem.LimberTextStyle
+import com.kkh.multimodule.designsystem.gradientModifier
+import com.kkh.multimodule.timer.ReservationScreenState
+import com.kkh.multimodule.ui.component.LimberCheckButton
+import com.kkh.multimodule.ui.component.LimberFilterChip
+import com.kkh.multimodule.ui.component.LimberRoundButton
+import com.kkh.multimodule.ui.component.LimberSquareButton
+import com.kkh.multimodule.ui.component.LimberToggle
+
+data class ReservationInfo(
+    val id: Int,
+    val title: String,
+    val description: String,
+    val chipText: String,
+    var isChecked: Boolean
+)
+
+
+@Composable
+fun ReservationPage(
+    modifier: Modifier = Modifier
+) {
+
+    val reservationViewModel: ReservationViewModel = hiltViewModel()
+    val uiState by reservationViewModel.uiState.collectAsState()
+
+    val reservationScreenState = uiState.reservationScreenState
+    var reservationList = uiState.reservationItemList
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButton = { ReservationFloatingBtn(onClick = {}) },
+        topBar = {
+            if (reservationScreenState == ReservationScreenState.Idle) {
+                ReservationTopBar(
+                    modifier = Modifier,
+                    onClickModify = {
+                        reservationViewModel.sendEvent(ReservationEvent.OnClickModifyButton)
+                    }
+                )
+            } else {
+                ReservationModifyTopBar(
+                    modifier = Modifier,
+                    isAllCheckButtonChecked = true,
+                    onClickSelectAll = {},
+                    onClickRemove = {},
+                    onClickComplete = {})
+            }
+
+        }) { paddingValues ->
+        Column(
+            modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            ReservationList(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                reservationList = reservationList,
+                reservationScreenState = reservationScreenState,
+                onToggleChanged = { id, checked ->
+                    reservationViewModel.sendEvent(ReservationEvent.OnToggleChanged(id, checked))
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ReservationListScreenPreview() {
+    ReservationPage()
+}
+
+@Composable
+fun ReservationTopBar(modifier: Modifier = Modifier, onClickModify: () -> Unit = {}) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = 20.dp,
+                bottom = 12.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("진행중인 실험", style = LimberTextStyle.Heading4, color = Gray800)
+            Spacer(Modifier.width(4.dp))
+            Text("3", style = LimberTextStyle.Heading4, color = Primary_Main)
+        }
+        ModifyButton(onClick = onClickModify)
+    }
+}
+
+@Composable
+fun ReservationModifyTopBar(
+    modifier: Modifier = Modifier,
+    isAllCheckButtonChecked: Boolean = false,
+    onClickSelectAll: () -> Unit = {},
+    onClickRemove: () -> Unit = {},
+    onClickComplete: () -> Unit = {}
+) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = 20.dp,
+                bottom = 12.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            LimberCheckButton(isChecked = isAllCheckButtonChecked, onClick = onClickSelectAll)
+            Text("전체 선택", style = LimberTextStyle.Heading4, color = Gray800)
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            LimberRoundButton(
+                onClick = onClickRemove,
+                text = "삭제",
+                textColor = Color.White,
+                enabled = true,
+                containerColor = LimberColorStyle.Gray700
+            )
+            LimberRoundButton(
+                onClick = onClickComplete,
+                text = "완료",
+                textColor = Gray500,
+                enabled = true,
+                containerColor = Gray200
+            )
+        }
+    }
+}
+
+@Composable
+fun ModifyButton(onClick: () -> Unit = {}) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(100.dp))
+            .clickable(onClick = onClick)
+            .background(Gray300)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_write),
+            contentDescription = null,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = "편집하기",
+            style = LimberTextStyle.Body2,
+            color = Gray600
+        )
+    }
+}
+
+@Composable
+fun ReservationList(
+    modifier: Modifier = Modifier,
+    reservationList: List<ReservationInfo>,
+    reservationScreenState: ReservationScreenState,
+    onToggleChanged: (id: Int, checked: Boolean) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(reservationList) { item ->
+            ReservationItemComposable(
+                info = item,
+                reservationScreenState = reservationScreenState,
+                onToggleChanged = { checked ->
+                    onToggleChanged(item.id, checked)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ReservationItemComposable(
+    info: ReservationInfo,
+    reservationScreenState: ReservationScreenState,
+    onToggleChanged: (Boolean) -> Unit
+) {
+
+    val backgroundColor = if (info.isChecked) {
+        Color.White
+    } else {
+        Gray100
+    }
+
+    val chipTextColor: Color = if (info.isChecked) {
+        Primary_Main
+    } else {
+        Gray500
+    }
+
+    val chipBackgroundColor = if (info.isChecked) {
+        LimberColorStyle.Primary_Background_Dark
+    } else {
+        Gray200
+    }
+
+    val descriptionColor = if (info.isChecked) {
+        Gray800
+    } else {
+        Gray400
+    }
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .shadow(4.dp, RoundedCornerShape(10.dp))
+            .background(backgroundColor)
+            .padding(20.dp)
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LimberFilterChip(
+                text = info.chipText,
+                textColor = chipTextColor,
+                backgroundColor = chipBackgroundColor,
+                onclick = {}
+            )
+            LimberToggle(
+                checked = info.isChecked,
+                onCheckedChange = onToggleChanged,
+                modifier = Modifier.size(40.dp,22.dp)
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = info.title,
+            style = LimberTextStyle.Heading3,
+            color = Gray800
+        )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = info.description,
+            style = LimberTextStyle.Body2,
+            color = descriptionColor
+        )
+    }
+}
+
+@Composable
+fun ReservationFloatingBtn(onClick: () -> Unit) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(end = 20.dp, bottom = 20.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(CircleShape)
+                .then(gradientModifier())
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}

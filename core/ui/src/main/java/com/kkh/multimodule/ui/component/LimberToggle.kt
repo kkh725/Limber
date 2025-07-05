@@ -27,7 +27,7 @@ fun LimberToggle(
         checkedThumbColor = Color.White,
         uncheckedThumbColor = Color.White,
         checkedTrackColor = LimberColorStyle.Primary_Main,
-        uncheckedTrackColor = LimberColorStyle.Gray100,
+        uncheckedTrackColor = LimberColorStyle.Gray300,
         checkedBorderColor = Color.Transparent,
         uncheckedBorderColor = Color.Transparent,
     )

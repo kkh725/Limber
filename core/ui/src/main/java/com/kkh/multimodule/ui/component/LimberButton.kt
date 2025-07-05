@@ -56,6 +56,31 @@ fun LimberSquareButton(
 }
 
 @Composable
+fun LimberRoundButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color = Color.White,
+    enabled: Boolean = true,
+    containerColor: Color = Primary_Main,
+    disabledContainerColor: Color = Color.Gray
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(100.dp),
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            disabledContainerColor = disabledContainerColor
+        )
+    ) {
+        Text(text, style = LimberTextStyle.Body2, color = textColor)
+    }
+}
+
+@Composable
 fun LimberGradientButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

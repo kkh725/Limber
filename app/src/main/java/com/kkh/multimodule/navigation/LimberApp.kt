@@ -39,17 +39,13 @@ fun LimberApp() {
 
     val rootViewModel: RootViewModel = hiltViewModel()
     val rootState by rootViewModel.uiState.collectAsState()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
-            contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
                 LimberBottomBar(
                     modifier = Modifier.navigationBarsPadding(),
-                    navHostController,
+                    navController = navHostController,
                     onScreenSelected = { bottomNavRoute ->
                         rootViewModel.sendEvent(RootEvent.OnClickedBottomNaviItem(bottomNavRoute))
                     }

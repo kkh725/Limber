@@ -92,11 +92,12 @@ fun LimberFilterChip(
     text: String = "토글",
     textColor: Color = Color.White,
     backgroundColor: Color = Gray600,
-    onclick: () -> Unit = {}
+    onclick: () -> Unit = {},
+    enabled: Boolean = false
 ) {
     Box(
         Modifier
-            .clickable(onClick = onclick)
+            .clickable(onClick = onclick, enabled = enabled)
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 100.dp))
             .padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 6.dp)
     ) {

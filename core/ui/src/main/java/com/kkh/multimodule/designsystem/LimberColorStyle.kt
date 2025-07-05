@@ -1,5 +1,10 @@
 package com.kkh.multimodule.designsystem
 
+import androidx.compose.foundation.background
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 object LimberColorStyle {
@@ -10,6 +15,7 @@ object LimberColorStyle {
     val Gray400 = Color(0xFFB0ABB2)
     val Gray500 = Color(0xFF938F96)
     val Gray600 = Color(0xFF625F66)
+    val Gray700 = Color(0xFF322F37)
     val Gray800 = Color(0xFF1D1A22)
 
 
@@ -18,5 +24,15 @@ object LimberColorStyle {
     val Secondary = Color(0xFFFF725E)
 
     val Primary_BG_Normal = Color(0xFFF5EBFE)
+}
+
+fun gradientModifier(): Modifier {
+    return Modifier.background(
+        brush = Brush.linearGradient(
+            colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2)),
+            start = Offset(0f, 0f),
+            end = Offset.Infinite
+        )
+    )
 }
 

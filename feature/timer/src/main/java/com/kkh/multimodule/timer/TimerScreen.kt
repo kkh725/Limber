@@ -1,8 +1,6 @@
 package com.kkh.multimodule.timer
 
 
-import android.graphics.drawable.Drawable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +26,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -48,8 +48,8 @@ import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
 import com.kkh.multimodule.designsystem.LimberTextStyle
+import com.kkh.multimodule.reservation.ReservationPage
 import com.kkh.multimodule.ui.WarnDialog
-import com.kkh.multimodule.ui.component.LimberSquareButton
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberChipWithPlus
 import com.kkh.multimodule.ui.component.LimberGradientButton
@@ -57,61 +57,90 @@ import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen(
-) {
-
+fun TimerScreen() {
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
 
     val selectedFocusChipIndex = uiState.selectedFocusChipIndex
     val timerScreenState = uiState.timerScreenState
-
     val chipList = uiState.chipList
 
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true // true면 Half 없고 바로 Expanded
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSheetVisible by remember { mutableStateOf(false) }
     var isModalVisible by remember { mutableStateOf(false) }
 
-    Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
-        TimerScreenTopBar(selectedTimerType = timerScreenState, onClickStartNowBtn = {
-            timerViewModel.sendEvent(
-                TimerEvent.OnClickTimerScreenButton(
-                    TimerScreenType.Now
-                )
-            )
-        }, onClickReservationBtn = {
-            timerViewModel.sendEvent(
-                TimerEvent.OnClickTimerScreenButton(
-                    TimerScreenType.Reserved
-                )
-            )
-        })
-    }, bottomBar = {
-        StartButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 40.dp),
-            enabled = uiState.selectedFocusChipIndex != -1,
-            onClick = { isModalVisible = true })
-    }) { paddingValues ->
-        TimerScreenContent(
-            chipTexts = chipList,
-            selectedIndex = selectedFocusChipIndex,
-            onSelectedChanged = { newIndex ->
-                timerViewModel.sendEvent(TimerEvent.OnClickFocusChip(newIndex))
-                if (newIndex == 4) {
-                    // 직접 선택.
-                }
-            },
-            modifier = Modifier.padding(paddingValues),
-            onTimeSelected = { hour, minute ->
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+    val coroutineScope = rememberCoroutineScope()
 
-            })
+    LaunchedEffect(pagerState.currentPage) {
+        when (pagerState.currentPage) {
+            0 -> timerViewModel.sendEvent(TimerEvent.OnClickTimerScreenButton(TimerScreenType.Now))
+            1 -> timerViewModel.sendEvent(TimerEvent.OnClickTimerScreenButton(TimerScreenType.Reserved))
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TimerScreenTopBar(
+                selectedTimerType = timerScreenState,
+                onClickStartNowBtn = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+
+                    timerViewModel.sendEvent(
+                        TimerEvent.OnClickTimerScreenButton(TimerScreenType.Now)
+                    )
+                },
+                onClickReservationBtn = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
+                    timerViewModel.sendEvent(
+                        TimerEvent.OnClickTimerScreenButton(TimerScreenType.Reserved)
+                    )
+                }
+            )
+        },
+        bottomBar = {
+            if (pagerState.currentPage == 0) {
+                StartButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 40.dp),
+                    enabled = uiState.selectedFocusChipIndex != -1,
+                    onClick = { isModalVisible = true }
+                )
+            }
+        }
+    ) { paddingValues ->
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.padding(paddingValues)
+        ) { page ->
+            when (page) {
+                0 -> TimerScreenContent(
+                    chipTexts = chipList,
+                    selectedIndex = selectedFocusChipIndex,
+                    onSelectedChanged = { newIndex ->
+                        timerViewModel.sendEvent(TimerEvent.OnClickFocusChip(newIndex))
+                        if (newIndex == 4) {
+                            // 직접 선택
+                        }
+                    },
+                    onTimeSelected = { hour, minute -> },
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                1 -> ReservationPage(
+                    modifier = Modifier
+                )
+            }
+        }
     }
     if (isModalVisible) {
         Dialog({ isModalVisible = false }) {
@@ -141,14 +170,14 @@ fun TimerScreenPreview() {
 
 @Composable
 fun TimerScreenTopBar(
+    modifier: Modifier = Modifier,
     selectedTimerType: TimerScreenType,
     onClickStartNowBtn: () -> Unit,
     onClickReservationBtn: () -> Unit
 ) {
 
     Row(
-        Modifier
-            .systemBarsPadding()
+        modifier
             .fillMaxWidth()
             .height(56.dp),
         horizontalArrangement = Arrangement.SpaceBetween
