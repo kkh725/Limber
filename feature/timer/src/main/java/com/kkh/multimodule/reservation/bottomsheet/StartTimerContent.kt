@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.LimberGradientButton
+import com.kkh.multimodule.ui.component.LimberTimePicker
 
 @Composable
 fun StartTimerContent(
@@ -66,6 +67,9 @@ fun StartTimerContent(
                 color = LimberColorStyle.Gray800,
                 style = LimberTextStyle.Heading3
             )
+            Spacer(Modifier.height(12.dp))
+
+            LimberTimePicker()
 
         }
     }

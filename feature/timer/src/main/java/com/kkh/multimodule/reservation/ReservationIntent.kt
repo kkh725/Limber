@@ -144,17 +144,21 @@ class ReservationReducer(state: ReservationState) :
                 setState(oldState.copy(reservationBottomSheetState = event.state))
             }
 
-            // 바텀시트 back
+            // 바텀시트 뒤로가기
             is ReservationEvent.BottomSheet.Back -> {
                 // 반복 옵션 선택했던 것들 초기화.
                 val newList = oldState.repeatOptionList.map { chip ->
+                    chip.copy(isSelected = false)
+                }
+                val newDayList = oldState.dayList.map { chip ->
                     chip.copy(isSelected = false)
                 }
 
                 setState(
                     oldState.copy(
                         reservationBottomSheetState = BottomSheetState.Idle,
-                        repeatOptionList = newList
+                        repeatOptionList = newList,
+                        dayList = newDayList
                     )
                 )
             }
