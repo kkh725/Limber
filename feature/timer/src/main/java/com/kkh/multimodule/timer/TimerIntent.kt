@@ -13,39 +13,56 @@ import com.kkh.multimodule.ui.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+data class ChipInfo(
+    val text: String,
+    val isSelected: Boolean = false,
+)
+
 data class TimerState(
     val timerScreenState: TimerScreenType,
-    val selectedFocusChipIndex : Int,
-    val chipList : List<String>
+    val chipList: List<ChipInfo>,
+    val isSheetVisible: Boolean = false,
+    val isModalVisible: Boolean = false,
 ) : UiState {
     companion object {
         fun init() = TimerState(
             timerScreenState = TimerScreenType.Now,
-            selectedFocusChipIndex = -1,
-            chipList = listOf("하나", "둘", "셋", "넷")
+            chipList = listOf(
+                ChipInfo("하나"),
+                ChipInfo("둘"),
+                ChipInfo("셋"),
+                ChipInfo("넷"),
+                ChipInfo("직접 추가")
+            )
         )
     }
 }
 
 sealed class TimerEvent : UiEvent {
     data class OnClickTimerScreenButton(val timerScreenState: TimerScreenType) : TimerEvent()
-    data class OnClickFocusChip(val selectedFocusChipIndex: Int) : TimerEvent()
+    data class OnClickFocusChip(val chipText: String) : TimerEvent()
+    data class ShowSheet(val isSheetVisible: Boolean) : TimerEvent()
+    data class ShowModal(val isModalVisible: Boolean) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
-    @SuppressLint("UseCompatLoadingForDrawables")
 
     override suspend fun reduce(oldState: TimerState, event: TimerEvent) {
         when (event) {
             is TimerEvent.OnClickTimerScreenButton -> {
-                setState(
-                    oldState.copy(timerScreenState = event.timerScreenState)
-                )
+                setState(oldState.copy(timerScreenState = event.timerScreenState))
             }
             is TimerEvent.OnClickFocusChip -> {
-                setState(
-                    oldState.copy(selectedFocusChipIndex = event.selectedFocusChipIndex)
-                )
+                val newChipList = oldState.chipList.map { chip ->
+                    chip.copy(isSelected = chip.text == event.chipText)
+                }
+                setState(oldState.copy(chipList = newChipList))
+            }
+            is TimerEvent.ShowSheet -> {
+                setState(oldState.copy(isSheetVisible = event.isSheetVisible))
+            }
+            is TimerEvent.ShowModal -> {
+                setState(oldState.copy(isModalVisible = event.isModalVisible))
             }
         }
     }

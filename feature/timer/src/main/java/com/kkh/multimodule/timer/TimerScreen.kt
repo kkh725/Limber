@@ -65,13 +65,13 @@ fun TimerScreen() {
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
 
-    val selectedFocusChipIndex = uiState.selectedFocusChipIndex
     val timerScreenState = uiState.timerScreenState
     val chipList = uiState.chipList
+    val selectedChip = chipList.find { it.isSelected }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var isSheetVisible by remember { mutableStateOf(false) }
-    var isModalVisible by remember { mutableStateOf(false) }
+    val isSheetVisible = uiState.isSheetVisible
+    val isModalVisible = uiState.isModalVisible
 
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -112,8 +112,8 @@ fun TimerScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 40.dp),
-                    enabled = uiState.selectedFocusChipIndex != -1,
-                    onClick = { isModalVisible = true }
+                    enabled = chipList.any { it.isSelected },
+                    onClick = { timerViewModel.sendEvent(TimerEvent.ShowModal(true)) }
                 )
             }
         }
@@ -124,40 +124,40 @@ fun TimerScreen() {
         ) { page ->
             when (page) {
                 0 -> TimerScreenContent(
-                    chipTexts = chipList,
-                    selectedIndex = selectedFocusChipIndex,
-                    onSelectedChanged = { newIndex ->
-                        timerViewModel.sendEvent(TimerEvent.OnClickFocusChip(newIndex))
-                        if (newIndex == 4) {
-                            // 직접 선택
+                    chipList = chipList,
+                    onSelectedChanged = { chipText ->
+                        if (chipText.isEmpty()) {
+                            timerViewModel.sendEvent(TimerEvent.OnClickFocusChip("")) // 해제
+                        } else {
+                            timerViewModel.sendEvent(TimerEvent.OnClickFocusChip(chipText))
                         }
                     },
                     onTimeSelected = { hour, minute -> },
                     modifier = Modifier.fillMaxSize()
                 )
-
                 1 -> ReservationPage(
                     modifier = Modifier
                 )
             }
         }
+
     }
     if (isModalVisible) {
-        Dialog({ isModalVisible = false }) {
+        Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
             WarnDialog(onClickModifyButton = {
-                isSheetVisible = true
-            }, onDismissRequest = { isModalVisible = false })
+                timerViewModel.sendEvent(TimerEvent.ShowModal(true))
+            }, onDismissRequest = { timerViewModel.sendEvent(TimerEvent.ShowModal(false)) })
         }
     }
 
     if (isSheetVisible) {
         RegisterBlockAppBottomSheet(sheetState = sheetState, onDismissRequest = {
-            isSheetVisible = false
+            timerViewModel.sendEvent(TimerEvent.ShowSheet(false))
         }, onClickComplete = { checkedAppList ->
             checkedAppList.forEach {
                 println(it.appName)
             }
-            isSheetVisible = false
+            timerViewModel.sendEvent(TimerEvent.ShowSheet(false))
         })
     }
 }
@@ -223,12 +223,10 @@ fun TimerSelectorButton(
         )
     }
 }
-
 @Composable
 fun FocusChipRow(
-    texts: List<String>,
-    selectedIndex: Int,
-    onSelectedChanged: (Int) -> Unit,
+    chipList: List<ChipInfo>,
+    onSelectedChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -237,33 +235,41 @@ fun FocusChipRow(
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
     ) {
-        texts.forEachIndexed { index, text ->
-            LimberChip(
-                text = text, isSelected = selectedIndex == index, onClick = {
-                    if (selectedIndex == index) {
-                        onSelectedChanged(-1) // 같은 칩 다시 클릭 시 해제
-                    } else {
-                        onSelectedChanged(index) // 선택
+        chipList.forEach { chip ->
+            if (chip.text == "직접 추가") {
+                LimberChipWithPlus(
+                    text = chip.text,
+                    isSelected = chip.isSelected,
+                    onClick = {
+                        if (chip.isSelected) {
+                            onSelectedChanged("") // 해제
+                        } else {
+                            onSelectedChanged(chip.text)
+                        }
                     }
-                })
+                )
+            } else {
+                LimberChip(
+                    text = chip.text,
+                    isSelected = chip.isSelected,
+                    onClick = {
+                        if (chip.isSelected) {
+                            onSelectedChanged("") // 해제
+                        } else {
+                            onSelectedChanged(chip.text)
+                        }
+                    }
+                )
+            }
         }
-        LimberChipWithPlus(
-            "직접 추가", isSelected = selectedIndex == 4, onClick = {
-                if (selectedIndex == 4) {
-                    onSelectedChanged(-1) // 같은 칩 다시 클릭 시 해제
-                } else {
-                    onSelectedChanged(4)
-                }
-            })
     }
 }
 
 
 @Composable
 fun TimerScreenContent(
-    chipTexts: List<String>,
-    selectedIndex: Int,
-    onSelectedChanged: (Int) -> Unit,
+    chipList: List<ChipInfo>,
+    onSelectedChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     onTimeSelected: (hour: Int, minute: Int) -> Unit
 ) {
@@ -282,8 +288,7 @@ fun TimerScreenContent(
         )
 
         FocusChipRow(
-            texts = chipTexts,
-            selectedIndex = selectedIndex,
+            chipList = chipList,
             onSelectedChanged = onSelectedChanged,
             modifier = Modifier.padding(top = 16.dp)
         )
@@ -304,6 +309,7 @@ fun TimerScreenContent(
         }
     }
 }
+
 
 @Composable
 fun SpinnerTimePicker(
