@@ -32,15 +32,19 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-@Preview(showBackground = true)
 @Composable
-fun LimberTimePicker(){
-//    var selectedTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
-    var selectedTime by remember { mutableStateOf(LocalTime(1, 0)) }
+fun LimberTimePicker(
+    selectedTime: LocalTime,
+    onValueChanged: (LocalTime) -> Unit
+) {
 
-    Box(Modifier.fillMaxWidth().height(224.dp)){
+    Box(Modifier
+        .fillMaxWidth()
+        .height(224.dp)) {
         TimePicker(
-            modifier = Modifier.fillMaxSize().align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
             initialTime = selectedTime,
             timeFormat = TimeFormat.TWELVE_HOUR_KOREAN,
             itemLabel = ItemLabel(
@@ -52,13 +56,13 @@ fun LimberTimePicker(){
                 shape = RoundedCornerShape(8.dp)
             )
         ) { newTime ->
-            selectedTime = newTime
+            onValueChanged(newTime)
         }
-        Row(Modifier.fillMaxSize(),verticalAlignment = Alignment.CenterVertically){
+        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
             Spacer(Modifier.fillMaxWidth(0.585f))
-            Text("시",style = LimberTextStyle.Heading2,color = Gray800)
+            Text("시", style = LimberTextStyle.Heading2, color = Gray800)
             Spacer(Modifier.fillMaxWidth(0.56f))
-            Text("분",style = LimberTextStyle.Heading2,color = Gray800)
+            Text("분", style = LimberTextStyle.Heading2, color = Gray800)
         }
     }
 

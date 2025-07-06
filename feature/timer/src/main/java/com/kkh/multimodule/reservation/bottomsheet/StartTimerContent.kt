@@ -21,6 +21,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,14 +35,18 @@ import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.LimberGradientButton
 import com.kkh.multimodule.ui.component.LimberTimePicker
+import kotlinx.datetime.LocalTime
 
 @Composable
 fun StartTimerContent(
     head: String,
     onClickBack: () -> Unit,
     onClickClose: () -> Unit,
-    onClickComplete: () -> Unit = {}
-){
+    onClickComplete: (LocalTime) -> Unit = {}
+) {
+
+    var selectedTime by remember { mutableStateOf(LocalTime(1, 0)) }
+
     Scaffold(containerColor = Color.White, topBar = {
         Box(
             Modifier
@@ -53,24 +61,33 @@ fun StartTimerContent(
         }
     }, bottomBar = {
         LimberGradientButton(
-            onClick = onClickComplete,
+            onClick = {
+                onClickComplete(selectedTime)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 20.dp),
             text = "완료"
         )
     }) {
-        Column(modifier = Modifier.padding(it).padding(horizontal = 20.dp)) {
+        Column(modifier = Modifier
+            .padding(it)
+            .padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(32.dp))
             Text(
-                "시작할 시간을 선택해주세요",
+                "종료할 시간을 선택해주세요",
                 color = LimberColorStyle.Gray800,
                 style = LimberTextStyle.Heading3
             )
             Spacer(Modifier.height(12.dp))
 
-            LimberTimePicker()
-
+            LimberTimePicker(
+                selectedTime = selectedTime,
+                onValueChanged = { newTime ->
+                    selectedTime = newTime
+                    println("Selected Time: $newTime")
+                }
+            )
         }
     }
 }

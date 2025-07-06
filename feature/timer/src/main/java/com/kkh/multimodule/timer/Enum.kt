@@ -1,19 +1,31 @@
 package com.kkh.multimodule.timer
 
-enum class TimerScreenType{
+import kotlinx.datetime.LocalTime
+
+enum class TimerScreenType {
     Now, Reserved
 }
 
-enum class ReservationScreenState{
+enum class ReservationScreenState {
     Idle, Modify
 }
 
-data class ReservationInfo(
-    val startTime: String = "",
-    val startAmPm: String = "AM",
-    val endTime: String = "",
-    val endAmPm: String = "AM",
+data class ReservationTime(
+    val title: String,
+    val category: String,
+    val startTime: LocalTime,
+    val endTime: LocalTime,
     val repeatDays: List<String> = emptyList()
-)
+) {
+    companion object {
+        fun init() = ReservationTime(
+            startTime = LocalTime(8, 0),
+            endTime = LocalTime(10, 0),
+            title = "",
+            category = "",
+            repeatDays = emptyList()
+        )
+    }
+}
 
 

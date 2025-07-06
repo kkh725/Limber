@@ -2,9 +2,11 @@ package com.kkh.multimodule.reservation
 
 import com.kkh.multimodule.timer.ReservationScreenState
 import com.kkh.multimodule.timer.ChipInfo
+import com.kkh.multimodule.timer.ReservationTime
 import com.kkh.multimodule.ui.Reducer
 import com.kkh.multimodule.ui.UiEvent
 import com.kkh.multimodule.ui.UiState
+import kotlinx.datetime.LocalTime
 
 sealed class BottomSheetState {
     data object Idle : BottomSheetState()
@@ -16,6 +18,7 @@ sealed class BottomSheetState {
 data class ReservationState(
     val reservationScreenState: ReservationScreenState,
     val reservationItemList: List<ReservationInfo>,
+    val reservationTime : ReservationTime,
     val isClickedAllSelected: Boolean,
     val reservationBottomSheetState: BottomSheetState,
     val repeatOptionList: List<ChipInfo>,
@@ -48,6 +51,7 @@ data class ReservationState(
                 ChipInfo("주말"),
             ),
             reservationBottomSheetState = BottomSheetState.Idle,
+            reservationTime = ReservationTime.init(),
             dayList = listOf(
                 ChipInfo("월"),
                 ChipInfo("화"),
@@ -77,6 +81,8 @@ sealed class ReservationEvent : UiEvent {
         data class OnClickRepeatOptionChip(val chipText: String) : BottomSheet()
         data class OnClickDayChip(val chipText: String) : BottomSheet()
         data object OnClickRepeatOptionCompleteButton : BottomSheet()
+        data class OnClickStartTimeCompleteButton(val time : LocalTime) : BottomSheet()
+        data class OnClickEndTimeCompleteButton(val time : LocalTime) : BottomSheet()
     }
 }
 
@@ -165,10 +171,12 @@ class ReservationReducer(state: ReservationState) :
 
             // 바텀시트 닫기
             is ReservationEvent.BottomSheet.Close -> {
+
                 setState(
                     oldState.copy(
                         reservationBottomSheetState = BottomSheetState.Idle,
-                        isSheetVisible = false
+                        isSheetVisible = false,
+                        reservationTime = ReservationTime.init()
                     )
                 )
             }
@@ -239,18 +247,43 @@ class ReservationReducer(state: ReservationState) :
                 setState(oldState.copy(repeatOptionList = newOptionList, dayList = newList))
             }
 
+            // 바텀시트 반복 옵션 (날짜 지정) 저장 이벤트
             is ReservationEvent.BottomSheet.OnClickRepeatOptionCompleteButton -> {
                 val initRepeatOption = oldState.repeatOptionList.map { it.copy(isSelected = false) }
                 val initDayOption = oldState.dayList.map { it.copy(isSelected = false) }
 
-                val selectedOption = oldState.dayList.find { it.isSelected }
-                if (selectedOption != null) {
-                    // todo 반복설정 데이터에 저장.
-                }
+                // 선택된 dayList 의 string 만 저장.
+                val dayList = oldState.dayList
+                    .filter { it.isSelected }
+                    .map { it.text }
+                    .toMutableList()
+
+                // 선택되어있는 반복옵션, day 옵션 제거 후 예약time에 저장한다.
                 setState(
                     oldState.copy(
                         repeatOptionList = initRepeatOption,
                         dayList = initDayOption,
+                        reservationBottomSheetState = BottomSheetState.Idle,
+                        reservationTime = oldState.reservationTime.copy(repeatDays = dayList)
+                    )
+                )
+            }
+            // 바텀시트 시작 시각 저장 이벤트
+            is ReservationEvent.BottomSheet.OnClickStartTimeCompleteButton -> {
+                val newTime = oldState.reservationTime.copy(startTime = event.time)
+                setState(
+                    oldState.copy(
+                        reservationTime = newTime,
+                        reservationBottomSheetState = BottomSheetState.Idle
+                    )
+                )
+            }
+            // 바텀시트 종료 시각 저장 이벤트
+            is ReservationEvent.BottomSheet.OnClickEndTimeCompleteButton -> {
+                val newTime = oldState.reservationTime.copy(endTime = event.time)
+                setState(
+                    oldState.copy(
+                        reservationTime = newTime,
                         reservationBottomSheetState = BottomSheetState.Idle
                     )
                 )
