@@ -60,18 +60,9 @@ fun RegisterBlockAppBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onClickComplete: (List<AppInfo>) -> Unit // ✅ 변경: 선택된 리스트를 넘겨줌
+    onClickComplete: (List<AppInfo>) -> Unit, // ✅ 변경: 선택된 리스트를 넘겨줌,
+    appList: List<AppInfo>
 ) {
-    var appList by remember {
-        mutableStateOf(
-            listOf(
-                AppInfo("카카오톡", "com.kakao.talk", null, "6시간 30분"),
-                AppInfo("인스타그램", "com.instagram.android", null, "3시간 20분"),
-                AppInfo("유튜브", "com.google.android.youtube", null, "5시간"),
-                AppInfo("슬랙", "com.slack", null, "1시간")
-            )
-        )
-    }
 
     var checkedList by remember {
         mutableStateOf(List(appList.size) { false })

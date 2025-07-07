@@ -23,6 +23,7 @@ data class TimerState(
     val chipList: List<ChipInfo>,
     val isSheetVisible: Boolean = false,
     val isModalVisible: Boolean = false,
+    val appDataList : List<AppInfo>
 ) : UiState {
     companion object {
         fun init() = TimerState(
@@ -33,6 +34,12 @@ data class TimerState(
                 ChipInfo("셋"),
                 ChipInfo("넷"),
                 ChipInfo("직접 추가")
+            ),
+            appDataList = listOf(
+                AppInfo("카카오톡", "com.kakao.talk", null, "6시간 30분"),
+                AppInfo("인스타그램", "com.instagram.android", null, "3시간 20분"),
+                AppInfo("유튜브", "com.google.android.youtube", null, "5시간"),
+                AppInfo("슬랙", "com.slack", null, "1시간")
             )
         )
     }
@@ -41,8 +48,9 @@ data class TimerState(
 sealed class TimerEvent : UiEvent {
     data class OnClickTimerScreenButton(val timerScreenState: TimerScreenType) : TimerEvent()
     data class OnClickFocusChip(val chipText: String) : TimerEvent()
-    data class ShowSheet(val isSheetVisible: Boolean) : TimerEvent()
+    data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean) : TimerEvent()
+    data class SetAppDataList(val list: List<AppInfo>) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
@@ -63,6 +71,10 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
             }
             is TimerEvent.ShowModal -> {
                 setState(oldState.copy(isModalVisible = event.isModalVisible))
+            }
+            is TimerEvent.SetAppDataList -> {
+                val newList = event.list
+                setState(oldState.copy(appDataList = newList))
             }
         }
     }

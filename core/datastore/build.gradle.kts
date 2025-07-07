@@ -11,6 +11,7 @@ android {
 dependencies {
 
     implementation(project(":core:domain"))
+    implementation(project(":core:accessibility"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

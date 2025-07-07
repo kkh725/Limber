@@ -1,6 +1,7 @@
 package com.kkh.multimodule.timer
 
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,13 +38,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.accessibility.AppInfo
 import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
@@ -68,6 +72,7 @@ fun TimerScreen() {
     val timerScreenState = uiState.timerScreenState
     val chipList = uiState.chipList
     val selectedChip = chipList.find { it.isSelected }
+    val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isSheetVisible = uiState.isSheetVisible
@@ -75,6 +80,8 @@ fun TimerScreen() {
 
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+
+    val appList = uiState.appDataList
 
     LaunchedEffect(pagerState.currentPage) {
         when (pagerState.currentPage) {
@@ -135,6 +142,7 @@ fun TimerScreen() {
                     onTimeSelected = { hour, minute -> },
                     modifier = Modifier.fillMaxSize()
                 )
+
                 1 -> ReservationPage(
                     modifier = Modifier
                 )
@@ -145,20 +153,20 @@ fun TimerScreen() {
     if (isModalVisible) {
         Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
             WarnDialog(onClickModifyButton = {
-                timerViewModel.sendEvent(TimerEvent.ShowModal(true))
+                timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
             }, onDismissRequest = { timerViewModel.sendEvent(TimerEvent.ShowModal(false)) })
         }
     }
 
     if (isSheetVisible) {
         RegisterBlockAppBottomSheet(sheetState = sheetState, onDismissRequest = {
-            timerViewModel.sendEvent(TimerEvent.ShowSheet(false))
+            timerViewModel.sendEvent(TimerEvent.ShowSheet(false,context))
         }, onClickComplete = { checkedAppList ->
             checkedAppList.forEach {
                 println(it.appName)
             }
-            timerViewModel.sendEvent(TimerEvent.ShowSheet(false))
-        })
+            timerViewModel.sendEvent(TimerEvent.ShowSheet(false,context))
+        }, appList = appList)
     }
 }
 
@@ -223,6 +231,7 @@ fun TimerSelectorButton(
         )
     }
 }
+
 @Composable
 fun FocusChipRow(
     chipList: List<ChipInfo>,

@@ -1,8 +1,11 @@
 package com.kkh.multimodule.datastore.datasource
 
+import android.app.usage.UsageStats
+import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.kkh.accessibility.AppUsageStatsManager
 import com.kkh.multimodule.datastore.DataStoreManager
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +30,10 @@ internal class LocalDataSourceImpl @Inject constructor(private val dataStoreMana
     // 변화를 계속 관찰하고 싶다면.
     override fun observeCustomText(): Flow<String> {
         return dataStoreManager.readString(keyString)
+    }
+
+    override fun getTodayUsageStats(context: Context): List<UsageStats> {
+        return AppUsageStatsManager.getTodayUsageStats(context)
     }
 
 

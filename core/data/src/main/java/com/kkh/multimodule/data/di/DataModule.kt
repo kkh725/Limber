@@ -1,7 +1,7 @@
 package com.kkh.multimodule.data.di
 
-import com.kkh.multimodule.data.repository.AppInfoRepository
-import com.kkh.multimodule.data.repository.AppInfoRepositoryImpl
+import com.kkh.multimodule.data.repository.AppDataRepository
+import com.kkh.multimodule.data.repository.AppDataRepositoryImpl
 import com.kkh.multimodule.data.repository.TestRepositoryImpl
 import com.kkh.multimodule.datastore.datasource.LocalDataSource
 import com.kkh.multimodule.data.repository.TestRepository
@@ -27,10 +27,10 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideAppInfoRepository(
+    fun provideAppDataRepository(
         localDataSource: LocalDataSource
-    ): AppInfoRepository {
-        return AppInfoRepositoryImpl(localDataSource)
+    ): AppDataRepository {
+        return AppDataRepositoryImpl(localDataSource)
     }
 
 }
