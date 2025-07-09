@@ -39,7 +39,8 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 fun LimberChip(
     text: String,
     isSelected: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
 ) {
     val borderColor by animateColorAsState(if (isSelected) Primary_Main else Gray300)
     val backgroundColor by animateColorAsState(if (isSelected) Primary_Main else Color.Transparent)
@@ -53,7 +54,7 @@ fun LimberChip(
             contentColor = textColor
         ),
         border = BorderStroke(1.dp, borderColor),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+        contentPadding = contentPadding
     ) {
         Text(text)
     }
@@ -93,7 +94,7 @@ fun LimberFilterChip(
     textColor: Color = Color.White,
     backgroundColor: Color = Gray600,
     onclick: () -> Unit = {},
-    enabled: Boolean = false
+    enabled: Boolean = false,
 ) {
     Box(
         Modifier
