@@ -66,6 +66,7 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_BG_Normal
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.DopamineActBox
@@ -208,6 +209,31 @@ fun WarnDialog(
     }
 }
 
+@Preview
+@Composable
+fun UnBlockWarnModal(
+    modifier: Modifier = Modifier,
+    onClickUnBlock: () -> Unit = {},
+    onClickContinue: () -> Unit = {}
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(12.dp)
+        , horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.height(20.dp))
+        Text(
+            "정말 잠금을 푸시겠어요?\n" +
+                    "이대로 잠금을 풀면 실험이 종료돼요.", style = LimberTextStyle.Heading3, color = Gray800
+        )
+        Spacer(Modifier.weight(1f))
+        BlockScreenBottomBar(onClickUnBlock = onClickUnBlock, onClickContinue = onClickContinue)
+    }
+}
+
 
 @Composable
 fun AppList(
@@ -250,5 +276,36 @@ fun AppInfoItem(appInfo: AppInfo) {
         )
         Spacer(Modifier.height(8.dp))
         Text(appInfo.appName, style = LimberTextStyle.Body2)
+    }
+}
+
+
+@Composable
+fun BlockScreenBottomBar(
+    modifier: Modifier = Modifier,
+    onClickUnBlock: () -> Unit,
+    onClickContinue: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        LimberSquareButton(
+            onClick = onClickUnBlock,
+            containerColor = Gray200,
+            textColor = Gray800,
+            text = "중단하기",
+            modifier = Modifier.weight(1f)
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        LimberSquareButton(
+            onClick = onClickContinue,
+            text = "실험 유지하기",
+            modifier = Modifier.weight(1f)
+        )
+
     }
 }
