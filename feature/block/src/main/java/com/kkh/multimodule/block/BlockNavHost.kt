@@ -9,17 +9,25 @@ import androidx.navigation.compose.NavHost
 fun BlockNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    onClickCloseScreen: () -> Unit,
+    onNavigateToStartTimerNow : () -> Unit
 ) {
     NavHost(
         navController = navController,
-        startDestination = BlockRoute.ROUTE,
+        startDestination = BlockNavRoutes.BLOCK,
         modifier = modifier,
     ) {
-        blockScreen(onClickUnBlock = navController::navigateToUnBlockReason, onClickContinue = {})
+        blockScreen(
+            onClickUnBlock = navController::navigateToUnBlockReason,
+            onClickContinue = {}
+        )
         unBlockReasonScreen(
             onClickBack = { navController.popBackStack() },
             onNavigateToComplete = navController::navigateToUnBlockComplete
         )
-        unBlockCompleteScreen()
+        unBlockCompleteScreen(
+            onClickCloseScreen = onClickCloseScreen,
+            onNavigateToStartTimerNow = onNavigateToStartTimerNow
+        )
     }
 }

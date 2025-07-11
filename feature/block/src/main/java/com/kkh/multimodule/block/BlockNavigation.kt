@@ -41,8 +41,10 @@ fun NavGraphBuilder.unBlockReasonScreen(
 }
 
 fun NavGraphBuilder.unBlockCompleteScreen(
+    onClickCloseScreen : () -> Unit,
+    onNavigateToStartTimerNow : () -> Unit
 ) {
     composable(BlockNavRoutes.UNBLOCK_COMPLETE) {
-        UnBlockCompleteScreen()
+        UnBlockCompleteScreen(onClickCloseScreen, onNavigateToStartTimerNow)
     }
 }

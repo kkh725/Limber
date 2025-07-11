@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:accessibility"))
 
-
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.core.ktx)

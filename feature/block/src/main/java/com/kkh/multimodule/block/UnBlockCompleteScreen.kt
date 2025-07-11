@@ -36,9 +36,11 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.LimberSquareButton
 
-@Preview
 @Composable
-fun UnBlockCompleteScreen() {
+fun UnBlockCompleteScreen(
+    onClickCloseScreen: () -> Unit,
+    onNavigateToTimerStartNow: () -> Unit = {}
+){
     Scaffold(
         topBar = {
             UnBlockCompleteTopBar(
@@ -54,8 +56,8 @@ fun UnBlockCompleteScreen() {
                 modifier = Modifier
                     .padding(bottom = 20.dp)
                     .navigationBarsPadding(),
-                onClickCloseScreen = {},
-                onClickMakeOtherTimer = {})
+                onClickCloseScreen = onClickCloseScreen,
+                onClickMakeOtherTimer = onNavigateToTimerStartNow)
         }
     ) { paddingValues ->
         UnBlockReasonContent(

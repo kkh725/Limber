@@ -144,7 +144,14 @@ fun ReasonItemList(
     selectedIndex: Int,
     onSelectReason: (Int) -> Unit
 ) {
-    val reasonList = listOf("이유1", "이유2", "이유3", "이유4")
+    val reasonList =
+        listOf(
+            "집중 의지가 부족해요",
+            "휴식이 필요해요",
+            "일정이 빨리 끝났어요",
+            "긴급한 상황이 발생했어요",
+            "외부의 방해가 있어요"
+        )
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         itemsIndexed(reasonList) { index, reason ->
