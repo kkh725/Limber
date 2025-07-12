@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -47,212 +48,306 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.designsystem.LimberColorStyle.Secondary_Main
+import com.kkh.multimodule.designsystem.LimberTextStyle
+import com.kkh.multimodule.home.HomeMainContent
 import com.kkh.multimodule.ui.component.DopamineActBox
 import com.kkh.multimodule.ui.component.LimberHomeTopAppBar
+import com.kkh.multimodule.ui.component.LimberSquareButton
 
 @Composable
 fun HomeScreen(
     onClickButtonTonNavigate: () -> Unit
 ) {
-
     val homeViewModel: HomeViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsState()
     val context = LocalContext.current
-
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
-
     val appInfoList = uiState.usageAppInfoList
 
     LaunchedEffect(Unit) {
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            LimberHomeTopAppBar(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                onNavigationClick = onClickButtonTonNavigate,
-                onActionClick = {},
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+    ) {
+        HomeTopBar(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            onNavigationClick = onClickButtonTonNavigate
+        )
+
+        HomeScreenContent(
+            modifier = Modifier.weight(1f),
+            appInfoList = appInfoList
+        )
+    }
+}
+
+@Composable
+private fun HomeTopBar(modifier: Modifier = Modifier,onNavigationClick: () -> Unit) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(R.drawable.logo_limber),
+            modifier = Modifier.size(65.dp, 20.dp),
+            contentDescription = "Back"
+        )
+        Spacer(Modifier.weight(1f))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(Color(0xFF7531C6))
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+
+            ) {
+                Text("n개의 앱 관리중",color = Color.White)
+            }
+            Spacer(Modifier.width(16.dp))
+            Image(
+                painter = painterResource(R.drawable.logo_limber),
+                modifier = Modifier.size(65.dp, 20.dp),
+                contentDescription = "Back"
             )
         }
-    ) { paddingValues ->
+    }
+}
 
+@Composable
+private fun HomeScreenContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(Color.Gray)
+    ) {
+//        HomeBackgroundSection()
+        HomeBottomSection(
+            modifier = Modifier.align(Alignment.Center),
+            appInfoList = appInfoList
+        )
+    }
+}
+
+@Composable
+private fun HomeBackgroundSection() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HomeTopBackground()
+    }
+}
+
+@Composable
+private fun HomeBottomSection(
+    modifier: Modifier = Modifier,
+    appInfoList: List<AppInfo>
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.logo_limber),
+            modifier = Modifier.size(114.dp),
+            contentDescription = null
+        )
+        Spacer(Modifier.height(10.dp))
+        TimerButton(onClick = {})
+        Spacer(Modifier.height(24.dp))
+
+        TodayActivityBar(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            onClick = {}
+        )
+        Spacer(Modifier.height(13.dp))
+        HomeMainContent(
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .padding(horizontal = 20.dp),
+            appInfoList = appInfoList
+        )
+    }
+}
+
+@Composable
+fun HomeMainContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
+    Box(modifier = modifier) {
         Box(
             Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFFB05AF6), Color(0xFF7329AF)),
-                        start = Offset(0f, 0f), // 시작 지점
-                        end = Offset(0f, (screenHeightDp).toFloat()) // 끝 지점 (예: 대각선)
-                    )
-                )
-                .padding(paddingValues)
+//            .shadow(elevation = 20.dp)
+                .fillMaxWidth()
+                .height(327.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White)
+                .padding(20.dp)
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                HomeTopBackground()
-            }
-            // 메인 시트
-            HomeMainSheet(modifier = Modifier.align(Alignment.BottomCenter), appInfoList)
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .align(Alignment.BottomCenter),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = onClickButtonTonNavigate) {
-                    Text("실험 시작하기")
-                }
-                Spacer(Modifier.fillMaxHeight(0.7f)) // 👈 하단 기준으로 띄움
-            }
 
-        }
-
-
-//        if (appInfoList.isNotEmpty()) {
-//            LazyColumn(
-//                modifier = Modifier.padding(paddingValues)
-//            ) {
-//                items(appInfoList) { appInfo ->
-//                    DopamineAppItem(appInfo)
-//                }
-//            }
-//        }
-    }
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen {}
-}
-
-@Composable
-fun HomeMainSheet(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
-    Box(
-        modifier = modifier
-            .fillMaxHeight(0.7f)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)) // 위쪽만 라운드
-            .background(color = Gray100)
-
-    ) {
-        // Content here
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 20.dp)
-        ) {
-            Spacer(Modifier.height(54.dp))
-            Text("6월 20일 금요일")
-            Spacer(Modifier.height(8.dp))
-            HomeMainContent(appInfoList)
-        }
-    }
-}
-
-@Composable
-fun HomeMainContent(appInfoList: List<AppInfo>) {
-    Box(
-        Modifier
-//            .shadow(elevation = 20.dp)
-            .fillMaxWidth()
-            .height(327.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .padding(horizontal = 24.dp)
-            .padding(top = 24.dp, bottom = 20.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            // 콘텐츠 영역
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("집중한 시간")
-                    Text("집중한 시간")
-                }
-
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("집중한 시간")
-                    Text("집중한 시간")
-                }
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Box(
-                        Modifier
-                            .size(120.dp, 24.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(Color.Blue)
-                    )
-
-                    Spacer(Modifier.width(2.dp))
-
-                    Box(
-                        Modifier
-                            .weight(1f)
-                            .height(24.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(Color.Red)
-                    )
-                }
-                Spacer(Modifier.height(24.dp))
-
-                Row(
+                // 콘텐츠 영역
+                Column(
                     modifier = Modifier
+                        .weight(1f)
                         .fillMaxWidth()
-                        .height(106.dp)
                 ) {
-                    FocusActBox(
+
+
+                    Spacer(Modifier.height(4.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            "집중한 시간",
+                            style = LimberTextStyle.Body2,
+                            color = LimberColorStyle.Primary_Main
+                        )
+                        Text(
+                            "도파민 노출시간",
+                            style = LimberTextStyle.Body2,
+                            color = LimberColorStyle.Secondary_Main
+                        )
+                    }
+                    Spacer(Modifier.height(2.dp))
+
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("1시간 2분", style = LimberTextStyle.Heading1)
+                        Text("1시간 0분", style = LimberTextStyle.Heading1)
+                    }
+                    Spacer(Modifier.height(12.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Box(
+                            Modifier
+                                .size(120.dp, 24.dp)
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = 100.dp,
+                                        bottomStart = 100.dp,
+                                        topEnd = 0.dp,
+                                        bottomEnd = 0.dp
+                                    )
+                                )
+                                .background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2))
+                                    )
+                                )
+                        )
+
+                        Spacer(Modifier.width(2.dp))
+
+                        Box(
+                            Modifier
+                                .weight(1f)
+                                .height(24.dp)
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        bottomStart = 0.dp,
+                                        topEnd = 100.dp,
+                                        bottomEnd = 100.dp
+                                    )
+                                )
+                                .background(Secondary_Main)
+                        )
+                    }
+                    Spacer(Modifier.height(24.dp))
+
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                    )
+                            .fillMaxWidth()
+                    ) {
+                        FocusActBox(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Gray100)
+                                .padding(16.dp)
+                        )
 
-                    Spacer(modifier = Modifier.width(20.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
 
-                    VerticalDivider()
+                        VerticalDivider()
 
-                    Spacer(modifier = Modifier.width(20.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
 
-                    DopamineActBox(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        appInfoList = appInfoList
-                    )
+                        DopamineActBox(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Gray100)
+                                .padding(16.dp),
+                            appInfoList = appInfoList
+                        )
+                    }
                 }
             }
+        }
+    }
+}
 
-            // 🔽 버튼 - 아래 고정
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
+@Composable
+fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Box(modifier = modifier) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFDFB8FF), Color(0xFFFAF5FF))
+                    )
+                )
+                .clickable(onClick = {})
+                .padding(vertical = 16.dp, horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(R.drawable.ic_star),
+                contentDescription = "Star"
+            )
+            Spacer(Modifier.width(10.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Button")
-//                    Icon(
-//                        modifier = Modifier.size(24.dp),
-//                        painter = painterResource(R.drawable.ic_next),
-//                        contentDescription = "Arrow Forward"
-//                    )
+                Text("Today's Activity", style = LimberTextStyle.Body2, color = Gray600)
+                Row {
+                    Text(
+                        "집중 시간",
+                        style = LimberTextStyle.Heading4,
+                        color = LimberColorStyle.Primary_Main
+                    )
+                    Text(
+                        "이 앞서고있어요! 계속 이어가요",
+                        style = LimberTextStyle.Heading4,
+                        color = Gray600
+                    )
+
                 }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(modifier = Modifier.size(24.dp), onClick = {}) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_next),
+                    contentDescription = "Arrow Forward"
+                )
             }
         }
     }
@@ -319,23 +414,58 @@ fun FocusActBox(modifier: Modifier = Modifier) {
                     )
             )
             Spacer(Modifier.width(6.dp))
-            Text("집중한 시간")
+            Text("집중한 시간", style = LimberTextStyle.Body2, color = Gray600)
         }
-        Spacer(Modifier.height(16.5.dp))
-        Row {
-            Text("학습")
-            Spacer(Modifier.width(10.dp))
-            Text("1시간 2분")
+        Spacer(Modifier.height(16.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row {
+                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
+                Spacer(Modifier.width(10.dp))
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+            }
+            Row {
+                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
+                Spacer(Modifier.width(10.dp))
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+            }
+            Row {
+                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
+                Spacer(Modifier.width(10.dp))
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+            }
         }
-        Row {
-            Text("학습")
-            Spacer(Modifier.width(10.dp))
-            Text("1시간 2분")
-        }
-        Row {
-            Text("학습")
-            Spacer(Modifier.width(10.dp))
-            Text("1시간 2분")
-        }
+
     }
+}
+
+@Composable
+fun TimerButton(onClick: () -> Unit) {
+    Row(
+        Modifier
+            .height(60.dp)
+            .clip(RoundedCornerShape(100.dp))
+            .clickable(onClick = onClick)
+            .background(Color.Red)
+            .padding(horizontal = 8.dp, vertical = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_info),
+            modifier = Modifier.size(20.dp),
+            contentDescription = null
+        )
+        Text("22:22:22", style = LimberTextStyle.Heading2, color = Color.White)
+        Image(
+            painter = painterResource(R.drawable.ic_info),
+            modifier = Modifier.size(20.dp),
+            contentDescription = null
+        )
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen {}
 }

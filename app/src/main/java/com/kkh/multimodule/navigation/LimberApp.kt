@@ -42,6 +42,7 @@ fun LimberApp() {
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
+            contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
                 LimberBottomBar(
                     modifier = Modifier.navigationBarsPadding(),

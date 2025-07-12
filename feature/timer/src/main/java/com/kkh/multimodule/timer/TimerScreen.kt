@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen() {
+fun TimerScreen(onNavigateToActiveTimer: () -> Unit){
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
 
@@ -152,9 +152,13 @@ fun TimerScreen() {
     }
     if (isModalVisible) {
         Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
-            WarnDialog(onClickModifyButton = {
-                timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
-            }, onDismissRequest = { timerViewModel.sendEvent(TimerEvent.ShowModal(false)) })
+            WarnDialog(
+                onClickModifyButton = {
+                    timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
+                },
+                onClickStartButton = onNavigateToActiveTimer,
+                onDismissRequest = { timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }
+            )
         }
     }
 
@@ -173,7 +177,7 @@ fun TimerScreen() {
 @Preview
 @Composable
 fun TimerScreenPreview() {
-    TimerScreen()
+    TimerScreen{}
 }
 
 @Composable

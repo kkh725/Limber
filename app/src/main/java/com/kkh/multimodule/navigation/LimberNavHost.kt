@@ -10,6 +10,8 @@ import com.kkh.multimodule.home.homeScreen
 import com.kkh.multimodule.home.navigateToMain
 import com.kkh.multimodule.intent.RootEvent
 import com.kkh.multimodule.timer.TimerRoute
+import com.kkh.multimodule.timer.activeTimerScreen
+import com.kkh.multimodule.timer.navigateToActiveTimerScreen
 import com.kkh.multimodule.timer.timerScreen
 
 @Composable
@@ -24,6 +26,7 @@ fun LimberNavHost(
         modifier = modifier,
     ) {
         homeScreen(onClickButtonToNavigate = navController::navigateToMain)
-        timerScreen()
+        timerScreen(onNavigateToActiveTimer = navController::navigateToActiveTimerScreen)
+        activeTimerScreen()
     }
 }
