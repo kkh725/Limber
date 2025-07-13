@@ -34,8 +34,8 @@ internal class LocalDataSourceImpl @Inject constructor(private val dataStoreMana
         return dataStoreManager.readString(keyString)
     }
 
-    override fun getTodayUsageStats(context: Context): List<UsageStats> {
-        return AppUsageStatsManager.getTodayUsageStats(context)
+    override fun getUsageStats(context: Context): List<UsageStats> {
+        return AppUsageStatsManager.getUsageStats(context)
     }
 
     override fun getAppInfo(context: Context, usageStats: UsageStats): AppInfo {

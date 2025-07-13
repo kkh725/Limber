@@ -5,7 +5,7 @@ import android.content.Context
 import com.kkh.accessibility.AppInfo
 import com.kkh.accessibility.AppInfoProvider
 import com.kkh.accessibility.AppUsageStatsManager
-import com.kkh.accessibility.AppUsageStatsManager.getTodayUsageStats
+import com.kkh.accessibility.AppUsageStatsManager.getUsageStats
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.ui.Reducer
 import com.kkh.multimodule.ui.UiEvent
@@ -36,7 +36,7 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
                 val context = event.context.applicationContext
 
                 val newList = withContext(Dispatchers.IO) {
-                    AppInfoProvider.getTodayUsageAppInfoList(context)
+                    AppInfoProvider.getMonthUsageAppInfoList(context)
                 }
 
                 // UI 스레드에서 상태 업데이트

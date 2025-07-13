@@ -5,7 +5,7 @@ import android.content.Context
 import com.kkh.accessibility.AppInfo
 import com.kkh.accessibility.AppInfoProvider
 import com.kkh.accessibility.AppUsageStatsManager
-import com.kkh.accessibility.AppUsageStatsManager.getTodayUsageStats
+import com.kkh.accessibility.AppUsageStatsManager.getUsageStats
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.ui.Reducer
 import com.kkh.multimodule.ui.UiEvent

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.kkh.accessibility.AppInfo
 import com.kkh.accessibility.AppInfoProvider
 import com.kkh.accessibility.AppUsageStatsManager
-import com.kkh.accessibility.AppUsageStatsManager.getTodayUsageStats
+import com.kkh.accessibility.AppUsageStatsManager.getUsageStats
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.data.repository.AppDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,7 +46,7 @@ class TimerViewModel @Inject constructor() :
     // app 리스트를 가져와서 순서가 많은대로 탑10 정렬.
     private suspend fun setAppDataList(context: Context) {
         val newList = withContext(Dispatchers.IO) {
-            AppInfoProvider.getTodayUsageAppInfoList(context)
+            AppInfoProvider.getMonthUsageAppInfoList(context)
         }
 
         sendEvent(TimerEvent.SetAppDataList(newList))

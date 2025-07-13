@@ -1,10 +1,11 @@
 package com.kkh.accessibility
 
 import android.app.usage.UsageStats
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import com.kkh.accessibility.AppUsageStatsManager.getTodayUsageStats
+import com.kkh.accessibility.AppUsageStatsManager.getUsageStats
 
 object AppInfoProvider {
 
@@ -63,8 +64,8 @@ object AppInfoProvider {
     }
 
     // 하루의 앱 usage를 appInfo로 변환하여 출력.
-    fun getTodayUsageAppInfoList(context: Context): List<AppInfo> {
-        return getTodayUsageStats(context)
+    fun getMonthUsageAppInfoList(context: Context): List<AppInfo> {
+        return getUsageStats(context, UsageStatsManager.INTERVAL_MONTHLY)
             .filter { it.totalTimeInForeground > 0 }
             .distinctBy { it.packageName }
             .sortedByDescending { it.totalTimeInForeground }

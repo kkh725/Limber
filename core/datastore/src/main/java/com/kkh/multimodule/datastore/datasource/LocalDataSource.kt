@@ -10,6 +10,6 @@ interface LocalDataSource {
     suspend fun saveCustomText(saveString : String)
     suspend fun getCustomText() : String
     fun observeCustomText(): Flow<String>
-    fun getTodayUsageStats(context : Context) : List<UsageStats>
+    fun getUsageStats(context : Context) : List<UsageStats>
     fun getAppInfo(context: Context, usageStats: UsageStats) : AppInfo
 }
