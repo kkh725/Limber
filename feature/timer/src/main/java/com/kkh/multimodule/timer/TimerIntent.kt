@@ -12,6 +12,7 @@ import com.kkh.multimodule.ui.UiEvent
 import com.kkh.multimodule.ui.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Timer
 
 data class ChipInfo(
     val text: String,
@@ -23,8 +24,8 @@ data class TimerState(
     val chipList: List<ChipInfo>,
     val isSheetVisible: Boolean = false,
     val isModalVisible: Boolean = false,
-    val appDataList : List<AppInfo>,
-    val modalAppDataList : List<AppInfo>
+    val appDataList: List<AppInfo>,
+    val modalAppDataList: List<AppInfo>
 ) : UiState {
     companion object {
         fun init() = TimerState(
@@ -48,8 +49,7 @@ sealed class TimerEvent : UiEvent {
     data class OnClickFocusChip(val chipText: String) : TimerEvent()
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean) : TimerEvent()
-    data class SetAppDataList(val list: List<AppInfo>) : TimerEvent()
-    data class SetModalAppDataList(val list: List<AppInfo>) : TimerEvent()
+    data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
@@ -59,25 +59,54 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
             is TimerEvent.OnClickTimerScreenButton -> {
                 setState(oldState.copy(timerScreenState = event.timerScreenState))
             }
+
             is TimerEvent.OnClickFocusChip -> {
                 val newChipList = oldState.chipList.map { chip ->
                     chip.copy(isSelected = chip.text == event.chipText)
                 }
                 setState(oldState.copy(chipList = newChipList))
             }
+
             is TimerEvent.ShowSheet -> {
-                setState(oldState.copy(isSheetVisible = event.isSheetVisible))
+                // sheet이 올라오는지 내려가는지 확인
+                val newList = if (event.isSheetVisible) withContext(Dispatchers.IO) {
+                    AppInfoProvider.getMonthUsageAppInfoList(event.context)
+                } else emptyList()
+
+                setState(
+                    oldState.copy(
+                        isSheetVisible = event.isSheetVisible,
+                        appDataList = newList
+                    )
+                )
             }
+
             is TimerEvent.ShowModal -> {
-                setState(oldState.copy(isModalVisible = event.isModalVisible))
+                if (!event.isModalVisible) {
+                    setState(
+                        oldState.copy(
+                            isModalVisible = false,
+                            appDataList = emptyList(),
+                            modalAppDataList = emptyList()
+                        )
+                    )
+                } else {
+                    setState(
+                        oldState.copy(
+                            isModalVisible = true
+                        )
+                    )
+                }
             }
-            is TimerEvent.SetAppDataList -> {
-                val newList = event.list
-                setState(oldState.copy(appDataList = newList))
-            }
-            is TimerEvent.SetModalAppDataList -> {
-                val newList = event.list
-                setState(oldState.copy(modalAppDataList = newList))
+
+            // 바텀 시트 complete 버튼
+            is TimerEvent.OnClickSheetCompleteButton -> {
+                setState(
+                    oldState.copy(
+                        isSheetVisible = false,
+                        modalAppDataList = event.appDataList
+                    )
+                )
             }
         }
     }

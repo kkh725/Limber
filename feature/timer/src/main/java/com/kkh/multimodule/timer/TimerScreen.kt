@@ -165,7 +165,6 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                     timerViewModel.sendEvent(TimerEvent.ShowModal(false))
                 },
                 onDismissRequest = {
-                    timerViewModel.sendEvent(TimerEvent.SetModalAppDataList(emptyList()))
                     timerViewModel.sendEvent(TimerEvent.ShowModal(false))
                 }
             )
@@ -176,8 +175,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
         RegisterBlockAppBottomSheet(sheetState = sheetState, onDismissRequest = {
             timerViewModel.sendEvent(TimerEvent.ShowSheet(false, context))
         }, onClickComplete = { checkedAppList ->
-            timerViewModel.sendEvent(TimerEvent.SetModalAppDataList(checkedAppList))
-            timerViewModel.sendEvent(TimerEvent.ShowSheet(false, context))
+            timerViewModel.sendEvent(TimerEvent.OnClickSheetCompleteButton(checkedAppList))
         }, appList = appList)
     }
 }

@@ -66,6 +66,7 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
+import com.kkh.multimodule.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.designsystem.LimberColorStyle.Secondary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.home.HomeMainContent
@@ -201,6 +202,12 @@ fun HomeMainContent(
     focusTime: String,
     dopamineTime: String
 ) {
+
+    val focusTextColor = if (focusTime == "0분") Primary_Main else Primary_Main.copy(alpha = 0.3f)
+    val dopamineTextColor = if (dopamineTime == "0분") Secondary_Main else Secondary_Main.copy(alpha = 0.3f)
+    val focusTimeColor = if (focusTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
+    val dopamineTimeColor = if (dopamineTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
+
     Box(modifier = modifier) {
         Box(
             Modifier
@@ -229,19 +236,19 @@ fun HomeMainContent(
                         Text(
                             "집중한 시간",
                             style = LimberTextStyle.Body2,
-                            color = LimberColorStyle.Primary_Main
+                            color = focusTextColor
                         )
                         Text(
                             "도파민 노출시간",
                             style = LimberTextStyle.Body2,
-                            color = LimberColorStyle.Secondary_Main
+                            color = dopamineTextColor
                         )
                     }
                     Spacer(Modifier.height(2.dp))
 
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(focusTime, style = LimberTextStyle.Heading1)
-                        Text(dopamineTime, style = LimberTextStyle.Heading1)
+                        Text(focusTime, style = LimberTextStyle.Heading1 , color = focusTimeColor)
+                        Text(dopamineTime, style = LimberTextStyle.Heading1 , color = dopamineTimeColor)
                     }
                     Spacer(Modifier.height(12.dp))
 

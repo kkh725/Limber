@@ -29,26 +29,6 @@ class TimerViewModel @Inject constructor() :
         viewModelScope.launch {
 
             reducer.sendEvent(e)
-
-            when (e) {
-                // 바텀시트 올라갈 때마다 앱 리스트 상위 10개를 갱신
-                is TimerEvent.ShowSheet -> {
-                    if (e.isSheetVisible) {
-                        setAppDataList(context = e.context)
-                    }
-                }
-
-                else -> {}
-            }
         }
-    }
-
-    // app 리스트를 가져와서 순서가 많은대로 탑10 정렬.
-    private suspend fun setAppDataList(context: Context) {
-        val newList = withContext(Dispatchers.IO) {
-            AppInfoProvider.getMonthUsageAppInfoList(context)
-        }
-
-        sendEvent(TimerEvent.SetAppDataList(newList))
     }
 }
