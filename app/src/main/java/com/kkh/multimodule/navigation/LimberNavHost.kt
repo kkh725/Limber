@@ -22,7 +22,7 @@ fun LimberNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = TimerRoute.ROUTE,
+        startDestination = HomeRoute.ROUTE,
         modifier = modifier,
     ) {
         homeScreen(onClickButtonToNavigate = navController::navigateToMain)

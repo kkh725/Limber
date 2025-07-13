@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.kkh.multimodule.designsystem.LimberColorStyle
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.home.HomeRoute
 import com.kkh.multimodule.navigation.BottomNavRoutes
 
@@ -56,7 +58,7 @@ fun LimberBottomBar(
                     Icon(
                         painter = painterResource(screen.icon),
                         contentDescription = screen.title,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(23.dp,21.dp)
                     )
                 },
                 label = { Text(screen.title) },
@@ -74,10 +76,10 @@ fun LimberBottomBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.Blue,
-                    selectedTextColor = Color.Blue,
-                    unselectedIconColor = Color.Gray,
-                    unselectedTextColor = Color.Gray,
+                    selectedIconColor = LimberColorStyle.Primary_Dark,
+                    selectedTextColor = LimberColorStyle.Primary_Dark,
+                    unselectedIconColor = Gray400,
+                    unselectedTextColor = Gray400,
                     indicatorColor = Color.Transparent
                 )
             )

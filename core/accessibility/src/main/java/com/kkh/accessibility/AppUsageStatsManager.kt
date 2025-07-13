@@ -8,6 +8,7 @@ import java.util.Calendar
 object AppUsageStatsManager {
 
     // 앱 별 사용시간 리스트.
+    // totalTimeInForeGround 에서 많이 사용한 순으로 탑10, 중복제거.
     fun getTodayUsageStats(context: Context): List<UsageStats> {
         val usageStatsManager =
             context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
@@ -31,13 +32,7 @@ object AppUsageStatsManager {
             endTime
         )
 
-
-        val sortedList = usageStatsList
-            .filter { it.totalTimeInForeground > 0 }
-            .sortedByDescending { it.totalTimeInForeground }
-            .take(10)
-
-        return sortedList
+        return usageStatsList
     }
 
     fun getTodayUsageForApp(context: Context, packageName: String): Long {

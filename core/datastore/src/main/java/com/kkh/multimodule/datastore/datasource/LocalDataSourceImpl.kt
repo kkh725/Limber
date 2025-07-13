@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.kkh.accessibility.AppInfo
+import com.kkh.accessibility.AppInfoProvider
 import com.kkh.accessibility.AppUsageStatsManager
 import com.kkh.multimodule.datastore.DataStoreManager
 import jakarta.inject.Inject
@@ -36,5 +38,13 @@ internal class LocalDataSourceImpl @Inject constructor(private val dataStoreMana
         return AppUsageStatsManager.getTodayUsageStats(context)
     }
 
-
+    override fun getAppInfo(context: Context, usageStats: UsageStats): AppInfo {
+        val appInfo = AppInfo(
+            appName = AppInfoProvider.getAppLabel(context, usageStats.packageName) ?: "Unknown",
+            packageName = usageStats.packageName,
+            appIcon = AppInfoProvider.getAppIcon(context, usageStats.packageName),
+            usageTime = AppUsageStatsManager.formatUsageTime(usageStats.totalTimeInForeground)
+        )
+        return appInfo
+    }
 }

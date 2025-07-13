@@ -15,32 +15,44 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,13 +65,16 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberColorStyle.Secondary_Main
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.home.HomeMainContent
 import com.kkh.multimodule.ui.component.DopamineActBox
 import com.kkh.multimodule.ui.component.LimberHomeTopAppBar
 import com.kkh.multimodule.ui.component.LimberSquareButton
+import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onClickButtonTonNavigate: () -> Unit
@@ -69,6 +84,9 @@ fun HomeScreen(
     val context = LocalContext.current
     val appInfoList = uiState.usageAppInfoList
 
+    var isSheetVisible by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     LaunchedEffect(Unit) {
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
     }
@@ -76,26 +94,76 @@ fun HomeScreen(
     Column(
         Modifier
             .fillMaxSize()
+            .systemBarsPadding()
             .background(Color.Transparent)
     ) {
-        HomeTopBar(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            onNavigationClick = onClickButtonTonNavigate
-        )
-
-        HomeScreenContent(
-            modifier = Modifier.weight(1f),
+        Spacer(Modifier.height(12.dp))
+        HomeTopBar(number = 4, onClick = {
+            isSheetVisible = true
+        }, onClickNoti = {})
+        Spacer(Modifier.height(20.dp))
+        HomeScreenMainBody(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize(),
             appInfoList = appInfoList
+        )
+    }
+
+    if (isSheetVisible) {
+        RegisterBlockAppBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { isSheetVisible = false },
+            onClickComplete = { checkedAppList ->
+                isSheetVisible = false
+            },
+            appList = appInfoList
         )
     }
 }
 
 @Composable
-private fun HomeTopBar(modifier: Modifier = Modifier,onNavigationClick: () -> Unit) {
+private fun HomeScreenMainBody(
+    modifier: Modifier = Modifier,
+    appInfoList: List<AppInfo>
+) {
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.logo_limber),
+                modifier = Modifier.size(114.dp),
+                contentDescription = null
+            )
+            Spacer(Modifier.height(10.dp))
+            TimerButton(onClick = {})
+            Spacer(Modifier.height(24.dp))
+            TodayActivityBar(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                onClick = {}
+            )
+            Spacer(Modifier.height(13.dp))
+            HomeMainContent(
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .padding(horizontal = 20.dp),
+                appInfoList = appInfoList,
+                focusTime = "1시간 2분",
+                dopamineTime = "1시간 0분"
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeTopBar(number: Int, onClick: () -> Unit, onClickNoti: () -> Unit) {
     Row(
-        modifier
+        Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -109,91 +177,40 @@ private fun HomeTopBar(modifier: Modifier = Modifier,onNavigationClick: () -> Un
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
                     .background(Color(0xFF7531C6))
+                    .clickable { onClick() }
                     .padding(horizontal = 12.dp, vertical = 6.dp)
-
             ) {
-                Text("n개의 앱 관리중",color = Color.White)
+                Text("${number}개의 앱 관리중", style = LimberTextStyle.Body2, color = Color.White)
             }
-            Spacer(Modifier.width(16.dp))
-            Image(
-                painter = painterResource(R.drawable.logo_limber),
-                modifier = Modifier.size(65.dp, 20.dp),
-                contentDescription = "Back"
-            )
+            Spacer(Modifier.width(6.dp))
+            IconButton(onClick = onClickNoti, Modifier) {
+                Image(
+                    painter = painterResource(R.drawable.ic_noti),
+                    modifier = Modifier.size(20.dp),
+                    contentDescription = "Back"
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun HomeScreenContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
-    Box(
-        modifier
-            .fillMaxSize()
-            .background(Color.Gray)
-    ) {
-//        HomeBackgroundSection()
-        HomeBottomSection(
-            modifier = Modifier.align(Alignment.Center),
-            appInfoList = appInfoList
-        )
-    }
-}
-
-@Composable
-private fun HomeBackgroundSection() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        HomeTopBackground()
-    }
-}
-
-@Composable
-private fun HomeBottomSection(
+fun HomeMainContent(
     modifier: Modifier = Modifier,
-    appInfoList: List<AppInfo>
+    appInfoList: List<AppInfo>,
+    focusTime: String,
+    dopamineTime: String
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(R.drawable.logo_limber),
-            modifier = Modifier.size(114.dp),
-            contentDescription = null
-        )
-        Spacer(Modifier.height(10.dp))
-        TimerButton(onClick = {})
-        Spacer(Modifier.height(24.dp))
-
-        TodayActivityBar(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            onClick = {}
-        )
-        Spacer(Modifier.height(13.dp))
-        HomeMainContent(
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .padding(horizontal = 20.dp),
-            appInfoList = appInfoList
-        )
-    }
-}
-
-@Composable
-fun HomeMainContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
     Box(modifier = modifier) {
         Box(
             Modifier
-//            .shadow(elevation = 20.dp)
                 .fillMaxWidth()
                 .height(327.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .shadow(4.dp, shape = RoundedCornerShape(12.dp), clip = true)
                 .background(Color.White)
                 .padding(20.dp)
-        ) {
+        )
+        {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -223,8 +240,8 @@ fun HomeMainContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
                     Spacer(Modifier.height(2.dp))
 
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("1시간 2분", style = LimberTextStyle.Heading1)
-                        Text("1시간 0분", style = LimberTextStyle.Heading1)
+                        Text(focusTime, style = LimberTextStyle.Heading1)
+                        Text(dopamineTime, style = LimberTextStyle.Heading1)
                     }
                     Spacer(Modifier.height(12.dp))
 
@@ -261,7 +278,7 @@ fun HomeMainContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
                                         bottomEnd = 100.dp
                                     )
                                 )
-                                .background(Secondary_Main)
+                                .background(LimberColorStyle.Secondary_Main)
                         )
                     }
                     Spacer(Modifier.height(24.dp))
@@ -275,7 +292,7 @@ fun HomeMainContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(Gray100)
+                                .background(LimberColorStyle.Gray100)
                                 .padding(16.dp)
                         )
 
@@ -290,7 +307,7 @@ fun HomeMainContent(modifier: Modifier = Modifier, appInfoList: List<AppInfo>) {
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(Gray100)
+                                .background(LimberColorStyle.Gray100)
                                 .padding(16.dp),
                             appInfoList = appInfoList
                         )
@@ -327,7 +344,11 @@ fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Text("Today's Activity", style = LimberTextStyle.Body2, color = Gray600)
+                Text(
+                    "Today's Activity",
+                    style = LimberTextStyle.Body2,
+                    color = LimberColorStyle.Gray600
+                )
                 Row {
                     Text(
                         "집중 시간",
@@ -337,7 +358,7 @@ fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
                     Text(
                         "이 앞서고있어요! 계속 이어가요",
                         style = LimberTextStyle.Heading4,
-                        color = Gray600
+                        color = LimberColorStyle.Gray600
                     )
 
                 }
@@ -345,53 +366,6 @@ fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             IconButton(modifier = Modifier.size(24.dp), onClick = {}) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_next),
-                    contentDescription = "Arrow Forward"
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun HomeTopBackground() {
-    Box(
-        modifier = Modifier
-            .height(188.dp)
-            .fillMaxWidth()
-    ) {
-        Image(
-            painter = painterResource(R.drawable.bg_half_circle),
-            modifier = Modifier
-                .size(286.dp, 143.dp)
-                .fillMaxSize()
-                .align(Alignment.BottomCenter),
-            contentDescription = "bg_half_circle"
-        )
-        Column(
-            modifier = Modifier
-                .size(120.dp)
-                .fillMaxSize()
-                .align(Alignment.TopCenter),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.logo_limber),
-                contentDescription = "",
-
-                )
-            Spacer(Modifier.height(14.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .wrapContentSize()
-                    .clickable(onClick = {})
-            ) {
-                Text("Button")
-                Icon(
-                    modifier = Modifier.size(24.dp),
                     painter = painterResource(R.drawable.ic_next),
                     contentDescription = "Arrow Forward"
                 )
@@ -414,24 +388,24 @@ fun FocusActBox(modifier: Modifier = Modifier) {
                     )
             )
             Spacer(Modifier.width(6.dp))
-            Text("집중한 시간", style = LimberTextStyle.Body2, color = Gray600)
+            Text("집중한 시간", style = LimberTextStyle.Body2, color = LimberColorStyle.Gray600)
         }
         Spacer(Modifier.height(16.dp))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row {
-                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
+                Text("학습", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
                 Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
             }
             Row {
-                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
+                Text("학습", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
                 Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
             }
             Row {
-                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
+                Text("학습", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
                 Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
             }
         }
 
@@ -439,7 +413,7 @@ fun FocusActBox(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TimerButton(onClick: () -> Unit) {
+fun TimerButton(onClick: () -> Unit, timerText: String = "22:22:22") {
     Row(
         Modifier
             .height(60.dp)
@@ -451,15 +425,16 @@ fun TimerButton(onClick: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_info),
+            painter = painterResource(R.drawable.ic_clock),
             modifier = Modifier.size(20.dp),
             contentDescription = null
         )
-        Text("22:22:22", style = LimberTextStyle.Heading2, color = Color.White)
+        Text(timerText, style = LimberTextStyle.Heading2, color = Color.White)
         Image(
-            painter = painterResource(R.drawable.ic_info),
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             modifier = Modifier.size(20.dp),
-            contentDescription = null
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(Color.White)
         )
     }
 }

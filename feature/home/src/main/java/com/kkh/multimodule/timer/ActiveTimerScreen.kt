@@ -8,20 +8,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -53,13 +59,17 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.AppList
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberSquareButton
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
-
 @Composable
 fun ActiveTimerScreen() {
-
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_star)
+    val sheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+    var isSheetOpen =
+        androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
     Box(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
@@ -88,7 +98,9 @@ fun ActiveTimerScreen() {
                     Text(
                         "차단중인 앱 보기  >",
                         style = LimberTextStyle.Body2,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .clickable { isSheetOpen.value = true }
                     )
                 }
                 Spacer(Modifier.height(18.dp))
@@ -100,6 +112,20 @@ fun ActiveTimerScreen() {
         ) {
             IconButton(onClick = {}) {
                 Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = Gray600)
+            }
+        }
+        // BottomSheet
+        if (isSheetOpen.value) {
+            ModalBottomSheet(
+                onDismissRequest = { isSheetOpen.value = false },
+                sheetState = sheetState
+            ) {
+                BottomSheetContent(
+                    onClose = {
+                        coroutineScope.launch { sheetState.hide() }
+                        isSheetOpen.value = false
+                    }
+                )
             }
         }
     }
@@ -247,7 +273,7 @@ fun BottomBar(onClick: () -> Unit) {
 }
 
 @Composable
-fun BottomSheetContent() {
+fun BottomSheetContent(onClose: () -> Unit) {
     val appinfoList: List<AppInfo> = listOf(
         AppInfo("인스타그램", "com.app1", null, "30분"),
         AppInfo("유튜브", "com.app2", null, "45분"),
@@ -260,18 +286,39 @@ fun BottomSheetContent() {
         AppInfo("카카오톡", "com.app3", null, "1시간")
     )
 
-    Box(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-            Text("차단 중인 앱", style = LimberTextStyle.Heading4, color = Gray800)
-            AppList(appInfoList = appinfoList)
-        }
-        Box(
-            Modifier
-                .fillMaxSize(), contentAlignment = Alignment.TopEnd
+    Box{
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
         ) {
-            IconButton(onClick = {}) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = Gray600)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "차단 중인 앱",
+                    style = LimberTextStyle.Heading4,
+                    color = Gray800,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+
             }
+            Spacer(Modifier.height(33.dp))
+            AppList(appInfoList = appinfoList, onClickModifyButton = {})
+            Spacer(Modifier.height(24.dp))
+
+        }
+        IconButton(
+            onClick = { onClose() },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(20.dp)
+        ) {
+            Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = Gray600)
         }
     }
+
 }

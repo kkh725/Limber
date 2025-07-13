@@ -23,24 +23,22 @@ data class TimerState(
     val chipList: List<ChipInfo>,
     val isSheetVisible: Boolean = false,
     val isModalVisible: Boolean = false,
-    val appDataList : List<AppInfo>
+    val appDataList : List<AppInfo>,
+    val modalAppDataList : List<AppInfo>
 ) : UiState {
     companion object {
         fun init() = TimerState(
             timerScreenState = TimerScreenType.Now,
             chipList = listOf(
-                ChipInfo("하나"),
-                ChipInfo("둘"),
-                ChipInfo("셋"),
-                ChipInfo("넷"),
+                ChipInfo("학습"),
+                ChipInfo("업무"),
+                ChipInfo("회의"),
+                ChipInfo("작업"),
+                ChipInfo("독서"),
                 ChipInfo("직접 추가")
             ),
-            appDataList = listOf(
-                AppInfo("카카오톡", "com.kakao.talk", null, "6시간 30분"),
-                AppInfo("인스타그램", "com.instagram.android", null, "3시간 20분"),
-                AppInfo("유튜브", "com.google.android.youtube", null, "5시간"),
-                AppInfo("슬랙", "com.slack", null, "1시간")
-            )
+            appDataList = emptyList(),
+            modalAppDataList = emptyList()
         )
     }
 }
@@ -51,6 +49,7 @@ sealed class TimerEvent : UiEvent {
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean) : TimerEvent()
     data class SetAppDataList(val list: List<AppInfo>) : TimerEvent()
+    data class SetModalAppDataList(val list: List<AppInfo>) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
@@ -75,6 +74,10 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
             is TimerEvent.SetAppDataList -> {
                 val newList = event.list
                 setState(oldState.copy(appDataList = newList))
+            }
+            is TimerEvent.SetModalAppDataList -> {
+                val newList = event.list
+                setState(oldState.copy(modalAppDataList = newList))
             }
         }
     }

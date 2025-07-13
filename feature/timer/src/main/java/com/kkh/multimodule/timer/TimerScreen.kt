@@ -65,9 +65,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen(onNavigateToActiveTimer: () -> Unit){
+fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
+
+    var isVisible by remember { mutableStateOf(false) }
 
     val timerScreenState = uiState.timerScreenState
     val chipList = uiState.chipList
@@ -82,6 +84,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit){
     val coroutineScope = rememberCoroutineScope()
 
     val appList = uiState.appDataList
+    val modalAppList = uiState.modalAppDataList
 
     LaunchedEffect(pagerState.currentPage) {
         when (pagerState.currentPage) {
@@ -153,23 +156,28 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit){
     if (isModalVisible) {
         Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
             WarnDialog(
+                appinfoList = modalAppList,
                 onClickModifyButton = {
                     timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
                 },
-                onClickStartButton = onNavigateToActiveTimer,
-                onDismissRequest = { timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }
+                onClickStartButton = {
+                    onNavigateToActiveTimer()
+                    timerViewModel.sendEvent(TimerEvent.ShowModal(false))
+                },
+                onDismissRequest = {
+                    timerViewModel.sendEvent(TimerEvent.SetModalAppDataList(emptyList()))
+                    timerViewModel.sendEvent(TimerEvent.ShowModal(false))
+                }
             )
         }
     }
 
     if (isSheetVisible) {
         RegisterBlockAppBottomSheet(sheetState = sheetState, onDismissRequest = {
-            timerViewModel.sendEvent(TimerEvent.ShowSheet(false,context))
+            timerViewModel.sendEvent(TimerEvent.ShowSheet(false, context))
         }, onClickComplete = { checkedAppList ->
-            checkedAppList.forEach {
-                println(it.appName)
-            }
-            timerViewModel.sendEvent(TimerEvent.ShowSheet(false,context))
+            timerViewModel.sendEvent(TimerEvent.SetModalAppDataList(checkedAppList))
+            timerViewModel.sendEvent(TimerEvent.ShowSheet(false, context))
         }, appList = appList)
     }
 }
@@ -177,7 +185,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit){
 @Preview
 @Composable
 fun TimerScreenPreview() {
-    TimerScreen{}
+    TimerScreen {}
 }
 
 @Composable

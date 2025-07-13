@@ -129,6 +129,7 @@ fun RegisterBlockAppBottomSheet(
                 style = LimberTextStyle.Heading3
             )
             Spacer(Modifier.height(24.dp))
+            RegisterAppNotice()
 
             CheckAppList(
                 appList = appList,
@@ -183,26 +184,35 @@ fun CheckAppList(
     checkedList: List<Boolean>,
     onCheckClicked: (Int) -> Unit
 ) {
+    if (checkedList.isEmpty()){
+        return
+    }
     val checkedCount = checkedList.count { it }
 
-    LazyColumn {
-        item {
-            RegisterAppNotice()
-        }
-        itemsIndexed(appList) { index, item ->
-            val canCheck = checkedCount < 10 || checkedList[index] // 이미 선택된 경우는 해제할 수 있어야 함
+    if (appList.isEmpty()){
+        Text(
+            "앱이 없습니다.",
+            style = LimberTextStyle.Body2,
+            color = Gray600
+        )
+    }else{
+        LazyColumn {
+            itemsIndexed(appList) { index, item ->
+                val canCheck = checkedCount < 10 || checkedList[index] // 이미 선택된 경우는 해제할 수 있어야 함
 
-            CheckAppItem(
-                appInfo = item,
-                isChecked = checkedList[index],
-                onCheckClick = {
-                    if (canCheck) {
-                        onCheckClicked(index)
+                CheckAppItem(
+                    appInfo = item,
+                    isChecked = checkedList[index],
+                    onCheckClick = {
+                        if (canCheck) {
+                            onCheckClicked(index)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
+
 }
 
 

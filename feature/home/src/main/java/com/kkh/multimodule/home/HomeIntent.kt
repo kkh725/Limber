@@ -35,19 +35,8 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
             is HomeEvent.EnterHomeScreen -> {
                 val context = event.context.applicationContext
 
-                // IO 스레드에서 무거운 작업 실행
                 val newList = withContext(Dispatchers.IO) {
-                    val usageStatsAppList = getTodayUsageStats(context)
-
-                    usageStatsAppList.map {
-                        AppInfo(
-                            AppInfoProvider.getAppLabel(context, it.packageName) ?: "",
-                            it.packageName,
-                            AppInfoProvider.getAppIcon(context, it.packageName)
-                                ?: context.getDrawable(R.drawable.logo_limber)!!,
-                            AppUsageStatsManager.formatUsageTime(it.totalTimeInForeground)
-                        )
-                    }
+                    AppInfoProvider.getTodayUsageAppInfoList(context)
                 }
 
                 // UI 스레드에서 상태 업데이트

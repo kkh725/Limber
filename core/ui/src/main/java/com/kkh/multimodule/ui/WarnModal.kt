@@ -33,6 +33,7 @@ import com.kkh.multimodule.core.ui.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -159,7 +160,7 @@ fun WarnDialog(
             )
             Spacer(Modifier.height(24.dp))
 
-            AppList(appInfoList = appinfoList)
+            AppList(appInfoList = appinfoList, onClickModifyButton = onClickModifyButton)
             Spacer(Modifier.height(20.dp))
 
             Row(
@@ -221,8 +222,7 @@ fun UnBlockWarnModal(
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
-            .padding(12.dp)
-        , horizontalAlignment = Alignment.CenterHorizontally
+            .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(20.dp))
         Text(
@@ -238,18 +238,35 @@ fun UnBlockWarnModal(
 @Composable
 fun AppList(
     modifier: Modifier = Modifier,
-    appInfoList: List<AppInfo>
+    appInfoList: List<AppInfo>,
+    onClickModifyButton: () -> Unit
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
+    if (appInfoList.isEmpty()) {
+        Box(Modifier
             .height(76.dp)
-            .padding(start = 20.dp)
-    ) {
-        itemsIndexed(appInfoList) { index, appInfo ->
-            AppInfoItem(appInfo = appInfo)
+            .fillMaxWidth(), contentAlignment = Alignment.Center) {
+            IconButton(onClickModifyButton, modifier = Modifier.size(48.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Icon",
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+        }
+    } else {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = modifier
+                .height(76.dp)
+                .padding(start = 20.dp)
+        ) {
+            itemsIndexed(appInfoList) { index, appInfo ->
+                AppInfoItem(appInfo = appInfo)
+            }
         }
     }
+
 }
 
 @Composable
