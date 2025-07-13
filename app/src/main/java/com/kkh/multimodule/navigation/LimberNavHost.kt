@@ -13,6 +13,8 @@ import com.kkh.multimodule.timer.TimerRoute
 import com.kkh.multimodule.timer.activeTimerScreen
 import com.kkh.multimodule.timer.navigateToActiveTimerScreen
 import com.kkh.multimodule.timer.timerScreen
+import com.kkh.onboarding.OnBoardingRoute
+import com.kkh.onboarding.onBoardingScreen
 
 @Composable
 fun LimberNavHost(
@@ -22,11 +24,13 @@ fun LimberNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeRoute.ROUTE,
+        startDestination = OnBoardingRoute.ROUTE,
         modifier = modifier,
     ) {
         homeScreen(onClickButtonToNavigate = navController::navigateToMain)
         timerScreen(onNavigateToActiveTimer = navController::navigateToActiveTimerScreen)
         activeTimerScreen()
+        onBoardingScreen()
+
     }
 }
