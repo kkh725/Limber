@@ -22,7 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
-import com.kkh.multimodule.home.HomeRoute
+import com.kkh.multimodule.home.HomeRoutes
 import com.kkh.multimodule.navigation.BottomNavRoutes
 
 sealed class BottomNavItem(
@@ -30,7 +30,7 @@ sealed class BottomNavItem(
     val title: String,
     val icon: Int
 ) {
-    object Home : BottomNavItem(HomeRoute.ROUTE, "홈", R.drawable.ic_home)
+    object Home : BottomNavItem(HomeRoutes.HOME, "홈", R.drawable.ic_home)
     object TIMER : BottomNavItem(BottomNavRoutes.TIMER, "타이머", R.drawable.ic_timer)
     object LABORATORY : BottomNavItem(BottomNavRoutes.LABORATORY, "실험실", R.drawable.ic_laboratory)
     object MORE : BottomNavItem(BottomNavRoutes.MORE, "더보기", R.drawable.ic_more)

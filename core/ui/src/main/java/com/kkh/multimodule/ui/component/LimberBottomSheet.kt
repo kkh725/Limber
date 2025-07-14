@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,7 +22,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -42,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +58,7 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterBlockAppBottomSheet(
@@ -99,7 +104,7 @@ fun RegisterBlockAppBottomSheet(
                     }
                 }, modifier = Modifier.size(24.dp)) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "",
                         modifier = Modifier.fillMaxSize(),
                         tint = Gray400
@@ -124,10 +129,24 @@ fun RegisterBlockAppBottomSheet(
             Spacer(Modifier.height(20.dp))
             Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray500)
             Spacer(Modifier.height(11.dp))
-            Text(
-                "${checkedList.count { it }}/${appList.size}",
-                style = LimberTextStyle.Heading3
-            )
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(LimberColorStyle.Primary_BG_Dark)
+                    .padding(vertical = 4.dp, horizontal = 12.dp)
+            ) {
+                Row {
+                    Text(
+                        "${checkedList.count { it }}",
+                        style = LimberTextStyle.Heading4, color = LimberColorStyle.Primary_Main
+                    )
+                    Text(
+                        "/${appList.size}",
+                        style = LimberTextStyle.Heading4
+                    )
+                }
+            }
+
             Spacer(Modifier.height(24.dp))
             RegisterAppNotice()
 
@@ -143,7 +162,6 @@ fun RegisterBlockAppBottomSheet(
         }
     }
 }
-
 
 
 @Composable
@@ -177,6 +195,7 @@ fun CheckAppItem(
         )
     }
 }
+
 // 10개 이상인 경우는 체크 불가능
 @Composable
 fun CheckAppList(
@@ -184,18 +203,18 @@ fun CheckAppList(
     checkedList: List<Boolean>,
     onCheckClicked: (Int) -> Unit
 ) {
-    if (checkedList.isEmpty()){
+    if (checkedList.isEmpty()) {
         return
     }
     val checkedCount = checkedList.count { it }
 
-    if (appList.isEmpty()){
+    if (appList.isEmpty()) {
         Text(
             "앱이 없습니다.",
             style = LimberTextStyle.Body2,
             color = Gray600
         )
-    }else{
+    } else {
         LazyColumn {
             itemsIndexed(appList) { index, item ->
                 val canCheck = checkedCount < 10 || checkedList[index] // 이미 선택된 경우는 해제할 수 있어야 함
@@ -224,11 +243,15 @@ fun RegisterAppNotice() {
             .height(44.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Gray100)
-            .padding(start = 12.dp, end = 16.dp)
-            ,
+            .padding(start = 12.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painter = painterResource(R.drawable.ic_info), contentDescription = null)
+        Image(
+            painter = painterResource(R.drawable.ic_info),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            colorFilter = ColorFilter.tint(Gray400)
+        )
         Spacer(Modifier.width(8.dp))
         Text(
             "최근 한 달 동안 하루 평균 사용 시간이 많은 순서예요",

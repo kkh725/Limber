@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -22,14 +23,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import com.kkh.accessibility.BlockedAppAccessibilityService
+import com.kkh.accessibility.PermissionManager
+import com.kkh.accessibility.PermissionManager.openAccessibilitySettings
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
@@ -38,31 +50,65 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.LimberGradientButton
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun AccessPermissionScreen() {
+fun AccessPermissionScreen(navigateToManageApp : () -> Unit) {
+
+    val context = LocalContext.current
+    var isRequestingPermission by remember { mutableStateOf(false) }
+
+    var hasPermission by remember {
+        mutableStateOf(
+            PermissionManager.isAccessibilityServiceEnabled(
+                context = context,
+                service = BlockedAppAccessibilityService::class.java
+            )
+        )
+    }
+
+    // app이 세팅창으로 갔다가 돌아오면 재검사.
+    LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+        if (isRequestingPermission) {
+            hasPermission = PermissionManager.isAccessibilityServiceEnabled(
+                context = context,
+                service = BlockedAppAccessibilityService::class.java
+            )
+        }
+    }
+
+
+    // permission이 있다면 다음페이지로 이동
+    LaunchedEffect(hasPermission) {
+        if (hasPermission) {
+            delay(1000)
+            navigateToManageApp()
+        }
+    }
+
     Column(
         Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBar(Modifier.padding(vertical = 20.dp), onClickBack = {})
-        LimberProgressBar(0.4f)
+        Spacer(Modifier.height(84.dp).systemBarsPadding())
+
+        LimberProgressBar(0.7f)
         Spacer(Modifier.height(40.dp))
         Text(
-            "림버를 사용하기 위해\n" +
-                    "스크린타임 데이터가 필요해요",
+            "방해되는 앱을 차단하기 위해\n" +
+                    "접근성 허용이 필요해요",
             textAlign = TextAlign.Center,
-            style = LimberTextStyle.Heading1,
+            style = LimberTextStyle.Heading3,
             color = Gray800
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "서비스 이용에 꼭 필요한 데이터만 수집해요", style = LimberTextStyle.Body2, color = Gray600
+            "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
         )
         Spacer(Modifier.height(40.dp))
-        PermissionBox(headText = "스크린 타임 데이터", bodyText = "앱 별 사용시간 조회")
+        PermissionBox(headText = "접근성 허용", bodyText = "앱 차단 허용")
         Spacer(Modifier.weight(1f))
         Box(
             Modifier
@@ -71,8 +117,12 @@ fun AccessPermissionScreen() {
             LimberGradientButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
+                    if (!hasPermission){
+                        openAccessibilitySettings(context)
+                        isRequestingPermission = true
+                    }
                 },
-                text = "다음으로"
+                text = "동의하기"
             )
         }
         Spacer(Modifier.height(20.dp))
@@ -82,7 +132,7 @@ fun AccessPermissionScreen() {
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
 @Composable
 fun AccessPermissionScreenPreview() {
-    AccessPermissionScreen()
+    AccessPermissionScreen({})
 }
 
 @Composable
@@ -130,7 +180,7 @@ fun PermissionBox(headText: String, bodyText: String) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(painter = painterResource(R.drawable.ic_info), contentDescription = "info")
+            Image(painter = painterResource(R.drawable.ic_data), contentDescription = "info")
             Spacer(Modifier.width(16.dp))
             Column(verticalArrangement = Arrangement.Center) {
                 Text(

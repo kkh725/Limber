@@ -14,7 +14,7 @@ class OnboardingViewModel @Inject constructor() : ViewModel() {
     private val reducer = OnboardingReducer(OnBoardingState.init())
     val uiState get() = reducer.uiState
 
-    fun sendEvent(e: HomeEvent) {
+    fun sendEvent(e: OnboardingEvent) {
         viewModelScope.launch {
             reducer.sendEvent(e)
         }

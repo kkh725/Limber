@@ -27,11 +27,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kkh.multimodule.LimberBottomBar
 import com.kkh.multimodule.RootViewModel
+import com.kkh.multimodule.domain.model.ScreenState
 import com.kkh.multimodule.intent.RootEvent
-import com.kkh.multimodule.ui.WarnDialog
-import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
-import com.kkh.onboarding.OnBoardingRoute
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +38,7 @@ fun LimberApp() {
 
     val rootViewModel: RootViewModel = hiltViewModel()
     val rootState by rootViewModel.uiState.collectAsState()
+    val screenState = rootState.screenState
 
     // 👉 현재 백스택 Entry 를 State로 가져오기
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -52,7 +50,7 @@ fun LimberApp() {
         Scaffold(
             contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
-                if (currentRoute != OnBoardingRoute.ROUTE){
+                if (screenState != ScreenState.ONBOARDING_SCREEN){
                     LimberBottomBar(
                         modifier = Modifier.navigationBarsPadding(),
                         navController = navHostController,

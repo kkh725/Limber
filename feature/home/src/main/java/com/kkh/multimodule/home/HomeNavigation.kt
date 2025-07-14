@@ -3,18 +3,26 @@ package com.kkh.multimodule.home
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kkh.multimodule.timer.ActiveTimerScreen
 
-object HomeRoute{
-    const val ROUTE = "MAIN"
+object HomeRoutes {
+    const val HOME = "home"
+    const val ACTIVE_TIMER = "active_timer"
 }
 
-fun NavController.navigateToMain() =
-    navigate(route = HomeRoute.ROUTE)
+fun NavController.navigateToHomeScreen() =
+    navigate(HomeRoutes.HOME)
 
-fun NavGraphBuilder.homeScreen(
+fun NavController.navigateToActiveTimerScreen() =
+    navigate(HomeRoutes.ACTIVE_TIMER)
+
+fun NavGraphBuilder.homeNavGraph(
     onClickButtonToNavigate: () -> Unit
 ) {
-    composable(HomeRoute.ROUTE) {
-        HomeScreen {  }
+    composable(HomeRoutes.HOME) {
+        HomeScreen(onClickButtonToNavigate)
+    }
+    composable(HomeRoutes.ACTIVE_TIMER) {
+        ActiveTimerScreen()
     }
 }

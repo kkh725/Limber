@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(navigateToScreenTimePermissionScreen: () -> Unit = {}){
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 4 })
     val scope = rememberCoroutineScope()
 
@@ -88,7 +88,7 @@ fun OnboardingScreen() {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
                     } else {
-                        // navigate
+                        navigateToScreenTimePermissionScreen()
                     }
                 },
                 text = "다음으로"

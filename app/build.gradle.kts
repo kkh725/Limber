@@ -39,5 +39,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.core:core-splashscreen:1.0.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-beta01")
 
 }
