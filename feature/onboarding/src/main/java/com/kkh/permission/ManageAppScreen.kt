@@ -40,7 +40,7 @@ import com.kkh.onboarding.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageAppScreen() {
+fun ManageAppScreen(navigateToSelectType : () -> Unit) {
 
     var isSheetVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -103,6 +103,7 @@ fun ManageAppScreen() {
             onDismissRequest = { isSheetVisible = false },
             onClickComplete = { checkedAppList ->
                 isSheetVisible = false
+                navigateToSelectType()
             },
             appList = appList,
         )
@@ -112,5 +113,5 @@ fun ManageAppScreen() {
 @Preview
 @Composable
 fun ManageAppScreenPreview() {
-    ManageAppScreen()
+    ManageAppScreen({})
 }

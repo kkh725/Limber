@@ -5,14 +5,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kkh.multimodule.RootViewModel
+import com.kkh.multimodule.domain.model.ScreenState
+import com.kkh.multimodule.home.HomeRoutes
 import com.kkh.multimodule.home.homeNavGraph
 import com.kkh.multimodule.home.navigateToHomeScreen
+import com.kkh.multimodule.intent.RootEvent
 import com.kkh.multimodule.timer.navigateToTimer
 import com.kkh.multimodule.timer.timerNavGraph
 import com.kkh.onboarding.OnBoardingRoute
 import com.kkh.onboarding.navigateToAccessPermissionScreen
+import com.kkh.onboarding.navigateToStartScreenScreen
 import com.kkh.onboarding.navigateToManageAppScreen
 import com.kkh.onboarding.navigateToScreenTimePermissionScreen
+import com.kkh.onboarding.navigateToSelectTypeScreen
 import com.kkh.onboarding.onBoardingNavGraph
 
 @Composable
@@ -31,7 +36,13 @@ fun LimberNavHost(
         onBoardingNavGraph(
             navigateToScreenTimePermissionScreen = navController::navigateToScreenTimePermissionScreen,
             navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
-            navigateToManageAppScreen = navController::navigateToManageAppScreen
+            navigateToManageAppScreen = navController::navigateToManageAppScreen,
+            navigateToSelectTypeScreen = navController::navigateToSelectTypeScreen,
+            navigateToStartScreenScreen = navController::navigateToStartScreenScreen,
+            navigateToHome = {
+                navController.navigateToHomeScreen()
+                rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+            }
         )
     }
 }

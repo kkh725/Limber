@@ -1,5 +1,6 @@
 package com.kkh.permission
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +43,7 @@ import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberTextStyle
+import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberGradientButton
 import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.onboarding.OnboardingViewModel
@@ -43,18 +51,19 @@ import com.kkh.onboarding.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectTypeScreen() {
+fun SelectTypeScreen(navigateToStart : () -> Unit) {
+
+    val chipTexts = listOf("학습", "업무", "회의", "작업", "독서", "+")
+    var selectedIndex by remember { mutableStateOf<Int?>(null) }
 
     var isSheetVisible by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val viewModel : OnboardingViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val appList = uiState.usageAppInfoList
 
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 20.dp).systemBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SelectTopBar(Modifier.padding(vertical = 20.dp), onClickBack = {})
         LimberProgressBar(1f)
@@ -63,7 +72,7 @@ fun SelectTypeScreen() {
             "평소 스마트폰의 방해 없이\n" +
                     "집중하고 싶은 순간을 골라주세요",
             textAlign = TextAlign.Center,
-            style = LimberTextStyle.Heading1,
+            style = LimberTextStyle.Heading3,
             color = Gray800
         )
         Spacer(Modifier.height(16.dp))
@@ -72,33 +81,30 @@ fun SelectTypeScreen() {
         )
         Spacer(Modifier.height(40.dp))
 
-        Image(painter = painterResource(R.drawable.ic_star), contentDescription = null)
+        ChipGridScreen(
+            chipTexts = chipTexts,
+            selectedIndex = selectedIndex,
+            onSelect = { newIndex ->
+                selectedIndex = newIndex
+            }
+        )
+
         Spacer(Modifier.weight(1f))
         Box(
             Modifier
                 .fillMaxWidth()
         ) {
             LimberGradientButton(
+                enabled = selectedIndex != null,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     isSheetVisible = true
+                    navigateToStart()
                 },
                 text = "다음으로"
             )
         }
         Spacer(Modifier.height(20.dp))
-    }
-
-    if (isSheetVisible) {
-        RegisterBlockAppBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { isSheetVisible = false },
-            onClickComplete = { checkedAppList ->
-                isSheetVisible = false
-            },
-            appList = appList
-
-        )
     }
 }
 
@@ -123,8 +129,35 @@ fun SelectTopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
     }
 }
 
-@Preview
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ChipGridScreen(
+    chipTexts: List<String>,
+    selectedIndex: Int?,
+    onSelect: (Int) -> Unit
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier.padding(horizontal = 50.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        itemsIndexed(chipTexts) { index, text ->
+            LimberChip(
+                modifier = Modifier.wrapContentWidth(),
+                text = text,
+                isSelected = selectedIndex == index,
+                onClick = {
+                    onSelect(index)
+                }
+            )
+        }
+    }
+}
+
+
+@Preview(showBackground = true)
 @Composable
 fun SelectTypeScreenPreview() {
-    SelectTypeScreen()
+    SelectTypeScreen({})
 }

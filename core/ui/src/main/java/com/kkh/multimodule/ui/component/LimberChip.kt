@@ -1,6 +1,5 @@
 package com.kkh.multimodule.ui.component
 
-import android.R
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -37,6 +36,7 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 
 @Composable
 fun LimberChip(
+    modifier: Modifier = Modifier,
     text: String,
     isSelected: Boolean = false,
     onClick: () -> Unit,
@@ -44,9 +44,10 @@ fun LimberChip(
 ) {
     val borderColor by animateColorAsState(if (isSelected) Primary_Main else Gray300)
     val backgroundColor by animateColorAsState(if (isSelected) Primary_Main else Color.Transparent)
-    val textColor by animateColorAsState(if (isSelected) Color.White else Gray300)
+    val textColor by animateColorAsState(if (isSelected) Color.White else Gray500)
 
     Button(
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(100.dp),
         colors = ButtonDefaults.buttonColors(

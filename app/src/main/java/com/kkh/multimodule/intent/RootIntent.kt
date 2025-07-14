@@ -19,12 +19,16 @@ data class RootState(
 }
 
 sealed class RootEvent : UiEvent {
+    data class SetScreenState(val screenState: ScreenState) : RootEvent()
     data class OnClickedBottomNaviItem(val route: String) : RootEvent()
 }
 
 class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
     override suspend fun reduce(oldState: RootState, event: RootEvent) {
         when (event) {
+            is RootEvent.SetScreenState -> {
+                setState(oldState.copy(screenState = event.screenState))
+            }
             is RootEvent.OnClickedBottomNaviItem -> {
                 when (event.route) {
                     HomeRoutes.HOME -> {

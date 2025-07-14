@@ -24,7 +24,7 @@ import com.kkh.multimodule.ui.component.LimberGradientButton
 
 
 @Composable
-fun StartScreen() {
+fun StartScreen(navigateToHome : () -> Unit = {}){
     Column(
         Modifier
             .fillMaxSize()
@@ -34,9 +34,9 @@ fun StartScreen() {
         Spacer(Modifier.height(66.dp))
         Text(
             "이제 림버와 함께\n" +
-                    "집중 회복 실험을 시작해보세요!",
+                    "집중 실험을 시작해보세요!",
             textAlign = TextAlign.Center,
-            style = LimberTextStyle.Heading1,
+            style = LimberTextStyle.Heading3,
             color = Gray800
         )
         Spacer(Modifier.height(90.dp))
@@ -49,6 +49,7 @@ fun StartScreen() {
             LimberGradientButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
+                    navigateToHome()
                 },
                 text = "림버 시작하기"
             )
@@ -60,5 +61,5 @@ fun StartScreen() {
 @Preview
 @Composable
 fun StartScreenPreview() {
-    StartScreen()
+    StartScreen({})
 }

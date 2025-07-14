@@ -249,8 +249,7 @@ fun RegisterAppNotice() {
         Image(
             painter = painterResource(R.drawable.ic_info),
             contentDescription = null,
-            modifier = Modifier.size(20.dp),
-            colorFilter = ColorFilter.tint(Gray400)
+            modifier = Modifier.size(20.dp)
         )
         Spacer(Modifier.width(8.dp))
         Text(
