@@ -3,13 +3,16 @@ package com.kkh.multimodule.home
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kkh.accessibility.AppInfo
 import com.kkh.accessibility.AppUsageStatsManager
+import com.kkh.multimodule.data.repository.AppDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRepository) :
+    ViewModel() {
 
     private val reducer = HomeReducer(HomeState.init())
     val uiState get() = reducer.uiState
@@ -17,6 +20,29 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     fun sendEvent(e: HomeEvent) {
         viewModelScope.launch {
             reducer.sendEvent(e)
+
+            when (e) {
+                is HomeEvent.OnCompleteRegisterButton -> {
+                    savePackageList(e.appList)
+                    setPackageList()
+                }
+
+                is HomeEvent.EnterHomeScreen -> {
+                    setPackageList()
+                }
+
+                else -> {}
+            }
         }
     }
+
+    private suspend fun savePackageList(appList: List<AppInfo>) {
+        val packageList = appList.map { it.packageName }
+        appDataRepository.savePackageList(packageList)
+    }
+
+    private suspend fun setPackageList() {
+        sendEvent(HomeEvent.SetBlockingAppList(appDataRepository.getPackageList()))
+    }
+
 }

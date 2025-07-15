@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.kkh.accessibility.AppInfo
 import com.kkh.accessibility.AppInfoProvider
-import com.kkh.accessibility.AppUsageStatsManager
-import com.kkh.accessibility.AppUsageStatsManager.getUsageStats
-import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.ui.Reducer
 import com.kkh.multimodule.ui.UiEvent
 import com.kkh.multimodule.ui.UiState
@@ -14,17 +11,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 data class HomeState(
-    val usageAppInfoList: List<AppInfo>
+    val usageAppInfoList: List<AppInfo>,
+    val blockingAppPackageList: List<String>
 ) : UiState {
     companion object {
         fun init() = HomeState(
-            usageAppInfoList = emptyList()
+            usageAppInfoList = emptyList() ,
+            blockingAppPackageList = emptyList()
         )
     }
 }
 
 sealed class HomeEvent : UiEvent {
     data class EnterHomeScreen(val context: Context) : HomeEvent()
+    data class OnCompleteRegisterButton (val appList : List<AppInfo>): HomeEvent()
+    data class SetBlockingAppList(val appList: List<String>) : HomeEvent()
 }
 
 class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
@@ -42,6 +43,10 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
                 // UI 스레드에서 상태 업데이트
                 setState(oldState.copy(usageAppInfoList = newList))
             }
+            is HomeEvent.SetBlockingAppList -> {
+                setState(oldState.copy(blockingAppPackageList = event.appList))
+            }
+            else -> {}
         }
     }
 }

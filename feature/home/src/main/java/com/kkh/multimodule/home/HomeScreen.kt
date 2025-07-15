@@ -84,6 +84,7 @@ fun HomeScreen(
     val uiState by homeViewModel.uiState.collectAsState()
     val context = LocalContext.current
     val appInfoList = uiState.usageAppInfoList
+    val blockingAppPackageList = uiState.blockingAppPackageList
 
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -99,9 +100,13 @@ fun HomeScreen(
             .background(Color.Transparent)
     ) {
         Spacer(Modifier.height(12.dp))
-        HomeTopBar(number = 4, onClick = {
-            isSheetVisible = true
-        }, onClickNoti = {})
+        HomeTopBar(
+            number = blockingAppPackageList.size,
+            onClick = {
+                isSheetVisible = true
+            },
+            onClickNoti = {}
+        )
         Spacer(Modifier.height(20.dp))
         HomeScreenMainBody(
             modifier = Modifier
@@ -117,6 +122,7 @@ fun HomeScreen(
             onDismissRequest = { isSheetVisible = false },
             onClickComplete = { checkedAppList ->
                 isSheetVisible = false
+                homeViewModel.sendEvent(HomeEvent.OnCompleteRegisterButton(checkedAppList))
             },
             appList = appInfoList
         )
@@ -204,7 +210,8 @@ fun HomeMainContent(
 ) {
 
     val focusTextColor = if (focusTime == "0분") Primary_Main else Primary_Main.copy(alpha = 0.3f)
-    val dopamineTextColor = if (dopamineTime == "0분") Secondary_Main else Secondary_Main.copy(alpha = 0.3f)
+    val dopamineTextColor =
+        if (dopamineTime == "0분") Secondary_Main else Secondary_Main.copy(alpha = 0.3f)
     val focusTimeColor = if (focusTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
     val dopamineTimeColor = if (dopamineTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
 
@@ -247,8 +254,12 @@ fun HomeMainContent(
                     Spacer(Modifier.height(2.dp))
 
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(focusTime, style = LimberTextStyle.Heading1 , color = focusTimeColor)
-                        Text(dopamineTime, style = LimberTextStyle.Heading1 , color = dopamineTimeColor)
+                        Text(focusTime, style = LimberTextStyle.Heading1, color = focusTimeColor)
+                        Text(
+                            dopamineTime,
+                            style = LimberTextStyle.Heading1,
+                            color = dopamineTimeColor
+                        )
                     }
                     Spacer(Modifier.height(12.dp))
 
