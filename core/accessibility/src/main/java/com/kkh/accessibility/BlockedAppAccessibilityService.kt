@@ -6,30 +6,55 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
 import kotlin.apply
 import androidx.core.net.toUri
+import com.kkh.multimodule.data.repository.AppDataRepository
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 //접근성 서비스가 켜져 있는 동안 (접근성 설정 메뉴에서 내 서비스가 활성화된 상태)
 //시스템은 계속해서 onAccessibilityEvent()를 호출해서 이벤트를 전달합니다.
 //따라서, 앱이 백그라운드에 있든 포그라운드에 있든 상관없이 blockApp() 같은 차단 로직이 지속적으로 동작.
 //시스템에서 백그라운드로 계속 유지해준다.
+@AndroidEntryPoint
 class BlockedAppAccessibilityService : AccessibilityService() {
 
-    private val blockedPackages = listOf(
-        "com.google.android.youtube",  // 유튜브
-        "com.instagram.android"       // 인스타그램 등
-    )
+    @Inject lateinit var appDataRepository: AppDataRepository
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+    private val isBlockedState = MutableStateFlow(true)
+    private val blockedPackageListState = MutableStateFlow(listOf<String>())
+
+    override fun onCreate() {
+        super.onCreate()
+        coroutineScope.launch {
+            appDataRepository.observeBlockMode().collect { newState ->
+                isBlockedState.value = newState
+            }
+        }
+        coroutineScope.launch {
+            appDataRepository.observePackageList().collect { packageList ->
+                Log.d("TAG", "packageList: ${packageList.firstOrNull()}")
+                blockedPackageListState.value = packageList
+            }
+        }
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (!isBlockedState.value) return
+        val packageName = event?.packageName?.toString() ?: return
+        Log.d("TAG", "packageList:22 ${packageName.firstOrNull()}")
 
-        // 특정 조건에 따라서 동작하게끔 구현. -> dataStore를 통해서 전달받는다.
-        if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            val packageName = event.packageName?.toString() ?: return
-
-            if (blockedPackages.contains(packageName)) {
-                // 앱 차단 로직 실행
+        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            if (blockedPackageListState.value.contains(packageName)) {
                 blockApp(packageName)
             }
         }
@@ -61,6 +86,12 @@ class BlockedAppAccessibilityService : AccessibilityService() {
         startActivity(intent)
 
         Toast.makeText(this, "$packageName 사용이 차단되었습니다", Toast.LENGTH_SHORT).show()
+    }
+
+
+
+    override fun onDestroy() {
+        coroutineScope.cancel()
     }
 
 

@@ -421,12 +421,22 @@ fun FocusActBox(modifier: Modifier = Modifier) {
 
 @Composable
 fun TimerButton(onClick: () -> Unit, timerText: String = "22:22:22") {
+
+    val backgroundModifier = Modifier.background(
+        brush = Brush.linearGradient(
+            colors = listOf(Color(0xFF8308D2), Color(0xFFB961FF)),
+            start = Offset(0f, 0f),         // 좌상단
+            end = Offset.Infinite           // 우하단 (혹은 원하는 크기에 맞게 조절)
+        )
+    )
+
     Row(
         Modifier
             .height(60.dp)
             .clip(RoundedCornerShape(100.dp))
             .clickable(onClick = onClick)
             .background(Color.Red)
+            .then(backgroundModifier)
             .padding(horizontal = 8.dp, vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)

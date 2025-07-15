@@ -35,6 +35,7 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.ui.component.LimberGradientButton
 import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.onboarding.OnboardingEvent
+import com.kkh.onboarding.OnboardingEvent.OnCompleteRegisterButton
 import com.kkh.onboarding.OnboardingViewModel
 
 
@@ -103,6 +104,7 @@ fun ManageAppScreen(navigateToSelectType : () -> Unit) {
             onDismissRequest = { isSheetVisible = false },
             onClickComplete = { checkedAppList ->
                 isSheetVisible = false
+                viewModel.sendEvent(OnCompleteRegisterButton(checkedAppList))
                 navigateToSelectType()
             },
             appList = appList,

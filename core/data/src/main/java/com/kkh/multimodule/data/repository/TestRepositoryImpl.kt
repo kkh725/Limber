@@ -11,13 +11,13 @@ internal class TestRepositoryImpl @Inject constructor(
 ) : TestRepository {
 
     override suspend fun localDoit(){
-        localDataSource.getCustomText()
+//        localDataSource.getCustomText()
     }
 
     override suspend fun networkDoit(){
-        val res = networkDataSource.testPosts()
-        if (res.isSuccessful){
-            Log.d("network", "networkDoit: network 통신 성공\n ${res.body()}")
-        }
+//        val res = networkDataSource.testPosts()
+//        if (res.isSuccessful){
+//            Log.d("network", "networkDoit: network 통신 성공\n ${res.body()}")
+//        }
     }
 }

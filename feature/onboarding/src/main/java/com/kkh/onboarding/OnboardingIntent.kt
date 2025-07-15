@@ -23,6 +23,7 @@ data class OnBoardingState(
 
 sealed class OnboardingEvent : UiEvent {
     data class OnClickRegisterButton(val context: Context) : OnboardingEvent()
+    data class OnCompleteRegisterButton (val appList : List<AppInfo>): OnboardingEvent()
 }
 
 class OnboardingReducer(state: OnBoardingState) : Reducer<OnBoardingState, OnboardingEvent>(state) {
@@ -44,7 +45,7 @@ class OnboardingReducer(state: OnBoardingState) : Reducer<OnBoardingState, Onboa
                 // UI 스레드에서 상태 업데이트
                 setState(oldState.copy(usageAppInfoList = newList))
             }
+            else -> {}
         }
     }
-
 }
