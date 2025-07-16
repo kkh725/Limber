@@ -13,6 +13,7 @@ dependencies {
 
     api(project(":core:domain"))
     implementation(project(":core:ui"))
+    implementation(project(":core:data"))
     implementation(project(":core:accessibility"))
 
     implementation(libs.androidx.appcompat)

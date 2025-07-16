@@ -42,7 +42,8 @@ fun LimberNavHost(
             navigateToHome = {
                 navController.navigateToHomeScreen()
                 rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
-            }
+            },
+            onClickBack = {navController.popBackStack()}
         )
     }
 }

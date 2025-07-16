@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -51,21 +53,27 @@ import com.kkh.onboarding.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectTypeScreen(navigateToStart : () -> Unit) {
+fun SelectTypeScreen(navigateToStart: () -> Unit, onClickBack: () -> Unit) {
 
     val chipTexts = listOf("학습", "업무", "회의", "작업", "독서", "+")
     var selectedIndex by remember { mutableStateOf<Int?>(null) }
 
     var isSheetVisible by remember { mutableStateOf(false) }
-    val viewModel : OnboardingViewModel = hiltViewModel()
+    val viewModel: OnboardingViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp).systemBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 20.dp)
+            .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SelectTopBar(Modifier.padding(vertical = 20.dp), onClickBack = {})
+        SelectTopBar(
+            Modifier.padding(top = 20.dp, bottom = 16.dp),
+            onClickBack = onClickBack,
+            onClickSkip = navigateToStart
+        )
         LimberProgressBar(1f)
         Spacer(Modifier.height(40.dp))
         Text(
@@ -109,7 +117,11 @@ fun SelectTypeScreen(navigateToStart : () -> Unit) {
 }
 
 @Composable
-fun SelectTopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
+fun SelectTopBar(
+    modifier: Modifier = Modifier,
+    onClickBack: () -> Unit = {},
+    onClickSkip: () -> Unit = {}
+) {
     Row(
         modifier
             .fillMaxWidth(),
@@ -123,9 +135,11 @@ fun SelectTopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
                 contentDescription = "ic_back"
             )
         }
-        Text(
-            "건너뛰기", style = LimberTextStyle.Body2, color = LimberColorStyle.Gray500
-        )
+        TextButton(onClickSkip, contentPadding = PaddingValues(0.dp)) {
+            Text(
+                "건너뛰기", style = LimberTextStyle.Body2, color = LimberColorStyle.Gray500
+            )
+        }
     }
 }
 
@@ -159,5 +173,4 @@ fun ChipGridScreen(
 @Preview(showBackground = true)
 @Composable
 fun SelectTypeScreenPreview() {
-    SelectTypeScreen({})
 }

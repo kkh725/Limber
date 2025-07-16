@@ -46,12 +46,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.designsystem.LimberColorStyle
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberTextStyle
+import com.kkh.multimodule.ui.component.LimberAnimation
 import com.kkh.multimodule.ui.component.LimberCheckButton
 import com.kkh.multimodule.ui.component.LimberGradientButton
 import com.kkh.multimodule.ui.component.LimberSquareButton
@@ -61,8 +63,9 @@ import kotlinx.coroutines.delay
 fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Unit) {
     // 🔥 최상단에서 상태 선언
     var selectedIndex by remember { mutableIntStateOf(-1) }
-
     var isLoading by remember { mutableStateOf(false) }
+    val blockViewModel : BlockViewModel = hiltViewModel()
+
     LaunchedEffect(isLoading) {
         if (isLoading) {
             delay(2000)
@@ -86,6 +89,7 @@ fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Uni
             bottomBar = {
                 UnBlockBottomButton(onClick = {
                     isLoading = true
+                    blockViewModel.sendEvent(BlockEvent.OnClickUnBlockButton)
                     // TODO: 선택된 이유 처리
                     println("선택된 인덱스: $selectedIndex")
                 }, enabled = selectedIndex != -1)
@@ -237,11 +241,14 @@ fun LoadingUnBlockScreen() {
             .background(Color.Black.copy(alpha = 0.5f)), contentAlignment = Alignment.Center
     ) {
         Column(
-            Modifier.fillMaxSize(),
+            Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(painter = painterResource(id = R.drawable.logo_limber), contentDescription = null)
+            LimberAnimation(
+                modifier = Modifier.size(50.dp),
+                resId = R.raw.loading_dark
+            )
             Spacer(Modifier.height(32.dp))
             Text(text = "실험 중단 중...", style = LimberTextStyle.Heading1, color = Color.White)
             Spacer(Modifier.height(12.dp))

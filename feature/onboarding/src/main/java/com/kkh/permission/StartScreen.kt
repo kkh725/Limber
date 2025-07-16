@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,13 +25,14 @@ import com.kkh.multimodule.ui.component.LimberGradientButton
 
 
 @Composable
-fun StartScreen(navigateToHome : () -> Unit = {}){
+fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {}){
     Column(
         Modifier
             .fillMaxSize()
+            .systemBarsPadding()
             .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBar(Modifier.padding(vertical = 20.dp), onClickBack = {})
+        TopBar(Modifier.padding(vertical = 20.dp), onClickBack = onClickBack)
         Spacer(Modifier.height(66.dp))
         Text(
             "이제 림버와 함께\n" +

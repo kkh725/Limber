@@ -58,35 +58,39 @@ fun NavGraphBuilder.onBoardingNavGraph(
     navigateToManageAppScreen: () -> Unit,
     navigateToSelectTypeScreen: () -> Unit = {},
     navigateToStartScreenScreen: () -> Unit = {},
-    navigateToHome: () -> Unit = {}
+    navigateToHome: () -> Unit = {},
+    onClickBack: () -> Unit = {}
 ) {
 
     composable(OnBoardingRoute.Onboarding) {
         OnboardingScreen(navigateToScreenTimePermissionScreen = navigateToScreenTimePermissionScreen)
     }
     composable(OnBoardingRoute.ScreenTimePermission) {
-        RightHorizontalEnterAnimation{
+        RightHorizontalEnterAnimation {
             ScreenTimePermissionScreen(navigateToAccessPermission = navigateToAccessPermissionScreen)
         }
     }
     composable(OnBoardingRoute.AccessPermission) {
-        RightHorizontalEnterAnimation{
+        RightHorizontalEnterAnimation {
             AccessPermissionScreen(navigateToManageApp = navigateToManageAppScreen)
         }
     }
     composable(OnBoardingRoute.ManageApp) {
-        RightHorizontalEnterAnimation{
+        RightHorizontalEnterAnimation {
             ManageAppScreen(navigateToSelectType = navigateToSelectTypeScreen)
         }
     }
     composable(OnBoardingRoute.SelectType) {
-        RightHorizontalEnterAnimation{
-            SelectTypeScreen(navigateToStart = navigateToStartScreenScreen)
+        RightHorizontalEnterAnimation {
+            SelectTypeScreen(
+                navigateToStart = navigateToStartScreenScreen,
+                onClickBack = onClickBack
+            )
         }
     }
     composable(OnBoardingRoute.StartScreen) {
-        RightHorizontalEnterAnimation{
-            StartScreen(navigateToHome = navigateToHome)
+        RightHorizontalEnterAnimation {
+            StartScreen(navigateToHome = navigateToHome, onClickBack = onClickBack)
         }
     }
 }

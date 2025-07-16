@@ -32,7 +32,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
-    implementation("io.github.dongchyeon:time-picker:1.0.1")
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.time.picker)
+    implementation(libs.lottie.compose)
+
 
 }

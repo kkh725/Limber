@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,12 +51,13 @@ import com.kkh.multimodule.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.designsystem.LimberTextStyle
+import com.kkh.multimodule.ui.component.LimberAnimation
 import com.kkh.multimodule.ui.component.LimberGradientButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun AccessPermissionScreen(navigateToManageApp : () -> Unit) {
+fun AccessPermissionScreen(navigateToManageApp: () -> Unit) {
 
     val context = LocalContext.current
     var isRequestingPermission by remember { mutableStateOf(false) }
@@ -68,6 +71,8 @@ fun AccessPermissionScreen(navigateToManageApp : () -> Unit) {
         )
     }
 
+    var animationPlaying by remember { mutableStateOf(false) }
+
     // app이 세팅창으로 갔다가 돌아오면 재검사.
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
         if (isRequestingPermission) {
@@ -78,54 +83,76 @@ fun AccessPermissionScreen(navigateToManageApp : () -> Unit) {
         }
     }
 
-
     // permission이 있다면 다음페이지로 이동
     LaunchedEffect(hasPermission) {
         if (hasPermission) {
+            animationPlaying = true
             delay(1000)
+            animationPlaying = false
             navigateToManageApp()
         }
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(Modifier.height(84.dp).systemBarsPadding())
-
-        LimberProgressBar(0.7f)
-        Spacer(Modifier.height(40.dp))
-        Text(
-            "방해되는 앱을 차단하기 위해\n" +
-                    "접근성 허용이 필요해요",
-            textAlign = TextAlign.Center,
-            style = LimberTextStyle.Heading3,
-            color = Gray800
-        )
-        Spacer(Modifier.height(16.dp))
-        Text(
-            "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
-        )
-        Spacer(Modifier.height(40.dp))
-        PermissionBox(headText = "접근성 허용", bodyText = "앱 차단 허용")
-        Spacer(Modifier.weight(1f))
-        Box(
+    Box(Modifier
+        .fillMaxSize()
+        .systemBarsPadding()) {
+        Column(
             Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LimberGradientButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    if (!hasPermission){
-                        openAccessibilitySettings(context)
-                        isRequestingPermission = true
-                    }
-                },
-                text = "동의하기"
+            Spacer(
+                Modifier
+                    .height(84.dp)
+                    .systemBarsPadding()
+            )
+
+            LimberProgressBar(0.5f)
+
+            Spacer(Modifier.height(40.dp))
+            Text(
+                "방해되는 앱을 차단하기 위해\n" +
+                        "접근성 허용이 필요해요",
+                textAlign = TextAlign.Center,
+                style = LimberTextStyle.Heading3,
+                color = Gray800
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
+            )
+            Spacer(Modifier.height(40.dp))
+            PermissionBox(headText = "접근성 허용", bodyText = "앱 차단 허용")
+            Spacer(Modifier.weight(1f))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+            ) {
+                LimberGradientButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        if (!hasPermission) {
+                            openAccessibilitySettings(context)
+                            isRequestingPermission = true
+                        }
+                    },
+                    text = "동의하기"
+                )
+            }
+            Spacer(Modifier.height(20.dp))
+        }
+        // Show animation if playing
+        if (animationPlaying) {
+            Box(Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)))
+            LimberAnimation(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(50.dp),
+                resId = R.raw.loading_dark
             )
         }
-        Spacer(Modifier.height(20.dp))
     }
 }
 
@@ -137,9 +164,11 @@ fun AccessPermissionScreenPreview() {
 
 @Composable
 fun TopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
-    Box(
+    Row(
         modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onClickBack, modifier = Modifier.size(24.dp)) {
             Icon(
@@ -148,6 +177,7 @@ fun TopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
                 contentDescription = "ic_back"
             )
         }
+        TextButton({}, enabled = false, contentPadding = PaddingValues(0.dp)) {}
     }
 }
 

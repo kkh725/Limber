@@ -60,13 +60,13 @@ fun ManageAppScreen(navigateToSelectType : () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
+            .systemBarsPadding()
             .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier
-            .height(84.dp)
-            .systemBarsPadding())
+            .height(84.dp))
 
-        LimberProgressBar(0.7f)
+        LimberProgressBar(0.8f)
         Spacer(Modifier.height(40.dp))
         Text(
             "림버를 통해\n" +
