@@ -1,5 +1,6 @@
 package com.kkh.onboarding
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.expandHorizontally
@@ -74,11 +75,14 @@ fun NavGraphBuilder.onBoardingNavGraph(
         RightHorizontalEnterAnimation {
             AccessPermissionScreen(navigateToManageApp = navigateToManageAppScreen)
         }
+        // 👇 여기에 BackHandler 추가
+        BackHandler(enabled = true){}
     }
     composable(OnBoardingRoute.ManageApp) {
         RightHorizontalEnterAnimation {
             ManageAppScreen(navigateToSelectType = navigateToSelectTypeScreen)
         }
+        BackHandler(enabled = true){}
     }
     composable(OnBoardingRoute.SelectType) {
         RightHorizontalEnterAnimation {
