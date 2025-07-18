@@ -449,6 +449,8 @@ fun ReservationTimerButton(
     time: String,
     onClick: () -> Unit
 ) {
+    val timeText = time.ifEmpty { "없음" }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -464,7 +466,7 @@ fun ReservationTimerButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(time, style = LimberTextStyle.Body1, color = Gray600)
+            Text(timeText, style = LimberTextStyle.Body1, color = Gray600)
             Image(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null
