@@ -63,6 +63,7 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.designsystem.gradientModifier
 import com.kkh.multimodule.reservation.bottomsheet.ReservationBottomSheet
 import com.kkh.multimodule.timer.ReservationScreenState
+import com.kkh.multimodule.timer.ReservationTime
 import com.kkh.multimodule.timer.TimerEvent
 import com.kkh.multimodule.ui.component.LimberCheckButton
 import com.kkh.multimodule.ui.component.LimberFilterChip
@@ -73,12 +74,12 @@ import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 
 data class ReservationInfo(
     val id: Int,
-    val title: String,
-    val description: String,
-    val chipText: String,
+    val reservationTime : ReservationTime,
     var isToggleChecked: Boolean,
-    var isRemoveChecked: Boolean = false
+    var isRemoveChecked: Boolean = false,
 )
+
+
 
 @Preview(showBackground = true)
 @Composable
@@ -350,13 +351,13 @@ fun ReservationItemComposable(
 
         Spacer(Modifier.height(12.dp))
         Text(
-            text = info.title,
+            text = info.reservationTime.title,
             style = LimberTextStyle.Heading3,
             color = Gray800
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = info.description,
+            text = info.reservationTime.category,
             style = LimberTextStyle.Body2,
             color = descriptionColor
         )
@@ -376,7 +377,7 @@ fun IdleRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         LimberFilterChip(
-            text = info.chipText,
+            text = info.reservationTime.category,
             textColor = chipTextColor,
             backgroundColor = chipBackgroundColor,
             onclick = {}
@@ -406,7 +407,7 @@ fun ModifiedRow(
             onClick = onClickCheckButton
         )
         LimberFilterChip(
-            text = info.chipText,
+            text = info.reservationTime.category,
             textColor = chipTextColor,
             backgroundColor = chipBackgroundColor,
             enabled = false

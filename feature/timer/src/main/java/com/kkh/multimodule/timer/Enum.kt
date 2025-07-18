@@ -21,8 +21,8 @@ data class ReservationTime(
         fun init() = ReservationTime(
             startTime = LocalTime(8, 0),
             endTime = LocalTime(10, 0),
-            title = "",
-            category = "",
+            title = "포트폴리오 작업",
+            category = "공부",
             repeatDays = emptyList()
         )
     }

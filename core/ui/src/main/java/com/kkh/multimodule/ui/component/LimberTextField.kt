@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -50,14 +51,27 @@ fun LimberOutlinedTextField(
         focusedBorderColor = Gray300
     )
 ) {
+    val maxLength = 50
+    val isLimitExceeded = value.length > 49
+
+    val filteredOnValueChange: (String) -> Unit = {
+        if (it.length <= maxLength) onValueChange(it)
+    }
+
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = filteredOnValueChange,
         modifier = modifier,
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
-        label = label,
+        label = label?.let {
+            {
+                CompositionLocalProvider(LocalContentColor provides if (isLimitExceeded) MaterialTheme.colorScheme.error else LocalContentColor.current) {
+                    it()
+                }
+            }
+        },
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = {

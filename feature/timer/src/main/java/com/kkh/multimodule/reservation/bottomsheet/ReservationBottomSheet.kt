@@ -58,6 +58,7 @@ import com.kkh.multimodule.designsystem.LimberTextStyle
 import com.kkh.multimodule.reservation.ReservationEvent
 import com.kkh.multimodule.reservation.ReservationViewModel
 import com.kkh.multimodule.reservation.BottomSheetState
+import com.kkh.multimodule.reservation.ReservationInfo
 import com.kkh.multimodule.timer.ChipInfo
 import com.kkh.multimodule.timer.FocusChipRow
 import com.kkh.multimodule.timer.ReservationTime
@@ -92,6 +93,8 @@ fun ReservationBottomSheet(
         BottomSheetState.End -> 0.5f
         BottomSheetState.Repeat -> 0.5f
     }
+
+    var titleText by remember { mutableStateOf("") }
 
     // 이전 값을 기억하기 위해 remember 사용
     var previousHeightFraction by remember { mutableFloatStateOf(targetHeightFraction) }
@@ -135,6 +138,10 @@ fun ReservationBottomSheet(
                     BottomSheetState.Idle -> {
                         ReservationBottomSheetContent(
                             reservationTime = reservationTime,
+                            value = titleText,
+                            onValueChange = {
+                                titleText = it
+                            },
                             onClickTimerButton = { buttonIndex ->
                                 val targetState = when (buttonIndex) {
                                     0 -> BottomSheetState.Start
@@ -154,9 +161,11 @@ fun ReservationBottomSheet(
                             },
                             chipList = chipList,
                             // 집중 칩 변경 이벤트
-                            onSelectedChanged = {},
+                            onSelectedChanged = { chipText ->
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.OnClickFocusChip(chipText))
+                            },
                             onClickReservationButton = {
-
+                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.OnClickReservationButton(titleText))
                             }
                         )
                     }
@@ -275,6 +284,8 @@ fun ReservationBottomSheetPreview() {
 fun ReservationBottomSheetContent(
     onClickClose: () -> Unit = {},
     chipList: List<ChipInfo> = listOf(),
+    value: String,
+    onValueChange: (String) -> Unit,
     reservationTime : ReservationTime,
     onSelectedChanged: (String) -> Unit = {},
     onClickTimerButton: (Int) -> Unit = {},
@@ -289,8 +300,8 @@ fun ReservationBottomSheetContent(
             ReservationTopBar(onClickClose = onClickClose)
             Spacer(Modifier.height(33.dp))
             ReservationSetting(
-                value = "",
-                onValueChange = {}
+                value = value,
+                onValueChange = onValueChange
             )
             Spacer(Modifier.height(20.dp))
             HorizontalDivider(thickness = 4.dp, color = Gray200)
