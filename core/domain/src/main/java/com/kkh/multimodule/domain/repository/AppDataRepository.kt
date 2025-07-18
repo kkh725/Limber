@@ -1,7 +1,5 @@
-package com.kkh.multimodule.data.repository
+package com.kkh.multimodule.domain.repository
 
-import android.app.usage.UsageStats
-import android.content.Context
 import kotlinx.coroutines.flow.Flow
 
 interface AppDataRepository {

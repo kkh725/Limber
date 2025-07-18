@@ -11,7 +11,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
 import kotlin.apply
 import androidx.core.net.toUri
-import com.kkh.multimodule.data.repository.AppDataRepository
+import com.kkh.multimodule.domain.repository.AppDataRepository
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope

@@ -3,6 +3,7 @@ package com.kkh.multimodule.data.repository
 import android.app.usage.UsageStats
 import android.content.Context
 import com.kkh.multimodule.datastore.datasource.LocalDataSource
+import com.kkh.multimodule.domain.repository.AppDataRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

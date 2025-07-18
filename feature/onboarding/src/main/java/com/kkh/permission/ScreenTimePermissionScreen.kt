@@ -115,10 +115,16 @@ fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
             }
             Spacer(Modifier.height(20.dp))
         }
-        if (animationPlaying) {
-            Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)))
+    }
+    // Show animation if playing
+    if (animationPlaying) {
+        Box(Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f))){
             LimberAnimation(
-                modifier = Modifier.align(Alignment.Center).size(50.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(50.dp),
                 resId = R.raw.loading_dark
             )
         }
