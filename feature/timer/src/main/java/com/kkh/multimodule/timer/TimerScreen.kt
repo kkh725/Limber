@@ -96,6 +96,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
     Scaffold(
         topBar = {
             TimerScreenTopBar(
+                modifier = Modifier.systemBarsPadding(),
                 selectedTimerType = timerScreenState,
                 onClickStartNowBtn = {
                     coroutineScope.launch {
@@ -121,7 +122,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                 StartButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 40.dp),
+                        .padding(horizontal = 20.dp, vertical = 24.dp),
                     enabled = chipList.any { it.isSelected },
                     onClick = { timerViewModel.sendEvent(TimerEvent.ShowModal(true)) }
                 )
@@ -297,7 +298,7 @@ fun TimerScreenContent(
             .fillMaxSize()
             .padding(horizontal = 20.dp)
     ) {
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(48.dp))
         Text(
             "무엇에 집중하고 싶으신가요?",
             modifier = Modifier.fillMaxWidth(),

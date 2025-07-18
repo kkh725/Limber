@@ -26,13 +26,14 @@ fun LimberNavHost(
     modifier: Modifier = Modifier,
     rootViewModel: RootViewModel
 ) {
+
+    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+
     NavHost(
         navController = navController,
-        startDestination = OnBoardingRoute.Onboarding,
+        startDestination = HomeRoutes.HOME,
         modifier = modifier,
     ) {
-        homeNavGraph(onClickButtonToNavigate = navController::navigateToTimer)
-        timerNavGraph(onNavigateToActiveTimer = navController::navigateToHomeScreen)
         onBoardingNavGraph(
             navigateToScreenTimePermissionScreen = navController::navigateToScreenTimePermissionScreen,
             navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
@@ -45,5 +46,10 @@ fun LimberNavHost(
             },
             onClickBack = {navController.popBackStack()}
         )
+
+        homeNavGraph(onClickButtonToNavigate = navController::navigateToTimer)
+
+        timerNavGraph(onNavigateToActiveTimer = navController::navigateToHomeScreen)
+
     }
 }

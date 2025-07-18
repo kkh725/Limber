@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import com.kkh.accessibility.AppInfo
+import com.kkh.multimodule.core.ui.R
 
 
 @Composable
@@ -49,9 +51,15 @@ fun DopamineActBox(
                 val painter = imageBitmap?.let { BitmapPainter(it) }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    painter?.let {
+                    if (painter != null) {
                         Image(
-                            painter = it,
+                            painter = painter,
+                            contentDescription = "App Icon",
+                            modifier = Modifier.size(18.dp) // 원하는 크기 지정
+                        )
+                    }else{
+                        Image(
+                            painter = painterResource(R.drawable.ic_data),
                             contentDescription = "App Icon",
                             modifier = Modifier.size(18.dp) // 원하는 크기 지정
                         )
