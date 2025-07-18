@@ -12,6 +12,7 @@ import com.kkh.multimodule.ui.UiEvent
 import com.kkh.multimodule.ui.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalTime
 import java.util.Timer
 
 data class ChipInfo(
@@ -50,6 +51,7 @@ sealed class TimerEvent : UiEvent {
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean) : TimerEvent()
     data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
+    data class OnClickModalCompleteButton(val selectedTime : LocalTime) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
@@ -105,6 +107,16 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
                     oldState.copy(
                         isSheetVisible = false,
                         modalAppDataList = event.appDataList
+                    )
+                )
+            }
+
+            // 모달 최종 시작하기 버튼
+            is TimerEvent.OnClickModalCompleteButton -> {
+                setState(
+                    oldState.copy(
+                        isModalVisible = false,
+                        appDataList = event.appDataList
                     )
                 )
             }

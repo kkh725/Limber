@@ -11,16 +11,16 @@ internal class AppDataRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : AppDataRepository {
 
-    override suspend fun savePackageList(packageList: List<String>) {
-        localDataSource.savePackageList(packageList)
+    override suspend fun setBlockedPackageList(packageList: List<String>) {
+        localDataSource.setBlockedPackageList(packageList)
     }
 
-    override suspend fun getPackageList(): List<String> {
-        return localDataSource.getPackageList()
+    override suspend fun getBlockedPackageList(): List<String> {
+        return localDataSource.getBlockedPackageList()
     }
 
-    override fun observePackageList() : Flow<List<String>>{
-        return localDataSource.observePackageList()
+    override fun observeBlockedPackageList() : Flow<List<String>>{
+        return localDataSource.observeBlockedPackageList()
     }
 
     override suspend fun setBlockMode(isBlock: Boolean) {

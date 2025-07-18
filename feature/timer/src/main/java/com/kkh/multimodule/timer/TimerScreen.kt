@@ -57,11 +57,13 @@ import com.kkh.multimodule.ui.WarnDialog
 import com.kkh.multimodule.ui.component.LimberChip
 import com.kkh.multimodule.ui.component.LimberChipWithPlus
 import com.kkh.multimodule.ui.component.LimberGradientButton
+import com.kkh.multimodule.ui.component.LimberTimePicker24
 import com.kkh.multimodule.ui.component.RegisterBlockAppBottomSheet
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,6 +87,9 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
 
     val appList = uiState.appDataList
     val modalAppList = uiState.modalAppDataList
+
+    var selectedTime by remember { mutableStateOf(LocalTime(1, 0)) }
+
 
     LaunchedEffect(pagerState.currentPage) {
         when (pagerState.currentPage) {
@@ -143,8 +148,11 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                             timerViewModel.sendEvent(TimerEvent.OnClickFocusChip(chipText))
                         }
                     },
-                    onTimeSelected = { hour, minute -> },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    selectedTime = selectedTime,
+                    onValueChanged = { newTime ->
+                        selectedTime = newTime
+                    }
                 )
 
                 1 -> ReservationPage(
@@ -291,8 +299,10 @@ fun TimerScreenContent(
     chipList: List<ChipInfo>,
     onSelectedChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onTimeSelected: (hour: Int, minute: Int) -> Unit
+    selectedTime: LocalTime,
+    onValueChanged: (LocalTime) -> Unit
 ) {
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -322,140 +332,19 @@ fun TimerScreenContent(
             style = LimberTextStyle.Heading3,
             color = Gray800
         )
+        Spacer(modifier = Modifier.height(22.dp))
 
-        SpinnerTimePicker(modifier = Modifier.height(224.dp)) { hour, minute ->
-            println("선택된 시간: $hour:$minute")
-            onTimeSelected(hour, minute)
-        }
-    }
-}
-
-
-@Composable
-fun SpinnerTimePicker(
-    modifier: Modifier = Modifier, onTimeSelected: (hour: Int, minute: Int) -> Unit
-) {
-    val hourList = (0..23).toList()
-    val minuteList = (0..59).toList()
-
-    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 8 + 1) // padding 1개 포함
-    val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30 + 1)
-
-
-    val selectedHour =
-        remember { derivedStateOf { hourList.getOrNull(hourState.firstVisibleItemIndex + 1) ?: 0 } }
-    val selectedMinute = remember {
-        derivedStateOf {
-            minuteList.getOrNull(minuteState.firstVisibleItemIndex + 1) ?: 0
-        }
-    }
-
-    // ✅ 값이 바뀔 때마다 외부 콜백 호출
-    LaunchedEffect(selectedHour.value, selectedMinute.value) {
-        onTimeSelected(selectedHour.value, selectedMinute.value)
-    }
-
-    Box(
-        modifier = modifier.height(150.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth()
-                .height(40.dp)
-                .padding(horizontal = 27.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Primary_BG_Normal)
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 27.dp)
-        ) {
-            NumberPicker(
-                modifier = Modifier.weight(1f),
-                values = hourList,
-                listState = hourState,
-                label = "시간"
-            )
-            NumberPicker(
-                modifier = Modifier.weight(1f),
-                values = minuteList,
-                listState = minuteState,
-                label = "분"
-            )
-        }
-    }
-
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@OptIn(FlowPreview::class)
-@Composable
-fun NumberPicker(
-    modifier: Modifier = Modifier, values: List<Int>, listState: LazyListState, label: String
-) {
-    val itemHeight = 40.dp
-    val density = LocalDensity.current
-
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemScrollOffset to listState.isScrollInProgress
-        }.debounce(100) // fling 등으로 offset 변화가 잦을 때 완충
-            .filter { !it.second } // 스크롤이 멈췄을 때
-            .collect { (offset, _) ->
-                val visibleIndex = listState.firstVisibleItemIndex
-                val itemHeightPx = with(density) { itemHeight.toPx() }
-
-                val nextIndex = if (offset >= itemHeightPx / 2f) {
-                    visibleIndex + 1
-                } else {
-                    visibleIndex
-                }
-
-                val maxIndex = values.size + 1 // 패딩 포함
-
-                listState.animateScrollToItem(
-                    nextIndex.coerceIn(0, maxIndex), 0
-                )
-            }
-    }
-
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            LazyColumn(
-                state = listState, modifier = Modifier.height(120.dp) // ← 5개 보여주려면 높이 늘려주세요
-            ) {
-                itemsIndexed(listOf("") + values.map {
-                    it.toString().padStart(2, '0')
-                } + listOf("")) { _, item ->
-                    Box(
-                        modifier = Modifier.height(itemHeight), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = item,
-                            fontSize = 20.sp,
-                            color = if (item.isNotBlank()) Color.Black else Color.Transparent
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.width(22.dp))
-            Text(
-                text = label,
-                fontSize = 20.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(start = 4.dp)
-            )
-        }
+        LimberTimePicker24(
+            selectedTime = selectedTime,
+            onValueChanged = onValueChanged)
     }
 }
 
 @Composable
 fun StartButton(
-    modifier: Modifier, onClick: () -> Unit, enabled: Boolean = false
+    modifier: Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = false
 ) {
     LimberGradientButton(
         onClick = onClick, enabled = enabled, text = "시작하기", modifier = modifier.height(54.dp)

@@ -32,8 +32,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.time.picker)
+    api(libs.kotlinx.datetime)
+    api(libs.time.picker)
     implementation(libs.lottie.compose)
 
 

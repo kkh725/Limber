@@ -23,15 +23,15 @@ class OnboardingViewModel @Inject constructor(private val appDataRepository: App
 
             when (e) {
                 is OnboardingEvent.OnCompleteRegisterButton -> {
-                    savePackageList(e.appList)
+                    setBlockedPackageList(e.appList)
                 }
                 else -> {}
             }
         }
     }
 
-    private suspend fun savePackageList(appList: List<AppInfo>) {
+    private suspend fun setBlockedPackageList(appList: List<AppInfo>) {
         val packageList = appList.map { it.packageName }
-        appDataRepository.savePackageList(packageList)
+        appDataRepository.setBlockedPackageList(packageList)
     }
 }

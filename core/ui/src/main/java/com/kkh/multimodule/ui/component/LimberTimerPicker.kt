@@ -65,5 +65,47 @@ fun LimberTimePicker(
             Text("분", style = LimberTextStyle.Heading2, color = Gray800)
         }
     }
+}
 
+@Preview
+@Composable
+fun LimberTimePickerPreview() {
+    var selectedTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
+    LimberTimePicker24(selectedTime = selectedTime, timeFormat = TimeFormat.TWENTY_FOUR_HOUR, onValueChanged = { selectedTime = it })
+}
+
+@Composable
+fun LimberTimePicker24(
+    selectedTime: LocalTime,
+    timeFormat: TimeFormat = TimeFormat.TWENTY_FOUR_HOUR,
+    onValueChanged: (LocalTime) -> Unit
+) {
+
+    Box(Modifier
+        .fillMaxWidth()
+        .height(224.dp)) {
+        TimePicker(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            initialTime = selectedTime,
+            timeFormat = timeFormat,
+            itemLabel = ItemLabel(
+                style = LimberTextStyle.Heading2,
+                color = Gray800
+            ),
+            selector = TimePickerDefaults.pickerSelector(
+                color = Gray200,
+                shape = RoundedCornerShape(8.dp)
+            )
+        ) { newTime ->
+            onValueChanged(newTime)
+        }
+//        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+//            Spacer(Modifier.fillMaxWidth(0.585f))
+//            Text("시", style = LimberTextStyle.Heading2, color = Gray800)
+//            Spacer(Modifier.fillMaxWidth(0.56f))
+//            Text("분", style = LimberTextStyle.Heading2, color = Gray800)
+//        }
+    }
 }

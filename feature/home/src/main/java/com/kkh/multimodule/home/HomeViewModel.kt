@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRe
 
             when (e) {
                 is HomeEvent.OnCompleteRegisterButton -> {
-                    savePackageList(e.appList)
+                    setBlockedPackageList(e.appList)
                     setPackageList()
                 }
 
@@ -36,13 +36,13 @@ class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRe
         }
     }
 
-    private suspend fun savePackageList(appList: List<AppInfo>) {
+    private suspend fun setBlockedPackageList(appList: List<AppInfo>) {
         val packageList = appList.map { it.packageName }
-        appDataRepository.savePackageList(packageList)
+        appDataRepository.setBlockedPackageList(packageList)
     }
 
     private suspend fun setPackageList() {
-        sendEvent(HomeEvent.SetBlockingAppList(appDataRepository.getPackageList()))
+        sendEvent(HomeEvent.SetBlockingAppList(appDataRepository.getBlockedPackageList()))
     }
 
 }

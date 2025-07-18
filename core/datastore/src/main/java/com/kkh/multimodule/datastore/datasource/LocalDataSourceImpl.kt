@@ -22,15 +22,15 @@ internal class LocalDataSourceImpl @Inject constructor() :
     /**
      * 패키지명 로컬 저장
      */
-    override suspend fun getPackageList(): List<String> {
+    override suspend fun getBlockedPackageList(): List<String> {
         return DataStoreManager.readStringList(packageListKey).first().toList()
     }
 
-    override suspend fun savePackageList(packageList: List<String>) {
+    override suspend fun setBlockedPackageList(packageList: List<String>) {
         DataStoreManager.saveStringList(packageListKey, packageList)
     }
 
-    override fun observePackageList(): Flow<List<String>> {
+    override fun observeBlockedPackageList(): Flow<List<String>> {
         return DataStoreManager.readStringList(packageListKey)
     }
 

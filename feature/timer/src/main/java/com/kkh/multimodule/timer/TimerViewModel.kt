@@ -16,6 +16,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalTime
 import java.util.Timer
 
 @HiltViewModel
@@ -32,15 +33,31 @@ class TimerViewModel @Inject constructor(private val appDataRepository: AppDataR
 
             when(e){
                 is TimerEvent.OnClickSheetCompleteButton ->{
-                    savePackageList()
+                    // modal 에서 시작하기를 눌러야 차단해야할듯.
+//                    setBlockedPackageList()
+                }
+                is TimerEvent.OnClickModalCompleteButton -> {
+                    setBlockNow(LocalTime(1,1))
                 }
                 else -> {}
             }
         }
     }
 
-    private suspend fun savePackageList() {
+    private suspend fun setBlockedPackageList() {
         val packageList = uiState.value.appDataList.map { it.packageName }
-        appDataRepository.savePackageList(packageList)
+        appDataRepository.setBlockedPackageList(packageList)
+    }
+
+    private suspend fun setBlockNow(localTime: LocalTime){
+        val type = uiState.value.chipList.find { it.isSelected }
+        val time = localTime.toString()
+        val blockAppList = uiState.value.modalAppDataList
+
+        // send api
+
+        // local에서 당장 block 시작.
+        appDataRepository.setBlockedPackageList(blockAppList.map { it.packageName })
+        appDataRepository.setBlockMode(true)
     }
 }

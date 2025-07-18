@@ -41,7 +41,7 @@ class BlockedAppAccessibilityService : AccessibilityService() {
             }
         }
         coroutineScope.launch {
-            appDataRepository.observePackageList().collect { packageList ->
+            appDataRepository.observeBlockedPackageList().collect { packageList ->
                 Log.d("TAG", "packageList: ${packageList.firstOrNull()}")
                 blockedPackageListState.value = packageList
             }
