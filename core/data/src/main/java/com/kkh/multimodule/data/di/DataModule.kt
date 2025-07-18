@@ -1,6 +1,6 @@
 package com.kkh.multimodule.data.di
 
-import com.kkh.multimodule.data.repository.AppDataRepository
+import com.kkh.multimodule.domain.repository.AppDataRepository
 import com.kkh.multimodule.data.repository.AppDataRepositoryImpl
 import com.kkh.multimodule.data.repository.TestRepositoryImpl
 import com.kkh.multimodule.datastore.datasource.LocalDataSource

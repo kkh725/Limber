@@ -10,8 +10,7 @@ import com.kkh.accessibility.AppInfoProvider
 import com.kkh.accessibility.AppUsageStatsManager
 import com.kkh.accessibility.AppUsageStatsManager.getUsageStats
 import com.kkh.multimodule.core.ui.R
-import com.kkh.multimodule.data.repository.AppDataRepository
-import com.kkh.multimodule.datastore.datasource.LocalDataSource
+import com.kkh.multimodule.domain.repository.AppDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
