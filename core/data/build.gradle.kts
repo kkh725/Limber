@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kkh.multimodule.data"
+    namespace = "com.kkh.multimodule.core.data"
 }
 
 dependencies {
@@ -22,3 +22,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+//  namespace = "com.google.samples.apps.nowinandroid.core.data"

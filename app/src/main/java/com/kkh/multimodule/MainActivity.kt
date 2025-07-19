@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.kkh.multimodule.navigation.LimberApp
-import com.kkh.multimodule.ui.theme.TestModuleTheme
+import com.kkh.multimodule.core.ui.uitheme.TestModuleTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

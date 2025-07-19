@@ -1,4 +1,4 @@
-package com.kkh.multimodule.ui.theme
+package com.kkh.multimodule.core.ui.uitheme
 
 import androidx.compose.ui.graphics.Color
 

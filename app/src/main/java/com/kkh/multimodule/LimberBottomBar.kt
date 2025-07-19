@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.kkh.multimodule.designsystem.LimberColorStyle
-import com.kkh.multimodule.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.home.HomeRoutes
 import com.kkh.multimodule.navigation.BottomNavRoutes
 

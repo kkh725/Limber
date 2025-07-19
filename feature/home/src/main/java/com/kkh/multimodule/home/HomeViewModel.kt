@@ -1,11 +1,9 @@
 package com.kkh.multimodule.home
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkh.accessibility.AppInfo
-import com.kkh.accessibility.AppUsageStatsManager
-import com.kkh.multimodule.domain.repository.AppDataRepository
+import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch

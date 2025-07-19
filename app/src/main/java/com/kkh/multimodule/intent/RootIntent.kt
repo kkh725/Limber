@@ -1,12 +1,11 @@
 package com.kkh.multimodule.intent
 
-import com.kkh.multimodule.ui.Reducer
-import com.kkh.multimodule.ui.UiEvent
-import com.kkh.multimodule.ui.UiState
-import com.kkh.multimodule.domain.model.ScreenState
+import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEvent
+import com.kkh.multimodule.core.ui.ui.UiState
+import com.kkh.multimodule.core.domain.model.ScreenState
 import com.kkh.multimodule.home.HomeRoutes
 import com.kkh.multimodule.navigation.BottomNavRoutes
-import com.kkh.onboarding.OnBoardingRoute
 
 data class RootState(
     val screenState: ScreenState

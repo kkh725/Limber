@@ -1,8 +1,8 @@
 package com.kkh.multimodule.feature.test
 
-import com.kkh.multimodule.ui.Reducer
-import com.kkh.multimodule.ui.UiEvent
-import com.kkh.multimodule.ui.UiState
+import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEvent
+import com.kkh.multimodule.core.ui.ui.UiState
 
 data class TestState(
     val loadingState: String

@@ -2,11 +2,11 @@ package com.kkh.multimodule.home
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.kkh.accessibility.AppInfo
-import com.kkh.accessibility.AppInfoProvider
-import com.kkh.multimodule.ui.Reducer
-import com.kkh.multimodule.ui.UiEvent
-import com.kkh.multimodule.ui.UiState
+import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEvent
+import com.kkh.multimodule.core.ui.ui.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

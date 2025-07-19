@@ -5,7 +5,7 @@ plugins {
 }
 
 android{
-    namespace = "com.kkh.multimodule.accessibility"
+    namespace = "com.kkh.multimodule.core.accessibility"
 }
 
 dependencies {

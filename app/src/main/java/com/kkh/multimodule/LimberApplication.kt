@@ -2,7 +2,7 @@ package com.kkh.multimodule
 
 import android.app.Application
 import android.util.Log
-import com.kkh.multimodule.datastore.DataStoreManager
+import com.kkh.multimodule.core.datastore.DataStoreManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

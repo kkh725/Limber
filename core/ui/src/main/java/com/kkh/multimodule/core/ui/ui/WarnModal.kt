@@ -1,0 +1,292 @@
+package com.kkh.multimodule.core.ui.ui
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import com.kkh.multimodule.core.ui.R
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.graphics.drawable.toBitmap
+import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
+import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
+import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
+
+@Preview
+@Composable
+fun WarnDialog(
+    appinfoList: List<AppInfo> = listOf(
+        AppInfo("인스타그램", "com.app1", null, "30분"),
+        AppInfo("유튜브", "com.app2", null, "45분"),
+        AppInfo("카카오톡", "com.app3", null, "1시간"),
+        AppInfo("인스타그램", "com.app1", null, "30분"),
+        AppInfo("유튜브", "com.app2", null, "45분"),
+        AppInfo("카카오톡", "com.app3", null, "1시간"),
+        AppInfo("인스타그램", "com.app1", null, "30분"),
+        AppInfo("유튜브", "com.app2", null, "45분"),
+        AppInfo("카카오톡", "com.app3", null, "1시간")
+    ),
+    onClickModifyButton: () -> Unit = {},
+    onClickStartButton: () -> Unit = {},
+    onDismissRequest: () -> Unit = {}
+) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(482.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.White)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(152.dp)
+                    .background(Gray200)
+            ) {
+                Box(
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_checked),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(80.dp)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 32.dp, end = 20.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            onDismissRequest()
+                        },
+                        modifier = Modifier
+                            .size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "",
+                            modifier = Modifier.fillMaxSize(),
+                            tint = Gray400
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(32.dp))
+
+            Text(
+                "1시간 4분동안\n다음의 앱들이 차단돼요",
+                modifier = Modifier.fillMaxWidth(),
+                style = LimberTextStyle.Heading2,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(24.dp))
+
+            AppList(appInfoList = appinfoList, onClickModifyButton = onClickModifyButton)
+            Spacer(Modifier.height(20.dp))
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Row(
+                    Modifier.clickable(onClick = onClickModifyButton),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_write),
+                        contentDescription = "Write Icon",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        "편집하기",
+                        style = LimberTextStyle.Body2,
+                        color = Gray500
+                    )
+                }
+            }
+
+
+            Spacer(Modifier.weight(1f))
+            Text(
+                "버튼을 누르면 실험이 시작돼요",
+                modifier = Modifier.fillMaxWidth(),
+                color = Gray500,
+                textAlign = TextAlign.Center,
+                style = LimberTextStyle.Body3
+            )
+            Spacer(Modifier.height(8.dp))
+
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 16.dp)
+            ) {
+                LimberGradientButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "시작하기",
+                    onClick = onClickStartButton
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun UnBlockWarnModal(
+    modifier: Modifier = Modifier,
+    onClickUnBlock: () -> Unit = {},
+    onClickContinue: () -> Unit = {}
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.height(20.dp))
+        Text(
+            "정말 잠금을 푸시겠어요?\n" +
+                    "이대로 잠금을 풀면 실험이 종료돼요.", style = LimberTextStyle.Heading3, color = Gray800
+        )
+        Spacer(Modifier.weight(1f))
+        BlockScreenBottomBar(onClickUnBlock = onClickUnBlock, onClickContinue = onClickContinue)
+    }
+}
+
+
+@Composable
+fun AppList(
+    modifier: Modifier = Modifier,
+    appInfoList: List<AppInfo>,
+    onClickModifyButton: () -> Unit
+) {
+    if (appInfoList.isEmpty()) {
+        Box(Modifier
+            .height(76.dp)
+            .fillMaxWidth(), contentAlignment = Alignment.Center) {
+            IconButton(onClickModifyButton, modifier = Modifier.size(48.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Icon",
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+        }
+    } else {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = modifier
+                .height(76.dp)
+                .padding(start = 20.dp)
+        ) {
+            itemsIndexed(appInfoList) { index, appInfo ->
+                AppInfoItem(appInfo = appInfo)
+            }
+        }
+    }
+
+}
+
+@Composable
+fun AppInfoItem(appInfo: AppInfo) {
+
+    val bitmap = appInfo.appIcon?.toBitmap()
+    val imageBitmap = bitmap?.asImageBitmap()
+    val painter = imageBitmap?.let { BitmapPainter(it) }
+
+    Column(
+        Modifier
+            .width(100.dp)
+            .height(76.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Gray100),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painter ?: painterResource(R.drawable.ic_info),
+            contentDescription = "App Icon",
+            modifier = Modifier
+                .size(24.dp)
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(appInfo.appName, style = LimberTextStyle.Body2)
+    }
+}
+
+
+@Composable
+fun BlockScreenBottomBar(
+    modifier: Modifier = Modifier,
+    onClickUnBlock: () -> Unit,
+    onClickContinue: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        LimberSquareButton(
+            onClick = onClickUnBlock,
+            containerColor = Gray200,
+            textColor = Gray800,
+            text = "중단하기",
+            modifier = Modifier.weight(1f)
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        LimberSquareButton(
+            onClick = onClickContinue,
+            text = "실험 유지하기",
+            modifier = Modifier.weight(1f)
+        )
+
+    }
+}

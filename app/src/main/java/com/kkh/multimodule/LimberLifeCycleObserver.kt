@@ -1,18 +1,11 @@
 package com.kkh.multimodule
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import android.provider.Settings
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.kkh.accessibility.AppInfoProvider
-import com.kkh.accessibility.AppUsageStatsManager
-import com.kkh.accessibility.BlockedAppAccessibilityService
-import com.kkh.accessibility.PermissionManager
-import java.util.Date
+import com.kkh.multimodule.core.accessibility.AppInfoProvider
 
 class LimberLifeCycleObserver(private val context: Context) : DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {

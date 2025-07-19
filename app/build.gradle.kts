@@ -6,6 +6,10 @@ plugins {
     alias(libs.plugins.multi.module.hilt)
     alias(libs.plugins.multi.module.network)
 }
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Xlint:deprecation")
+}
+
 
 dependencies {
 

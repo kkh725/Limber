@@ -16,7 +16,7 @@ lottieCompose = "6.6.7"
 material = "1.10.0"
 
 #hilt
-hilt = "2.56"
+hilt = "2.57"
 hiltExt = "1.2.0"
 
 #ksp
@@ -34,7 +34,7 @@ datastore = "1.1.6"
 
 
 # Project versions
-projectApplicationId = "com.kkh.multimodule.moduletest"
+projectApplicationId = "com.kkh.multimodule.limber"
 projectVersionName = "1.0"
 projectVersionCode = "1"
 projectMinSdkVersion = "29"

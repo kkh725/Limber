@@ -6,7 +6,7 @@ plugins {
 }
 
 android{
-    namespace = "com.kkh.multimodule.network"
+    namespace = "com.kkh.multimodule.core.network"
 }
 
 dependencies {
