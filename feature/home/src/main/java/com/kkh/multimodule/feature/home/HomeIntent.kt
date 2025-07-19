@@ -1,4 +1,4 @@
-package com.kkh.multimodule.home
+package com.kkh.multimodule.feature.home
 
 import android.annotation.SuppressLint
 import android.content.Context

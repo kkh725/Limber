@@ -1,0 +1,72 @@
+package com.kkh.multimodule.feature.home.activeTimer
+
+import android.annotation.SuppressLint
+import android.content.Context
+import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEvent
+import com.kkh.multimodule.core.ui.ui.UiState
+import kotlin.concurrent.timer
+
+data class ActiveTimerState(
+    val blockedAppList: List<AppInfo>,
+    val sheetState: Boolean,
+    val timerPercent: Float,
+    val focusType: String,
+) : UiState {
+    companion object {
+        fun init() = ActiveTimerState(
+            blockedAppList = listOf(),
+            sheetState = false,
+            timerPercent = 0f,
+            focusType = "학습"
+        )
+    }
+}
+
+sealed class ActiveTimerEvent : UiEvent {
+    data class SheetExpanded(val isExpanded: Boolean, val context: Context) : ActiveTimerEvent()
+    data class SetBlockedAppList(val blockedAppList: List<AppInfo>) : ActiveTimerEvent()
+    data class SetTimerPercent(val percent: Float) : ActiveTimerEvent()
+    data class SetFocusType(val focusType: String) : ActiveTimerEvent()
+}
+
+class HomeReducer(state: ActiveTimerState) : Reducer<ActiveTimerState, ActiveTimerEvent>(state) {
+    @SuppressLint("UseCompatLoadingForDrawables")
+
+    override suspend fun reduce(oldState: ActiveTimerState, event: ActiveTimerEvent) {
+        when (event) {
+            is ActiveTimerEvent.SetBlockedAppList -> {
+                setState(
+                    oldState.copy(
+                        blockedAppList = event.blockedAppList
+                    )
+                )
+            }
+
+            is ActiveTimerEvent.SheetExpanded -> {
+                setState(
+                    oldState.copy(
+                        sheetState = event.isExpanded
+                    )
+                )
+            }
+
+            is ActiveTimerEvent.SetTimerPercent -> {
+                setState(
+                    oldState.copy(
+                        timerPercent = event.percent
+                    )
+                )
+            }
+
+            is ActiveTimerEvent.SetFocusType -> {
+                setState(
+                    oldState.copy(
+                        focusType = event.focusType
+                    )
+                )
+            }
+        }
+    }
+}

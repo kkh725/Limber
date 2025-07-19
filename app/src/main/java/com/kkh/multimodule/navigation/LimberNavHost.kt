@@ -7,11 +7,12 @@ import androidx.navigation.compose.NavHost
 import com.kkh.multimodule.RootViewModel
 import com.kkh.multimodule.core.domain.model.ScreenState
 import com.kkh.multimodule.feature.laboratory.laboratoryGraph
-import com.kkh.multimodule.home.HomeRoutes
-import com.kkh.multimodule.home.homeNavGraph
-import com.kkh.multimodule.home.navigateToHomeScreen
+import com.kkh.multimodule.feature.home.HomeRoutes
+import com.kkh.multimodule.feature.home.homeNavGraph
+import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
+import com.kkh.multimodule.feature.home.navigateToHomeScreen
+import com.kkh.multimodule.feature.home.navigateToRecallScreen
 import com.kkh.multimodule.intent.RootEvent
-import com.kkh.multimodule.feature.timer.navigateToTimer
 import com.kkh.multimodule.feature.timer.timerNavGraph
 import com.kkh.multimodule.feature.onboarding.navigateToAccessPermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToStartScreenScreen
@@ -19,6 +20,7 @@ import com.kkh.multimodule.feature.onboarding.navigateToManageAppScreen
 import com.kkh.multimodule.feature.onboarding.navigateToScreenTimePermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToSelectTypeScreen
 import com.kkh.multimodule.feature.onboarding.onBoardingNavGraph
+import com.kkh.multimodule.feature.timer.navigateToActiveTimer
 
 @Composable
 fun LimberNavHost(
@@ -44,10 +46,15 @@ fun LimberNavHost(
                 navController.navigateToHomeScreen()
                 rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
             },
-            onClickBack = {navController.popBackStack()}
+            onClickBack = navController::popBackStack
         )
 
-        homeNavGraph(onClickButtonToNavigate = navController::navigateToTimer)
+        homeNavGraph(
+            onNavigateToActiveTimer = navController::navigateToActiveTimerScreen,
+            onNavigateToHome = navController::navigateToHomeScreen,
+            onPopBackStack = navController::popBackStack,
+            onNavigateToRecall = navController::navigateToRecallScreen
+        )
 
         timerNavGraph(onNavigateToActiveTimer = navController::navigateToHomeScreen)
 

@@ -1,4 +1,4 @@
-package com.kkh.multimodule.home
+package com.kkh.multimodule.feature.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
@@ -61,7 +60,7 @@ import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onClickButtonTonNavigate: () -> Unit
+    onNavigateToActiveTimer: () -> Unit
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsState()
@@ -95,7 +94,8 @@ fun HomeScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxSize(),
-            appInfoList = appInfoList
+            appInfoList = appInfoList,
+            navigateToActiveTimer = onNavigateToActiveTimer
         )
     }
 
@@ -115,7 +115,8 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenMainBody(
     modifier: Modifier = Modifier,
-    appInfoList: List<AppInfo>
+    appInfoList: List<AppInfo>,
+    navigateToActiveTimer : () -> Unit = {}
 ) {
     Box(modifier = modifier) {
         Column(
@@ -129,7 +130,7 @@ private fun HomeScreenMainBody(
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
-            TimerButton(onClick = {})
+            TimerButton(onClick = navigateToActiveTimer)
             Spacer(Modifier.height(24.dp))
             TodayActivityBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
@@ -279,7 +280,7 @@ fun HomeMainContent(
                                         bottomEnd = 100.dp
                                     )
                                 )
-                                .background(LimberColorStyle.Secondary_Main)
+                                .background(Secondary_Main)
                         )
                     }
                     Spacer(Modifier.height(24.dp))
@@ -293,7 +294,7 @@ fun HomeMainContent(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(LimberColorStyle.Gray100)
+                                .background(Gray100)
                                 .padding(16.dp)
                         )
 
@@ -308,7 +309,7 @@ fun HomeMainContent(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(LimberColorStyle.Gray100)
+                                .background(Gray100)
                                 .padding(16.dp),
                             appInfoList = appInfoList
                         )
@@ -348,18 +349,18 @@ fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
                 Text(
                     "Today's Activity",
                     style = LimberTextStyle.Body2,
-                    color = LimberColorStyle.Gray600
+                    color = Gray600
                 )
                 Row {
                     Text(
                         "집중 시간",
                         style = LimberTextStyle.Heading4,
-                        color = LimberColorStyle.Primary_Main
+                        color = Primary_Main
                     )
                     Text(
                         "이 앞서고있어요! 계속 이어가요",
                         style = LimberTextStyle.Heading4,
-                        color = LimberColorStyle.Gray600
+                        color = Gray600
                     )
 
                 }
@@ -389,24 +390,24 @@ fun FocusActBox(modifier: Modifier = Modifier) {
                     )
             )
             Spacer(Modifier.width(6.dp))
-            Text("집중한 시간", style = LimberTextStyle.Body2, color = LimberColorStyle.Gray600)
+            Text("집중한 시간", style = LimberTextStyle.Body2, color = Gray600)
         }
         Spacer(Modifier.height(16.dp))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row {
-                Text("학습", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
+                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
                 Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
             }
             Row {
-                Text("학습", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
+                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
                 Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
             }
             Row {
-                Text("학습", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
+                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
                 Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = LimberColorStyle.Gray400)
+                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
             }
         }
 

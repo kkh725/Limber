@@ -3,10 +3,6 @@ package com.kkh.multimodule
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -16,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
@@ -28,7 +23,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
 import com.kkh.multimodule.feature.timer.TimerRoute
-import com.kkh.multimodule.home.HomeRoutes
+import com.kkh.multimodule.feature.home.HomeRoutes
 import com.kkh.multimodule.navigation.BottomNavRoutes
 
 sealed class BottomNavItem(

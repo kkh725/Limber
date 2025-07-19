@@ -1,9 +1,10 @@
-package com.kkh.multimodule.timer
+package com.kkh.multimodule.feature.home.activeTimer
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,9 +26,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -44,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
@@ -55,28 +63,56 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.AppList
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
+import kotlin.math.cos
+import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun ActiveTimerScreen() {
+fun ActiveTimerScreen(
+    onPopBackStack: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToRecall: () -> Unit = {}
+) {
+    val activeTimerViewModel: ActiveTimerViewModel = hiltViewModel()
+    val uiState by activeTimerViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_star)
-    val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
-    var isSheetOpen =
-        androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState()
+    val isSheetOpen = uiState.sheetState
+    val blockedAppList = uiState.blockedAppList
+    val timerPercent = uiState.timerPercent
+    val focusType = uiState.focusType
+
+    val isTimerEnd = timerPercent == 0f
 
     Box(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize()) {
-            Image(painter = painterResource(R.drawable.logo_limber), contentDescription = null)
-        }
+        Image(painter = painterResource(R.drawable.logo_limber), contentDescription = null)
+    }
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
         Scaffold(bottomBar = {
             Box(
                 Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
             ) {
-                BottomBar { }
+                BottomBar(
+                    isTimerEnd = isTimerEnd,
+                    onNavigateToHome = onNavigateToHome,
+                    onNavigateToRecall = onNavigateToRecall
+                )
             }
         }) { paddingValues ->
             Column(
@@ -84,41 +120,80 @@ fun ActiveTimerScreen() {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                CircularProgressBarWithHandleImage(percentage = 0.7f, handleImage = imageBitmap)
+                CircularProgressBarWithHandleImage(
+                    percentage = timerPercent,
+                    handleImage = imageBitmap
+                )
+
                 Box(Modifier.fillMaxWidth()) {
-                    TypeFocusText("학습", modifier = Modifier.align(Alignment.Center))
-                }
-                Spacer(Modifier.weight(1f))
-                Box(Modifier.fillMaxWidth()) {
-                    Text(
-                        "차단중인 앱 보기  >",
-                        style = LimberTextStyle.Body2,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .clickable { isSheetOpen.value = true }
+                    TypeFocusText(
+                        focusType,
+                        isTimerEnd = isTimerEnd,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                Spacer(Modifier.height(18.dp))
+
+                Spacer(Modifier.weight(1f))
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    if (isTimerEnd) {
+                        Text(
+                            "10초 후에 자동으로 회고 페이지로 넘어갑니다.",
+                            color = Gray500,
+                            style = LimberTextStyle.Caption1,
+                        )
+                    } else {
+                        TextButton(
+                            onClick = {
+                                activeTimerViewModel.sendEvent(
+                                    ActiveTimerEvent.SheetExpanded(
+                                        true,
+                                        context
+                                    )
+                                )
+                            }
+                        ) {
+                            Text(
+                                "차단중인 앱 보기  >",
+                                style = LimberTextStyle.Body2,
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
             }
         }
         Box(
             Modifier
                 .fillMaxSize(), contentAlignment = Alignment.TopEnd
         ) {
-            IconButton(onClick = {}) {
+            IconButton(onClick = onPopBackStack) {
                 Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = Gray600)
             }
         }
         // BottomSheet
-        if (isSheetOpen.value) {
+        if (isSheetOpen) {
             ModalBottomSheet(
-                onDismissRequest = { isSheetOpen.value = false },
+                containerColor = Color.White,
+                onDismissRequest = {
+                    activeTimerViewModel.sendEvent(
+                        ActiveTimerEvent.SheetExpanded(
+                            false,
+                            context
+                        )
+                    )
+                },
                 sheetState = sheetState
             ) {
                 BottomSheetContent(
+                    appInfoList = blockedAppList,
                     onClose = {
                         coroutineScope.launch { sheetState.hide() }
-                        isSheetOpen.value = false
+                        activeTimerViewModel.sendEvent(
+                            ActiveTimerEvent.SheetExpanded(
+                                false,
+                                context
+                            )
+                        )
                     }
                 )
             }
@@ -206,8 +281,8 @@ fun CircularProgressBarWithHandleImage(
             val angleInDegrees = (percentage * 360f) - 90f
             val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
-            val handleX = centerX + radius * kotlin.math.cos(angleInRadians).toFloat()
-            val handleY = centerY + radius * kotlin.math.sin(angleInRadians).toFloat()
+            val handleX = centerX + radius * cos(angleInRadians).toFloat()
+            val handleY = centerY + radius * sin(angleInRadians).toFloat()
 
             // 이미지 그리기 (중앙 정렬)
             drawImage(
@@ -229,10 +304,16 @@ fun CircularProgressBarWithHandleImage(
 }
 
 @Composable
-fun TypeFocusText(typeText: String, modifier: Modifier = Modifier) {
+fun TypeFocusText(
+    typeText: String,
+    isTimerEnd: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val alphaValue = if (isTimerEnd) 0.5f else 1f
+
     Box(
         modifier
-            .clickable(onClick = {}, enabled = false)
+            .alpha(alphaValue) // ✅ alpha
             .background(color = Primary_Dark, shape = RoundedCornerShape(size = 100.dp))
             .padding(vertical = 12.dp, horizontal = 20.dp)
     ) {
@@ -249,39 +330,54 @@ fun TypeFocusText(typeText: String, modifier: Modifier = Modifier) {
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
-
         }
     }
 }
 
 
 @Composable
-fun BottomBar(onClick: () -> Unit) {
-    LimberSquareButton(
-        modifier = Modifier
-            .fillMaxWidth(),
-        onClick = onClick,
-        text = "홈으로 가기",
-        textColor = Color.Black,
-        containerColor = Gray200
-    )
+fun BottomBar(
+    isTimerEnd: Boolean,
+    onNavigateToHome: () -> Unit,
+    onNavigateToRecall: () -> Unit
+) {
+    if (isTimerEnd) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            LimberSquareButton(
+                modifier = Modifier
+                    .fillMaxWidth().weight(1f),
+                onClick = onNavigateToHome,
+                text = "홈으로 가기",
+                textColor = Color.Black,
+                containerColor = Gray200
+            )
+            Spacer(Modifier.width(12.dp))
+            LimberSquareButton(
+                modifier = Modifier
+                    .fillMaxWidth().weight(1f),
+                onClick = onNavigateToRecall,
+                text = "회고하기",
+                textColor = Color.White,
+                containerColor = LimberColorStyle.Primary_Main
+            )
+        }
+    } else {
+        LimberSquareButton(
+            modifier = Modifier
+                .fillMaxWidth(),
+            onClick = onNavigateToHome,
+            text = "홈으로 가기",
+            textColor = Color.Black,
+            containerColor = Gray200
+        )
+    }
+
 }
 
 @Composable
-fun BottomSheetContent(onClose: () -> Unit) {
-    val appinfoList: List<AppInfo> = listOf(
-        AppInfo("인스타그램", "com.app1", null, "30분"),
-        AppInfo("유튜브", "com.app2", null, "45분"),
-        AppInfo("카카오톡", "com.app3", null, "1시간"),
-        AppInfo("인스타그램", "com.app1", null, "30분"),
-        AppInfo("유튜브", "com.app2", null, "45분"),
-        AppInfo("카카오톡", "com.app3", null, "1시간"),
-        AppInfo("인스타그램", "com.app1", null, "30분"),
-        AppInfo("유튜브", "com.app2", null, "45분"),
-        AppInfo("카카오톡", "com.app3", null, "1시간")
-    )
+fun BottomSheetContent(appInfoList: List<AppInfo>, onClose: () -> Unit) {
 
-    Box{
+    Box {
         Column(
             modifier = Modifier
                 .wrapContentHeight()
@@ -289,31 +385,36 @@ fun BottomSheetContent(onClose: () -> Unit) {
                 .padding(horizontal = 20.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                //icon button 만큼 start padding
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 48.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     "차단 중인 앱",
-                    style = LimberTextStyle.Heading4,
+                    style = LimberTextStyle.Heading5,
                     color = Gray800,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
                 )
+                IconButton(
+                    onClick = { onClose() },
+                    modifier = Modifier
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        tint = Gray600
+                    )
+                }
 
             }
             Spacer(Modifier.height(33.dp))
-            AppList(appInfoList = appinfoList, onClickModifyButton = {})
+            AppList(appInfoList = appInfoList, onClickModifyButton = {})
             Spacer(Modifier.height(24.dp))
 
         }
-        IconButton(
-            onClick = { onClose() },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(20.dp)
-        ) {
-            Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = Gray600)
-        }
     }
-
 }

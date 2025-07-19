@@ -151,8 +151,7 @@ fun LimberCheckButton(
 fun LimberCloseButton(modifier: Modifier = Modifier,onClick: () -> Unit){
     IconButton(
         onClick = onClick,
-        modifier = modifier
-            .size(24.dp)
+        modifier = modifier.size(18.dp)
     ) {
         Icon(
             imageVector = Icons.Default.Close,

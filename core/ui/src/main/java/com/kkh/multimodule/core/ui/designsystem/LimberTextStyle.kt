@@ -3,6 +3,7 @@ package com.kkh.multimodule.core.ui.designsystem
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.kkh.multimodule.core.ui.R
 
@@ -64,6 +65,16 @@ object LimberTextStyle {
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
             color = defaultTextColor
+        )
+
+    val Heading5: TextStyle
+        get() = TextStyle(
+            fontSize = 16.sp,
+            lineHeight = 22.4.sp,
+            fontFamily = FontFamily(Font(R.font.suit_semibold)),
+            fontWeight = FontWeight(600),
+            color = defaultTextColor,
+            textAlign = TextAlign.Center,
         )
 
     val Body1: TextStyle

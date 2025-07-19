@@ -8,7 +8,7 @@ object TimerRoute{
     const val ROUTE = "TIMER"
 }
 
-fun NavController.navigateToTimer() =
+fun NavController.navigateToActiveTimer() =
     navigate(route = TimerRoute.ROUTE)
 
 fun NavGraphBuilder.timerNavGraph(
