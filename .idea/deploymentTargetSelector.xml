@@ -24,12 +24,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="LottieAnimation">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="LimberTimePickerPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="ThreeCirclesWithBar">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -37,6 +31,12 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="SelectFocusDegree">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="LimberColumnChartExample">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ReportPagerContent">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

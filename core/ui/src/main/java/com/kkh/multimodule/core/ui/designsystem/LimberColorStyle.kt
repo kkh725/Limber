@@ -20,6 +20,9 @@ object LimberColorStyle {
 
 
     val Primary_Main = Color(0xFFB05AF6)
+    val Primary_Light = Color(0xFFDFB8FF)
+    val Primary_Vivid = Color(0xFF8308D2)
+
     val Primary_Dark = Color(0xFF2F044B)
     val Primary_Background_Dark = Color(0xFFF6EAFF)
     val Secondary_Main = Color(0xFFFF725E)

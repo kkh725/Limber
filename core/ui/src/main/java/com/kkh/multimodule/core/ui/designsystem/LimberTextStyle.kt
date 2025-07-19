@@ -112,4 +112,22 @@ object LimberTextStyle {
             fontWeight = fontWeightMedium,
             color = defaultTextColor
         )
+
+    val graphBody3_Gray400 : TextStyle
+        get() = TextStyle(
+            fontSize = 12.sp,
+            lineHeight = 16.8.sp,
+            fontFamily = suitSemiboldFamily,
+            fontWeight = fontWeightMedium,
+            color = LimberColorStyle.Gray400
+        )
+
+    val graphBody3_Primary_Vivid : TextStyle
+        get() = TextStyle(
+            fontSize = 12.sp,
+            lineHeight = 16.8.sp,
+            fontFamily = suitSemiboldFamily,
+            fontWeight = fontWeightMedium,
+            color = LimberColorStyle.Primary_Vivid
+        )
 }

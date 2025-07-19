@@ -58,7 +58,6 @@ fun LaboratoryScreen() {
         Modifier
             .fillMaxSize()
             .systemBarsPadding()
-            .navigationBarsPadding()
     ) {
         LaboratoryScreenTopBar(
             modifier = Modifier,
