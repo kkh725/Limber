@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -220,15 +221,20 @@ fun RecallScreen(
                     recallViewModel.sendEvent(RecallEvent.OnValueChange(it))
                 },
                 onClose = {
-                    coroutineScope.launch { sheetState.hide() }
-                    recallViewModel.sendEvent(
-                        RecallEvent.SetSheetState(
-                            false
+                    coroutineScope.launch {
+                        sheetState.hide()
+                        recallViewModel.sendEvent(
+                            RecallEvent.SetSheetState(
+                                false
+                            )
                         )
-                    )
+                    }
                 },
                 onClickSheetComplete = {
-                    recallViewModel.sendEvent(RecallEvent.OnClickSheetComplete)
+                    coroutineScope.launch {
+                        sheetState.hide()
+                        recallViewModel.sendEvent(RecallEvent.OnClickSheetComplete)
+                    }
                 }
             )
         }
@@ -242,6 +248,7 @@ fun RecallScreen(
                 },
                 onClickCancel = {
                     recallViewModel.sendEvent(RecallEvent.SetModalState(false))
+                    onNavigateToHome()
                 }
             )
         }
@@ -523,7 +530,10 @@ fun BottomSheetContent(
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(
-                    onClick = { onClose() },
+                    onClick = {
+                        keyboardController?.hide()
+                        onClose()
+                    },
                     modifier = Modifier
                 ) {
                     Icon(
@@ -546,8 +556,11 @@ fun BottomSheetContent(
             Spacer(Modifier.weight(1f))
 
             LimberGradientButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onClickSheetComplete,
+                modifier = Modifier.fillMaxWidth().imePadding(),
+                onClick = {
+                    keyboardController?.hide()
+                    onClickSheetComplete()
+                },
                 text = "완료",
                 textColor = Color.White
             )

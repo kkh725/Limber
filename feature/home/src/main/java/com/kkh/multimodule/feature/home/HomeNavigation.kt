@@ -38,6 +38,9 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
     composable(HomeRoutes.RECALL) {
-        RecallScreen(onPopBackStack = onPopBackStack)
+        RecallScreen(
+            onPopBackStack = onPopBackStack,
+            onNavigateToHome = onNavigateToHome
+        )
     }
 }
