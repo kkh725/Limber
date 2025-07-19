@@ -1,5 +1,6 @@
 package com.kkh.multimodule.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -18,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kkh.multimodule.LimberBottomBar
 import com.kkh.multimodule.RootViewModel
 import com.kkh.multimodule.core.domain.model.ScreenState
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.intent.RootEvent
 
 
@@ -35,8 +38,9 @@ fun LimberApp() {
     // 👉 현재 라우트 (destination.route)
     val currentRoute = navBackStackEntry?.destination?.route
 
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().background(Gray50)) {
         Scaffold(
+            containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
                 if (screenState != ScreenState.ONBOARDING_SCREEN){

@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -33,6 +36,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.feature.laboratory.report.ReportPagerContent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,7 +54,12 @@ fun LaboratoryScreen() {
         }
     }
 
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .navigationBarsPadding()
+    ) {
         LaboratoryScreenTopBar(
             modifier = Modifier,
             selectedTimerType = currentPageType,
@@ -64,6 +73,13 @@ fun LaboratoryScreen() {
                     pagerState.animateScrollToPage(1)
                 }
             })
+
+        HorizontalPager(state = pagerState) {
+            when (it) {
+                0 -> ReportPagerContent()
+                1 -> ReportPagerContent()
+            }
+        }
     }
 }
 
