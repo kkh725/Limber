@@ -91,18 +91,11 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(0)
                     }
-
-                    timerViewModel.sendEvent(
-                        TimerEvent.OnClickTimerScreenButton(TimerScreenType.Now)
-                    )
                 },
                 onClickReservationBtn = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(1)
                     }
-                    timerViewModel.sendEvent(
-                        TimerEvent.OnClickTimerScreenButton(TimerScreenType.Reserved)
-                    )
                 }
             )
         },

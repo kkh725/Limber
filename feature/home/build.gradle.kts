@@ -12,8 +12,8 @@ android {
 dependencies {
 
     api(project(":core:domain"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:accessibility"))
+    api(project(":core:ui"))
+    api(project(":core:accessibility"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -9,7 +9,6 @@ import dagger.hilt.android.HiltAndroidApp
 class LimberApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Log.d("test", "test: ")
         DataStoreManager.init(this)
     }
 }

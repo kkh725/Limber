@@ -44,6 +44,7 @@ desugar_jdk_libs = "2.1.5"
 navigationComposeAndroid = "2.9.0"
 junitJupiter = "5.8.1"
 timePicker = "1.0.1"
+navigationCommonAndroid = "2.9.2"
 
 # libraries ------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------
@@ -106,6 +107,7 @@ time-picker = { group = "io.github.dongchyeon", name = "time-picker", version.re
 
 #로티
 lottie-compose = { group = "com.airbnb.android",name = "lottie-compose", version.ref = "lottieCompose" }
+androidx-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
 
 
 # plugins ------------------------------------------------------------------------------------------------------------------------
