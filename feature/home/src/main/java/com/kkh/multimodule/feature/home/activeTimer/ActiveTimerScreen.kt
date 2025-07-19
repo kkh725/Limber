@@ -30,9 +30,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -43,6 +46,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,17 +60,21 @@ import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Dark
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.AppList
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
+import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -92,6 +100,19 @@ fun ActiveTimerScreen(
     val focusType = uiState.focusType
 
     val isTimerEnd = timerPercent == 0f
+
+    var countdownSeconds by remember(isTimerEnd) { mutableIntStateOf(10) }
+
+    LaunchedEffect(isTimerEnd) {
+        if (isTimerEnd) {
+            countdownSeconds = 10
+            for (i in 10 downTo 1) {
+                countdownSeconds = i
+                delay(1000)
+            }
+            onNavigateToRecall()
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         Image(painter = painterResource(R.drawable.logo_limber), contentDescription = null)
@@ -137,7 +158,7 @@ fun ActiveTimerScreen(
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (isTimerEnd) {
                         Text(
-                            "10초 후에 자동으로 회고 페이지로 넘어갑니다.",
+                            "${countdownSeconds}초 후에 자동으로 회고 페이지로 넘어갑니다.",
                             color = Gray500,
                             style = LimberTextStyle.Caption1,
                         )
@@ -345,7 +366,8 @@ fun BottomBar(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             LimberSquareButton(
                 modifier = Modifier
-                    .fillMaxWidth().weight(1f),
+                    .fillMaxWidth()
+                    .weight(1f),
                 onClick = onNavigateToHome,
                 text = "홈으로 가기",
                 textColor = Color.Black,
@@ -354,7 +376,8 @@ fun BottomBar(
             Spacer(Modifier.width(12.dp))
             LimberSquareButton(
                 modifier = Modifier
-                    .fillMaxWidth().weight(1f),
+                    .fillMaxWidth()
+                    .weight(1f),
                 onClick = onNavigateToRecall,
                 text = "회고하기",
                 textColor = Color.White,

@@ -59,6 +59,7 @@ fun WarnDialog(
         AppInfo("유튜브", "com.app2", null, "45분"),
         AppInfo("카카오톡", "com.app3", null, "1시간")
     ),
+    title : String = "1시간 4분동안\n다음의 앱들이 차단돼요",
     onClickModifyButton: () -> Unit = {},
     onClickStartButton: () -> Unit = {},
     onDismissRequest: () -> Unit = {}
@@ -117,7 +118,7 @@ fun WarnDialog(
             Spacer(Modifier.height(32.dp))
 
             Text(
-                "1시간 4분동안\n다음의 앱들이 차단돼요",
+                title,
                 modifier = Modifier.fillMaxWidth(),
                 style = LimberTextStyle.Heading2,
                 textAlign = TextAlign.Center
@@ -206,9 +207,11 @@ fun AppList(
     onClickModifyButton: () -> Unit
 ) {
     if (appInfoList.isEmpty()) {
-        Box(Modifier
-            .height(76.dp)
-            .fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier
+                .height(76.dp)
+                .fillMaxWidth(), contentAlignment = Alignment.Center
+        ) {
             IconButton(onClickModifyButton, modifier = Modifier.size(48.dp)) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -256,7 +259,12 @@ fun AppInfoItem(appInfo: AppInfo) {
                 .size(24.dp)
         )
         Spacer(Modifier.height(8.dp))
-        Text(appInfo.appName, style = LimberTextStyle.Body2)
+        Text(
+            appInfo.appName,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = LimberTextStyle.Body2
+        )
     }
 }
 

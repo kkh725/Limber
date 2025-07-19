@@ -142,6 +142,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
     if (isModalVisible) {
         Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
             WarnDialog(
+                title = "${selectedTime.hour}시간 ${selectedTime.minute}분 동안\n 다음의 앱들이 차단돼요",
                 appinfoList = modalAppList,
                 onClickModifyButton = {
                     timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
