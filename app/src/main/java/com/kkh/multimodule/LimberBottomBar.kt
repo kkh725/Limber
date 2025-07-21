@@ -47,7 +47,7 @@ fun LimberBottomBar(
         BottomNavItem.Home,
         BottomNavItem.TIMER,
         BottomNavItem.LABORATORY,
-        BottomNavItem.MORE
+//        BottomNavItem.MORE
     )
     val navBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = navBackStackEntry?.destination?.route

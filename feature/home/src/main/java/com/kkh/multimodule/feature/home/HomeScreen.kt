@@ -125,7 +125,7 @@ private fun HomeScreenMainBody(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.logo_limber),
+                painter = painterResource(R.drawable.ic_lv1),
                 modifier = Modifier.size(114.dp),
                 contentDescription = null
             )
