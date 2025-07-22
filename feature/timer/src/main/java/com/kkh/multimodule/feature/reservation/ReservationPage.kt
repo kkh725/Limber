@@ -190,7 +190,8 @@ fun ReservationTopBar(
                 color = Primary_Main
             )
         }
-        ModifyButton(onClick = onClickModify)
+        //todo 해제
+//        ModifyButton(onClick = onClickModify)
     }
 }
 

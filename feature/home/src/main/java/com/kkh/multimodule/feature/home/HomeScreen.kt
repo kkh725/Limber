@@ -56,6 +56,10 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Secondary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.DopamineActBox
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
+import com.kkh.multimodule.core.ui.util.decrementOneSecond
+import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,8 +75,19 @@ fun HomeScreen(
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    var timerText by remember { mutableStateOf(getCurrentTimeInKoreanFormat()) }
+
     LaunchedEffect(Unit) {
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
+    }
+
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            delay(1000)
+            if (timerText != "00:00:00") {
+                timerText = decrementOneSecond(timerText)
+            }
+        }
     }
 
     Column(
@@ -95,7 +110,8 @@ fun HomeScreen(
                 .weight(1f)
                 .fillMaxSize(),
             appInfoList = appInfoList,
-            navigateToActiveTimer = onNavigateToActiveTimer
+            navigateToActiveTimer = onNavigateToActiveTimer,
+            timerText = timerText
         )
     }
 
@@ -116,7 +132,8 @@ fun HomeScreen(
 private fun HomeScreenMainBody(
     modifier: Modifier = Modifier,
     appInfoList: List<AppInfo>,
-    navigateToActiveTimer : () -> Unit = {}
+    navigateToActiveTimer : () -> Unit = {},
+    timerText: String = "00:00:00"
 ) {
     Box(modifier = modifier) {
         Column(
@@ -130,7 +147,7 @@ private fun HomeScreenMainBody(
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
-            TimerButton(onClick = navigateToActiveTimer)
+            TimerButton(onClick = navigateToActiveTimer, timerText = timerText)
             Spacer(Modifier.height(24.dp))
             TodayActivityBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
@@ -168,19 +185,20 @@ fun HomeTopBar(number: Int, onClick: () -> Unit, onClickNoti: () -> Unit) {
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
                     .background(Color(0xFF7531C6))
-                    .clickable { onClick() }
+                    .clickable(enabled = false) { onClick() }
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text("${number}개의 앱 관리중", style = LimberTextStyle.Body2, color = Color.White)
             }
             Spacer(Modifier.width(6.dp))
-            IconButton(onClick = onClickNoti, Modifier) {
-                Image(
-                    painter = painterResource(R.drawable.ic_noti),
-                    modifier = Modifier.size(20.dp),
-                    contentDescription = "Back"
-                )
-            }
+            //todo open
+//            IconButton(onClick = onClickNoti, Modifier) {
+//                Image(
+//                    painter = painterResource(R.drawable.ic_noti),
+//                    modifier = Modifier.size(20.dp),
+//                    contentDescription = "Back"
+//                )
+//            }
         }
     }
 }
@@ -333,7 +351,7 @@ fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
                         colors = listOf(Color(0xFFDFB8FF), Color(0xFFFAF5FF))
                     )
                 )
-                .clickable(onClick = {})
+//                .clickable(onClick = {})
                 .padding(vertical = 16.dp, horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -429,7 +447,7 @@ fun TimerButton(onClick: () -> Unit, timerText: String = "22:22:22") {
         Modifier
             .height(60.dp)
             .clip(RoundedCornerShape(100.dp))
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick, enabled = false)
             .background(Color.Red)
             .then(backgroundModifier)
             .padding(horizontal = 8.dp, vertical = 20.dp),
