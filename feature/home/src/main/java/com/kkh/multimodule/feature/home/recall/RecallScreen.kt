@@ -133,6 +133,7 @@ fun RecallScreen(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isSheetOpen = uiState.sheetState
+    var isRecallComplete by remember { mutableStateOf(false) }
 
     var selectedIndex by remember { mutableIntStateOf(-1) }
 
@@ -196,7 +197,7 @@ fun RecallScreen(
         Spacer(Modifier.weight(1f))
         LimberGradientButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {},
+            onClick = { isRecallComplete = true },
             text = "저장하기",
             textColor = Color.White
         )
@@ -248,6 +249,20 @@ fun RecallScreen(
                 },
                 onClickCancel = {
                     recallViewModel.sendEvent(RecallEvent.SetModalState(false))
+                    onNavigateToHome()
+                }
+            )
+        }
+    }
+    if (isRecallComplete){
+        Dialog({ isRecallComplete = false }) {
+            RecallCompleteWarnModal(
+                onClickNavigateHome = {
+                    isRecallComplete = false
+                    onNavigateToHome()
+                },
+                onClickWatchReport = {
+                    isRecallComplete = false
                     onNavigateToHome()
                 }
             )
@@ -652,5 +667,54 @@ fun RecallCloseWarnModal(
             )
         }
         Spacer(Modifier.height(12.dp))
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun RecallCompleteWarnModal(
+    onClickNavigateHome: () -> Unit = {},
+    onClickWatchReport: () -> Unit = {}
+) {
+    Column(
+        Modifier
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .fillMaxWidth().padding(12.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(painter = painterResource(R.drawable.ic_info), contentDescription = null)
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            "회고가 저장되었어요!",
+            style = LimberTextStyle.Heading4,
+            textAlign = TextAlign.Center,
+            color = LimberColorStyle.Gray800
+        )
+        Spacer(Modifier.height(19.dp))
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            LimberSquareButton(
+                modifier = Modifier.weight(1f),
+                onClick = onClickNavigateHome,
+                text = "홈으로 가기",
+                containerColor = Gray200,
+                textColor = LimberColorStyle.Gray800
+            )
+            Spacer(Modifier.width(8.dp))
+            LimberSquareButton(
+                modifier = Modifier.weight(1f),
+                onClick = onClickWatchReport,
+                text = "리포트 보기",
+                textColor = Color.White
+            )
+        }
     }
 }
