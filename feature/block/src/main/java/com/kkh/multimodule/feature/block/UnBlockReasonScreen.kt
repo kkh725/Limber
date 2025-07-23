@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -71,7 +72,7 @@ fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Uni
                 UnBlockReasonTopBar(
                     modifier = Modifier
                         .padding(top = 20.dp, start = 20.dp)
-                        .systemBarsPadding(),
+                        .statusBarsPadding(),
                     onClickBack = {
                         onClickBack
                     }

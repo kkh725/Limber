@@ -151,6 +151,7 @@ fun ReservationPage(modifier: Modifier = Modifier) {
                     )
                 }
             )
+            Spacer(Modifier.height(20.dp))
         }
     }
 

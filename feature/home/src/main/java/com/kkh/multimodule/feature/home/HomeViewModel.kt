@@ -22,6 +22,7 @@ class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRe
             when (e) {
                 is HomeEvent.OnCompleteRegisterButton -> {
                     setBlockedPackageList(e.appList)
+                    setBlockModeOn()
                     setPackageList()
                 }
 
@@ -41,6 +42,10 @@ class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRe
 
     private suspend fun setPackageList() {
         sendEvent(HomeEvent.SetBlockingAppList(appDataRepository.getBlockedPackageList()))
+    }
+
+    private suspend fun setBlockModeOn(){
+        appDataRepository.setBlockMode(true)
     }
 
 }

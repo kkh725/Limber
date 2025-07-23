@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
@@ -42,6 +43,7 @@ fun BlockScreen(
 ) {
 
     var isWarnModalVisible by remember { mutableStateOf(false) }
+    val viewModel : BlockViewModel = hiltViewModel()
 
     Box(Modifier.fillMaxSize()) {
         Box(

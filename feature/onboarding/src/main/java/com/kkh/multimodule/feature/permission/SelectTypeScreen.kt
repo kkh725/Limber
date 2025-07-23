@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -59,8 +60,7 @@ fun SelectTypeScreen(navigateToStart: () -> Unit, onClickBack: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp)
-            .systemBarsPadding(),
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SelectTopBar(

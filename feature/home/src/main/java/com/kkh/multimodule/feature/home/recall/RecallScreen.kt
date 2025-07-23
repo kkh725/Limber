@@ -142,7 +142,7 @@ fun RecallScreen(
             .background(Color.Gray)
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
-            .systemBarsPadding()
+            .statusBarsPadding()
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

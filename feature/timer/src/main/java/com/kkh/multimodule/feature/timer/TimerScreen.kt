@@ -83,9 +83,9 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             TimerScreenTopBar(
-                modifier = Modifier.systemBarsPadding(),
                 selectedTimerType = timerScreenState,
                 onClickStartNowBtn = {
                     coroutineScope.launch {

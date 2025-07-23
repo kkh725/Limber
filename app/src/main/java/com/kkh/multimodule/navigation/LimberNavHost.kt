@@ -30,11 +30,11 @@ fun LimberNavHost(
     rootViewModel: RootViewModel
 ) {
 
-//    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
 
     NavHost(
         navController = navController,
-        startDestination = OnBoardingRoute.Onboarding,
+        startDestination = HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
         modifier = modifier,
     ) {
         onBoardingNavGraph(

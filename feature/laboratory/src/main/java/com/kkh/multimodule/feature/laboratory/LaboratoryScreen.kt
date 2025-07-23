@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -57,7 +58,6 @@ fun LaboratoryScreen() {
     Column(
         Modifier
             .fillMaxSize()
-            .systemBarsPadding()
     ) {
         LaboratoryScreenTopBar(
             modifier = Modifier,

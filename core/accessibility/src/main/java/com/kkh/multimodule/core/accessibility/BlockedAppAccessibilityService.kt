@@ -45,7 +45,7 @@ class BlockedAppAccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-//        if (!isBlockedState.value) return
+        if (!isBlockedState.value) return
         val packageName = event?.packageName?.toString() ?: return
         Log.d("TAG", "packageList:22 ${packageName.firstOrNull()}")
 

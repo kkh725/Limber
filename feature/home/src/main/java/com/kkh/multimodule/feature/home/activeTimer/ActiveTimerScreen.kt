@@ -121,7 +121,6 @@ fun ActiveTimerScreen(
     Box(
         Modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
         Scaffold(bottomBar = {
             Box(
