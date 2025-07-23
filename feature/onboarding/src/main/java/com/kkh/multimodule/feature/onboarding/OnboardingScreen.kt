@@ -54,8 +54,7 @@ fun OnboardingScreen(navigateToScreenTimePermissionScreen: () -> Unit = {}) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         HorizontalPager(

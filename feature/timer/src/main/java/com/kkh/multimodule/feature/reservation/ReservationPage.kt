@@ -151,7 +151,6 @@ fun ReservationPage(modifier: Modifier = Modifier) {
                     )
                 }
             )
-            Spacer(Modifier.height(20.dp))
         }
     }
 
@@ -191,8 +190,7 @@ fun ReservationTopBar(
                 color = Primary_Main
             )
         }
-        //todo 해제
-//        ModifyButton(onClick = onClickModify)
+        ModifyButton(onClick = onClickModify)
     }
 }
 
@@ -295,6 +293,9 @@ fun ReservationList(
                     onCheckButtonClicked(item.id, checked)
                 }
             )
+        }
+        item{
+            Spacer(Modifier.height(20.dp))
         }
     }
 }

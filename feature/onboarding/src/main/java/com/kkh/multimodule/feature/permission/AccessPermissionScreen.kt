@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.kkh.multimodule.core.accessibility.BlockedAppAccessibilityService
@@ -142,12 +143,9 @@ fun AccessPermissionScreen(navigateToManageApp: () -> Unit) {
     }
     // Show animation if playing
     if (animationPlaying) {
-        Box(Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))){
+        Dialog(onDismissRequest = { /* no-op, 또는 로딩중에는 막기 */ }) {
             LimberAnimation(
                 modifier = Modifier
-                    .align(Alignment.Center)
                     .size(50.dp),
                 resId = R.raw.loading_dark
             )
