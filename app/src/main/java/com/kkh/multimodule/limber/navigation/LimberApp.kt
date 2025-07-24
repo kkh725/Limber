@@ -1,8 +1,7 @@
-package com.kkh.multimodule.navigation
+package com.kkh.multimodule.limber.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -13,15 +12,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.kkh.multimodule.LimberBottomBar
-import com.kkh.multimodule.RootViewModel
+import com.kkh.multimodule.limber.LimberBottomBar
+import com.kkh.multimodule.limber.RootViewModel
 import com.kkh.multimodule.core.domain.model.ScreenState
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
-import com.kkh.multimodule.intent.RootEvent
+import com.kkh.multimodule.limber.intent.RootEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)

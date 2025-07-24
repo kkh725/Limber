@@ -1,7 +1,6 @@
-package com.kkh.multimodule
+package com.kkh.multimodule.limber
 
 import android.app.Application
-import android.util.Log
 import com.kkh.multimodule.core.datastore.DataStoreManager
 import dagger.hilt.android.HiltAndroidApp
 

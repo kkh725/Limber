@@ -1,10 +1,10 @@
-package com.kkh.multimodule
+package com.kkh.multimodule.limber
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkh.multimodule.intent.RootEvent
-import com.kkh.multimodule.intent.RootReducer
-import com.kkh.multimodule.intent.RootState
+import com.kkh.multimodule.limber.intent.RootEvent
+import com.kkh.multimodule.limber.intent.RootReducer
+import com.kkh.multimodule.limber.intent.RootState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch

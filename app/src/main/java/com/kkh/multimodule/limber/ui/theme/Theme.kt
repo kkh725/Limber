@@ -1,4 +1,4 @@
-package com.kkh.multimodule.ui.theme
+package com.kkh.multimodule.limber.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

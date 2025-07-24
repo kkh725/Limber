@@ -1,4 +1,4 @@
-package com.kkh.multimodule
+package com.kkh.multimodule.limber
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -24,7 +24,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
 import com.kkh.multimodule.feature.timer.TimerRoute
 import com.kkh.multimodule.feature.home.HomeRoutes
-import com.kkh.multimodule.navigation.BottomNavRoutes
+import com.kkh.multimodule.limber.navigation.BottomNavRoutes
 
 sealed class BottomNavItem(
     val route: String,

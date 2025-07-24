@@ -14,10 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Moduletest"
-        android:name="com.kkh.multimodule.LimberApplication"
+        android:name=".LimberApplication"
         tools:targetApi="31">
         <activity
-            android:name="com.kkh.multimodule.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyApp.Splash">
