@@ -684,7 +684,7 @@ fun RecallCompleteWarnModal(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painter = painterResource(R.drawable.ic_info), contentDescription = null)
+        Image(painter = painterResource(R.drawable.ic_check), contentDescription = null)
         Spacer(Modifier.height(10.dp))
 
         Text(
