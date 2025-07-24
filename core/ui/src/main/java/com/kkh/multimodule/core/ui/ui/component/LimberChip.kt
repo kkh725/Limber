@@ -101,7 +101,7 @@ fun LimberFilterChip(
         Modifier
             .clickable(onClick = onclick, enabled = enabled)
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 100.dp))
-            .padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 6.dp)
+            .padding(start = 12.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
     ) {
         Text(text, style = LimberTextStyle.Body2, color = textColor, textAlign = TextAlign.Center)
     }

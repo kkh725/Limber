@@ -118,7 +118,7 @@ fun RegisterBlockAppBottomSheet(
                     )
                 }
             }
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(12.dp))
             Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray500)
             Spacer(Modifier.height(11.dp))
             Box(

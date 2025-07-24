@@ -53,6 +53,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.feature.reservation.ReservationEvent
 import com.kkh.multimodule.feature.reservation.ReservationViewModel
@@ -301,7 +302,7 @@ fun ReservationBottomSheetContent(
                 onValueChange = onValueChange
             )
             Spacer(Modifier.height(20.dp))
-            HorizontalDivider(thickness = 4.dp, color = Gray200)
+            HorizontalDivider(thickness = 6.dp, color = Gray100)
             Spacer(Modifier.height(40.dp))
 
             ReservationFocusSection(
@@ -417,7 +418,7 @@ fun ReservationTimerSection(
     reservationTime : ReservationTime,
     onClickButton: (Int) -> Unit = {}
 ) {
-    Spacer(Modifier.height(40.dp))
+    Spacer(Modifier.height(20.dp))
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(horizontal = 20.dp)
@@ -463,7 +464,8 @@ fun ReservationTimerButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(timeText, style = LimberTextStyle.Body1, color = Gray600)
+            Text(timeText, style = LimberTextStyle.Heading5, color = Gray800)
+            // todo 
             Image(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null

@@ -214,7 +214,7 @@ fun TimerSelectorButton(
             )
     ) {
         Text(
-            text = text, modifier = Modifier
+            text = text, style = LimberTextStyle.Heading5, modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp)
         )
@@ -314,7 +314,8 @@ fun TimerScreenContent(
 
         LimberTimePicker24(
             selectedTime = selectedTime,
-            onValueChanged = onValueChanged)
+            onValueChanged = onValueChanged
+        )
     }
 }
 

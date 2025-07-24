@@ -201,10 +201,10 @@ fun LimberColumnChart(
             .height(230.dp),
         data = chartData,
         barProperties = BarProperties(
-            thickness = 28.dp,
+            thickness = 24.dp,
             cornerRadius = Rectangle(
-                topLeft = 10.dp,
-                topRight = 10.dp,
+                topLeft = 6.dp,
+                topRight = 6.dp,
                 bottomLeft = 0.dp,
                 bottomRight = 0.dp
             )

@@ -2,6 +2,7 @@ package com.kkh.multimodule.limber
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -52,7 +53,7 @@ fun LimberBottomBar(
     val navBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = navBackStackEntry?.destination?.route
 
-    Column {
+    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         HorizontalDivider(thickness = 1.dp, color = Gray200)
         NavigationBar(modifier = modifier.height(61.dp), containerColor = Gray50) {
             screens.forEach { screen ->
@@ -61,7 +62,7 @@ fun LimberBottomBar(
                         Icon(
                             painter = painterResource(screen.icon),
                             contentDescription = screen.title,
-                            modifier = Modifier.size(23.dp, 21.dp)
+                            modifier = Modifier.size(28.dp)
                         )
                     },
                     label = { Text(screen.title) },

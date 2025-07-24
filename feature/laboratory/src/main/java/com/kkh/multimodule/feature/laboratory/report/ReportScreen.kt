@@ -208,28 +208,28 @@ fun WeeklyFocusCard(
         modifier
             .background(
                 color = LimberColorStyle.Primary_BG_Normal,             // 연보라 계열의 배경색(예시)
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(10.dp)
             )
             .padding(16.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Image(
                 painter = painterResource(imageResId), // 아이콘 교체!
                 contentDescription = null,
-                modifier = Modifier.size(38.dp)
+                modifier = Modifier.size(36.dp)
             )
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = text,
-                color = LimberColorStyle.Primary_Main, // 프로젝트 컬러로 맞추기
+                color = LimberColorStyle.Primary_Vivid, // 프로젝트 컬러로 맞추기
                 style = LimberTextStyle.Body2
             )
             Text(
                 text = timerOrPercent,
-                color = Gray800,
+                color = LimberColorStyle.Primary_Dark,
                 style = LimberTextStyle.Heading2
             )
         }
@@ -247,7 +247,11 @@ fun ThisWeekTopGoalCard(
 ) {
     Box(
         modifier
-            .shadow(12.dp,shape = RoundedCornerShape(10.dp))
+            .shadow(
+                12.dp,
+                shape = RoundedCornerShape(10.dp),
+                spotColor = Color(0xFFEBEBEB)
+            )
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(10.dp)
@@ -283,7 +287,7 @@ fun ThisWeekTopGoalCard(
                         Image(
                             painter = painterResource(item.iconRes),
                             contentDescription = null,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(36.dp)
                         )
                         Spacer(Modifier.width(10.dp))
                         Column(

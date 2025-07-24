@@ -159,10 +159,11 @@ fun LaboratorySelectorButton(
     ) {
         Text(
             text = text,
+            style = LimberTextStyle.Heading5,
             color = textColor,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp)
+                .padding(bottom = 10.dp)
         )
 
         HorizontalDivider(
