@@ -53,6 +53,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberAnimation
+import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import kotlinx.coroutines.delay
 
@@ -167,13 +168,7 @@ fun TopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onClickBack, modifier = Modifier.size(24.dp)) {
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "ic_back"
-            )
-        }
+        LimberBackButton(onClick = onClickBack)
         TextButton({}, enabled = false, contentPadding = PaddingValues(0.dp)) {}
     }
 }
@@ -184,7 +179,7 @@ fun LimberProgressBar(percentage: Float) {
         modifier = Modifier
             .fillMaxWidth()
             .height(6.dp)
-            .background(color = Color.Black, shape = RoundedCornerShape(100.dp)) // 배경 바
+            .background(color = LimberColorStyle.Gray200, shape = RoundedCornerShape(100.dp)) // 배경 바
     ) {
         Box(
             modifier = Modifier

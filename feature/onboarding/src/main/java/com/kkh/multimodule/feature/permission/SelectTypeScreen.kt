@@ -33,14 +33,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
 import com.kkh.multimodule.core.ui.ui.component.LimberChip
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.feature.onboarding.OnboardingViewModel
@@ -83,7 +87,7 @@ fun SelectTypeScreen(navigateToStart: () -> Unit, onClickBack: () -> Unit) {
         )
         Spacer(Modifier.height(40.dp))
 
-        ChipGridScreen(
+        ChipColumnGridScreen(
             chipTexts = chipTexts,
             selectedIndex = selectedIndex,
             onSelect = { newIndex ->
@@ -122,13 +126,7 @@ fun SelectTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onClickBack, modifier = Modifier.size(24.dp)) {
-            Icon(
-                modifier = Modifier.fillMaxSize(),
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "ic_back"
-            )
-        }
+        LimberBackButton(onClick = onClickBack)
         TextButton(onClickSkip, contentPadding = PaddingValues(0.dp)) {
             Text(
                 "건너뛰기", style = LimberTextStyle.Body2, color = LimberColorStyle.Gray500
@@ -136,33 +134,39 @@ fun SelectTopBar(
         }
     }
 }
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ChipGridScreen(
+fun ChipColumnGridScreen(
     chipTexts: List<String>,
     selectedIndex: Int?,
     onSelect: (Int) -> Unit
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = Modifier.padding(horizontal = 50.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        itemsIndexed(chipTexts) { index, text ->
-            LimberChip(
-                modifier = Modifier.wrapContentWidth(),
-                text = text,
-                isSelected = selectedIndex == index,
-                onClick = {
-                    onSelect(index)
+        chipTexts.chunked(3).forEachIndexed { chunkRowIdx, subList ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                subList.forEachIndexed { chunkColIdx, text ->
+                    val realIdx = chunkRowIdx * 3 + chunkColIdx
+                    LimberChip(
+                        text = text,
+                        isSelected = selectedIndex == realIdx,
+                        onClick = {
+                            onSelect(realIdx)
+                        }
+                    )
                 }
-            )
+                // 3개 미만의 Row일 때 빈공간 채우기(선택)
+                if (subList.size < 3) {
+                    repeat(3 - subList.size) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

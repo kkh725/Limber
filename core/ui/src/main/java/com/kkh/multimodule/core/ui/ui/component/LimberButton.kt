@@ -161,3 +161,27 @@ fun LimberCloseButton(modifier: Modifier = Modifier,onClick: () -> Unit){
         )
     }
 }
+
+@Composable
+fun LimberBackButton(modifier: Modifier = Modifier,onClick: () -> Unit){
+    IconButton(onClick = onClick, modifier = modifier.size(24.dp)) {
+        Icon(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(R.drawable.ic_back),
+            tint = Color.Unspecified,
+            contentDescription = "ic_back"
+        )
+    }
+}
+
+@Composable
+fun LimberNextButton(modifier: Modifier = Modifier,onClick: () -> Unit){
+    IconButton(onClick = onClick, modifier = modifier.size(24.dp)) {
+        Icon(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(R.drawable.ic_next),
+            tint = Color.Unspecified,
+            contentDescription = "ic_next"
+        )
+    }
+}

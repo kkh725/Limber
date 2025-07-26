@@ -89,18 +89,11 @@ fun RegisterBlockAppBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = {
+                LimberBackButton {
                     scope.launch {
                         sheetState.hide()
                         onDismissRequest()
                     }
-                }, modifier = Modifier.size(24.dp)) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "",
-                        modifier = Modifier.fillMaxSize(),
-                        tint = Gray400
-                    )
                 }
                 TextButton(onClick = {
                     // ✅ 선택된 앱 리스트 추출
@@ -183,7 +176,7 @@ fun CheckAppItem(
         }
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
-            color = LimberColorStyle.Gray400
+            color = LimberColorStyle.Gray300
         )
     }
 }
