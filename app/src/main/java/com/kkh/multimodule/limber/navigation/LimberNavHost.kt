@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kkh.multimodule.limber.RootViewModel
 import com.kkh.multimodule.core.domain.model.ScreenState
+import com.kkh.multimodule.feature.home.HomeRoutes
 import com.kkh.multimodule.feature.laboratory.laboratoryGraph
 import com.kkh.multimodule.feature.home.homeNavGraph
 import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
@@ -28,11 +29,11 @@ fun LimberNavHost(
     rootViewModel: RootViewModel
 ) {
 
-//    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
 
     NavHost(
         navController = navController,
-        startDestination = OnBoardingRoute.Onboarding,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
+        startDestination = HomeRoutes.HOME,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
         modifier = modifier,
     ) {
         onBoardingNavGraph(

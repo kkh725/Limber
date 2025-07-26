@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,14 +50,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray700
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Secondary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.DopamineActBox
+import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.multimodule.core.ui.util.decrementOneSecond
 import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
@@ -132,7 +137,7 @@ fun HomeScreen(
 private fun HomeScreenMainBody(
     modifier: Modifier = Modifier,
     appInfoList: List<AppInfo>,
-    navigateToActiveTimer : () -> Unit = {},
+    navigateToActiveTimer: () -> Unit = {},
     timerText: String = "00:00:00"
 ) {
     Box(modifier = modifier) {
@@ -167,7 +172,11 @@ private fun HomeScreenMainBody(
 }
 
 @Composable
-fun HomeTopBar(number: Int, onClick: () -> Unit, onClickNoti: () -> Unit) {
+fun HomeTopBar(
+    number: Int,
+    onClick: () -> Unit,
+    onClickNoti: () -> Unit
+) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -181,24 +190,33 @@ fun HomeTopBar(number: Int, onClick: () -> Unit, onClickNoti: () -> Unit) {
         )
         Spacer(Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
+            Row(
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
-                    .background(Color(0xFF7531C6))
+                    .background(Color(0xFF9133E6))
                     .clickable(enabled = false) { onClick() }
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("${number}개의 앱 관리중", style = LimberTextStyle.Body2, color = Color.White)
+                Image(
+                    painter = painterResource(R.drawable.ic_apps),
+                    contentDescription = "ic_apps"
+                )
+                Spacer(Modifier.width(5.33.dp))
+                Text(
+                    "$number",
+                    style = LimberTextStyle.Heading5,
+                    color = LimberColorStyle.Primary_Light
+                )
             }
             Spacer(Modifier.width(6.dp))
-            //todo open
-//            IconButton(onClick = onClickNoti, Modifier) {
-//                Image(
-//                    painter = painterResource(R.drawable.ic_noti),
-//                    modifier = Modifier.size(20.dp),
-//                    contentDescription = "Back"
-//                )
-//            }
+            IconButton(onClick = onClickNoti, Modifier) {
+                Image(
+                    painter = painterResource(R.drawable.ic_noti),
+                    modifier = Modifier.size(20.dp),
+                    contentDescription = "Back"
+                )
+            }
         }
     }
 }
@@ -210,184 +228,161 @@ fun HomeMainContent(
     focusTime: String,
     dopamineTime: String
 ) {
-
     val focusTextColor = if (focusTime == "0분") Primary_Main else Primary_Main.copy(alpha = 0.3f)
     val dopamineTextColor =
         if (dopamineTime == "0분") Secondary_Main else Secondary_Main.copy(alpha = 0.3f)
     val focusTimeColor = if (focusTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
     val dopamineTimeColor = if (dopamineTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
 
-    Box(modifier = modifier) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(327.dp)
-                .shadow(4.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                .background(Color.White)
-                .padding(20.dp)
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
+    // 카드 형태 컨테이너
+    Box(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+            .height(327.dp)
+            .shadow(
+                12.dp,
+                shape = RoundedCornerShape(12.dp),
+                clip = true,
+                spotColor = Color(0x14000000)
+            )
+            .background(Color.White)
+            .padding(20.dp, top = 20.dp, end = 20.dp, bottom = 14.dp)
+    ) {
+        // 메인 수직 배치(콘텐츠)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            // 제목 및 값 Rows
+            Spacer(Modifier.height(4.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Text("집중한 시간", style = LimberTextStyle.Body2, color = focusTextColor)
+                Text("도파민 노출시간", style = LimberTextStyle.Body2, color = dopamineTextColor)
+            }
+            Spacer(Modifier.height(2.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(focusTime, style = LimberTextStyle.Heading1, color = focusTimeColor)
+                Text(dopamineTime, style = LimberTextStyle.Heading1, color = dopamineTimeColor)
+            }
+            Spacer(Modifier.height(12.dp))
 
-                // 콘텐츠 영역
-                Column(
+            // 그래프(바 형태)
+            Row(Modifier.fillMaxWidth()) {
+                Box(
+                    Modifier
+                        .size(120.dp, 24.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 100.dp,
+                                bottomStart = 100.dp,
+                                topEnd = 0.dp,
+                                bottomEnd = 0.dp
+                            )
+                        )
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2))
+                            )
+                        )
+                )
+                Spacer(Modifier.width(2.dp))
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .height(24.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 0.dp,
+                                bottomStart = 0.dp,
+                                topEnd = 100.dp,
+                                bottomEnd = 100.dp
+                            )
+                        )
+                        .background(Secondary_Main)
+                )
+            }
+            Spacer(Modifier.height(16.dp))
+
+            // 활동 박스 2개를 나란히
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                FocusActBox(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth()
-                ) {
-
-
-                    Spacer(Modifier.height(4.dp))
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(
-                            "집중한 시간",
-                            style = LimberTextStyle.Body2,
-                            color = focusTextColor
-                        )
-                        Text(
-                            "도파민 노출시간",
-                            style = LimberTextStyle.Body2,
-                            color = dopamineTextColor
-                        )
-                    }
-                    Spacer(Modifier.height(2.dp))
-
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(focusTime, style = LimberTextStyle.Heading1, color = focusTimeColor)
-                        Text(
-                            dopamineTime,
-                            style = LimberTextStyle.Heading1,
-                            color = dopamineTimeColor
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
-
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Box(
-                            Modifier
-                                .size(120.dp, 24.dp)
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 100.dp,
-                                        bottomStart = 100.dp,
-                                        topEnd = 0.dp,
-                                        bottomEnd = 0.dp
-                                    )
-                                )
-                                .background(
-                                    brush = Brush.horizontalGradient(
-                                        colors = listOf(Color(0xFFB961FF), Color(0xFF8308D2))
-                                    )
-                                )
-                        )
-
-                        Spacer(Modifier.width(2.dp))
-
-                        Box(
-                            Modifier
-                                .weight(1f)
-                                .height(24.dp)
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 0.dp,
-                                        bottomStart = 0.dp,
-                                        topEnd = 100.dp,
-                                        bottomEnd = 100.dp
-                                    )
-                                )
-                                .background(Secondary_Main)
-                        )
-                    }
-                    Spacer(Modifier.height(24.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        FocusActBox(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Gray100)
-                                .padding(16.dp)
-                        )
-
-                        Spacer(modifier = Modifier.width(20.dp))
-
-                        VerticalDivider()
-
-                        Spacer(modifier = Modifier.width(20.dp))
-
-                        DopamineActBox(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Gray100)
-                                .padding(16.dp),
-                            appInfoList = appInfoList
-                        )
-                    }
-                }
+                        .height(134.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Gray100)
+                        .padding(16.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                DopamineActBox(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(134.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Gray100)
+                        .padding(16.dp),
+                    appInfoList = appInfoList
+                )
+            }
+            Spacer(Modifier.height(14.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LimberText("분석 더보기", LimberTextStyle.Body2, Gray700)
+                Image(painterResource(R.drawable.ic_next), contentDescription = "")
             }
         }
     }
 }
 
+
 @Composable
-fun TodayActivityBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun TodayActivityBar(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = LimberColorStyle.Primary_BG_Dark,
+    textColor: Color = LimberColorStyle.Primary_Vivid,
+    onClick: () -> Unit
+) {
     Box(modifier = modifier) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .clip(RoundedCornerShape(12.dp))
                 .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(Color(0xFFDFB8FF), Color(0xFFFAF5FF))
-                    )
+                    color = backgroundColor, shape = RoundedCornerShape(100.dp)
                 )
 //                .clickable(onClick = {})
-                .padding(vertical = 16.dp, horizontal = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 modifier = Modifier.size(24.dp),
-                painter = painterResource(R.drawable.ic_star),
+                painter = painterResource(R.drawable.ic_fire),
                 contentDescription = "Star"
             )
             Spacer(Modifier.width(10.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
+            Row {
                 Text(
-                    "Today's Activity",
+                    "집중 시간",
                     style = LimberTextStyle.Body2,
-                    color = Gray600
+                    color = textColor
                 )
-                Row {
-                    Text(
-                        "집중 시간",
-                        style = LimberTextStyle.Heading4,
-                        color = Primary_Main
-                    )
-                    Text(
-                        "이 앞서고있어요! 계속 이어가요",
-                        style = LimberTextStyle.Heading4,
-                        color = Gray600
-                    )
-
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(modifier = Modifier.size(24.dp), onClick = {}) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_next),
-                    contentDescription = "Arrow Forward"
+                Text(
+                    "이 앞서고있어요! 계속 이어가요",
+                    style = LimberTextStyle.Body2,
+                    color = Gray800
                 )
             }
         }
@@ -408,7 +403,7 @@ fun FocusActBox(modifier: Modifier = Modifier) {
                     )
             )
             Spacer(Modifier.width(6.dp))
-            Text("집중한 시간", style = LimberTextStyle.Body2, color = Gray600)
+            Text("집중 활동", style = LimberTextStyle.Body2, color = Gray600)
         }
         Spacer(Modifier.height(16.dp))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

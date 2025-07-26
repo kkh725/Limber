@@ -2,6 +2,7 @@ package com.kkh.multimodule.core.ui.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 
 
 @Composable
@@ -41,33 +45,46 @@ fun DopamineActBox(
                     .background(color = Color.Red, shape = RoundedCornerShape(size = 100.dp))
             )
             Spacer(Modifier.width(6.dp))
-            Text("도파민 활동")
+            Text("도파민 활동", style = LimberTextStyle.Body2, color = Gray600)
         }
-        Spacer(Modifier.height(16.5.dp))
-        LazyColumn {
-            items(appInfoList) { appInfo ->
-                val bitmap = appInfo.appIcon?.toBitmap()
-                val imageBitmap = bitmap?.asImageBitmap()
-                val painter = imageBitmap?.let { BitmapPainter(it) }
+        Spacer(Modifier.height(16.dp))
+        if (appInfoList.isEmpty()){
+            Text(
+                text = "아직 활동이 없어요",
+                style = LimberTextStyle.Body3,
+                color = Gray400,
+            )
+        }else{
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                items(appInfoList) { appInfo ->
+                    val bitmap = appInfo.appIcon?.toBitmap()
+                    val imageBitmap = bitmap?.asImageBitmap()
+                    val painter = imageBitmap?.let { BitmapPainter(it) }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (painter != null) {
-                        Image(
-                            painter = painter,
-                            contentDescription = "App Icon",
-                            modifier = Modifier.size(18.dp) // 원하는 크기 지정
-                        )
-                    }else{
-                        Image(
-                            painter = painterResource(R.drawable.ic_data),
-                            contentDescription = "App Icon",
-                            modifier = Modifier.size(18.dp) // 원하는 크기 지정
+                    Row(verticalAlignment = Alignment.Top) {
+                        if (painter != null) {
+                            Image(
+                                painter = painter,
+                                contentDescription = "App Icon",
+                                modifier = Modifier.size(18.dp) // 원하는 크기 지정
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.ic_data),
+                                contentDescription = "App Icon",
+                                modifier = Modifier.size(18.dp) // 원하는 크기 지정
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = appInfo.usageTime,
+                            style = LimberTextStyle.Body3,
+                            color = Gray400,
+                            modifier = Modifier.align(Alignment.Top)
                         )
                     }
-                    Spacer(Modifier.width(12.dp))
-                    Text(text = appInfo.usageTime.toString(), fontSize = 12.sp)
+                    Spacer(Modifier.width(10.dp))
                 }
-                Spacer(Modifier.width(10.dp))
             }
         }
     }
