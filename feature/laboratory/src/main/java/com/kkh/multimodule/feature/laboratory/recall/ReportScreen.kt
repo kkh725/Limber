@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.laboratory.report
+package com.kkh.multimodule.feature.laboratory.recall
 
 import android.widget.Space
 import androidx.compose.foundation.Image

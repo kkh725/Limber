@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
@@ -68,6 +69,7 @@ fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Uni
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
+            containerColor = Gray50,
             topBar = {
                 UnBlockReasonTopBar(
                     modifier = Modifier

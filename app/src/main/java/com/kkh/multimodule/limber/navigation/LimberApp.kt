@@ -38,7 +38,7 @@ fun LimberApp() {
 
     Box(Modifier.fillMaxSize().background(Gray50)) {
         Scaffold(
-            containerColor = Color.Transparent,
+            containerColor = Gray50,
             bottomBar = {
                 if (screenState != ScreenState.ONBOARDING_SCREEN){
                     LimberBottomBar(

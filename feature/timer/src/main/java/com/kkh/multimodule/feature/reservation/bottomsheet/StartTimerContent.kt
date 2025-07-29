@@ -28,7 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
+import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
+import com.kkh.multimodule.core.ui.ui.component.LimberNextButton
 import com.kkh.multimodule.core.ui.ui.component.LimberTimePicker
 import kotlinx.datetime.LocalTime
 
@@ -69,12 +72,6 @@ fun StartTimerContent(
             .padding(it)
             .padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(32.dp))
-            Text(
-                "종료할 시간을 선택해주세요",
-                color = LimberColorStyle.Gray800,
-                style = LimberTextStyle.Heading3
-            )
-            Spacer(Modifier.height(12.dp))
 
             LimberTimePicker(
                 selectedTime = selectedTime,
@@ -100,16 +97,7 @@ fun StartTimerTopBar(
             .fillMaxWidth()
             .padding(horizontal = 20.dp), verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(
-            modifier = Modifier.size(24.dp), onClick = onClickBack
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "",
-                modifier = Modifier.fillMaxSize(),
-                tint = LimberColorStyle.Gray400
-            )
-        }
+        LimberBackButton (onClick = onClickBack)
         Spacer(Modifier.weight(1f))
         Text(
             text,
@@ -117,15 +105,6 @@ fun StartTimerTopBar(
             style = LimberTextStyle.Heading4
         )
         Spacer(Modifier.weight(1f))
-        IconButton(
-            modifier = Modifier.size(24.dp), onClick = onClickClose
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "",
-                modifier = Modifier.size(24.dp),
-                tint = LimberColorStyle.Gray400
-            )
-        }
+        LimberCloseButton (onClick = onClickClose)
     }
 }

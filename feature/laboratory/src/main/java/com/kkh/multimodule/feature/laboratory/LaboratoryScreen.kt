@@ -37,7 +37,8 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
-import com.kkh.multimodule.feature.laboratory.report.ReportPagerContent
+import com.kkh.multimodule.feature.laboratory.recall.ReportPagerContent
+import com.kkh.multimodule.feature.laboratory.report.RecallPagerContent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,7 +77,7 @@ fun LaboratoryScreen() {
         HorizontalPager(state = pagerState) {
             when (it) {
                 0 -> ReportPagerContent()
-                1 -> ReportPagerContent()
+                1 -> RecallPagerContent()
             }
         }
     }
@@ -125,13 +126,13 @@ fun LaboratoryScreenTopBar(
         ) {
             LaboratorySelectorButton(
                 modifier = Modifier.weight(1f),
-                text = "실험 리포트",
+                text = "주간 리포트",
                 isSelected = selectedTimerType == LaboratoryScreenType.Report,
                 onClick = onClickStartNowBtn
             )
             LaboratorySelectorButton(
                 modifier = Modifier.weight(1f),
-                text = "실험 기록",
+                text = "실험 회고",
                 isSelected = selectedTimerType == LaboratoryScreenType.Record,
                 onClick = onClickReservationBtn
             )

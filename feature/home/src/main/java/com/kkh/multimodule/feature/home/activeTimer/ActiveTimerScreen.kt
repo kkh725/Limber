@@ -73,6 +73,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import kotlinx.coroutines.delay
 import kotlin.math.cos
@@ -122,7 +123,9 @@ fun ActiveTimerScreen(
         Modifier
             .fillMaxSize()
     ) {
-        Scaffold(bottomBar = {
+        Scaffold(
+            containerColor = Gray50,
+            bottomBar = {
             Box(
                 Modifier
                     .fillMaxWidth()

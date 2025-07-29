@@ -2,6 +2,7 @@ package com.kkh.multimodule.limber
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
@@ -22,6 +23,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
+import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
 import com.kkh.multimodule.feature.timer.TimerRoute
 import com.kkh.multimodule.feature.home.HomeRoutes
@@ -32,10 +34,12 @@ sealed class BottomNavItem(
     val title: String,
     val icon: Int
 ) {
-    object Home : BottomNavItem(HomeRoutes.HOME, "홈", R.drawable.ic_home)
-    object TIMER : BottomNavItem(TimerRoute.ROUTE, "타이머", R.drawable.ic_timer)
-    object LABORATORY : BottomNavItem(LaboratoryRoutes.LABORATORY, "실험실", R.drawable.ic_laboratory)
-    object MORE : BottomNavItem(BottomNavRoutes.MORE, "더보기", R.drawable.ic_more)
+    object Home : BottomNavItem(HomeRoutes.HOME, "홈", R.drawable.ic_bottom_home)
+    object TIMER : BottomNavItem(TimerRoute.ROUTE, "타이머", R.drawable.ic_bottom_timer)
+    object LABORATORY :
+        BottomNavItem(LaboratoryRoutes.LABORATORY, "실험실", R.drawable.ic_bottom_experiment)
+
+    object MORE : BottomNavItem(BottomNavRoutes.MORE, "더보기", R.drawable.ic_bottom_more)
 }
 
 @Composable
@@ -65,7 +69,13 @@ fun LimberBottomBar(
                             modifier = Modifier.size(28.dp)
                         )
                     },
-                    label = { Text(screen.title) },
+                    label = {
+                        Text(
+                            text = screen.title,
+                            style = LimberTextStyle.Body3,
+                            modifier = Modifier.offset(y = (-2).dp)
+                        )
+                    },
                     selected = currentRoute == screen.route,
                     onClick = {
                         if (currentRoute != screen.route) {

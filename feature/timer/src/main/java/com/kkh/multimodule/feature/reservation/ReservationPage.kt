@@ -50,6 +50,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
@@ -66,11 +67,10 @@ import com.kkh.multimodule.core.ui.ui.component.LimberToggle
 
 data class ReservationInfo(
     val id: Int,
-    val reservationTime : ReservationTime,
+    val reservationTime: ReservationTime,
     var isToggleChecked: Boolean,
     var isRemoveChecked: Boolean = false,
 )
-
 
 
 @Preview(showBackground = true)
@@ -90,6 +90,7 @@ fun ReservationPage(modifier: Modifier = Modifier) {
     val isClickedAllSelect = uiState.isClickedAllSelected
 
     Scaffold(
+        containerColor = Gray50,
         contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
@@ -294,7 +295,7 @@ fun ReservationList(
                 }
             )
         }
-        item{
+        item {
             Spacer(Modifier.height(20.dp))
         }
     }
@@ -314,16 +315,22 @@ fun ReservationItemComposable(
     } else {
         Gray200
     }
-    val descriptionColor = if (info.isToggleChecked) Gray800 else Gray400
+    val descriptionColor = if (info.isToggleChecked) Gray600 else Gray400
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .shadow(4.dp, RoundedCornerShape(10.dp))
+            .shadow(
+                12.dp,
+                spotColor = Color(0x14000000),
+                shape = RoundedCornerShape(10.dp),
+                clip = false
+            ) // ✅ 먼저 그림자
+            .clip(RoundedCornerShape(10.dp))                       // ✅ 나중에 클립
             .background(backgroundColor)
             .padding(20.dp)
-    ) {
+    )
+    {
         when (reservationScreenState) {
             ReservationScreenState.Idle -> {
                 IdleRow(
@@ -348,7 +355,7 @@ fun ReservationItemComposable(
         Text(
             text = info.reservationTime.title,
             style = LimberTextStyle.Heading3,
-            color = Gray800
+            color = if (info.isToggleChecked) Gray800 else Gray600
         )
         Spacer(Modifier.height(6.dp))
         Text(
@@ -373,9 +380,12 @@ fun IdleRow(
     ) {
         LimberFilterChip(
             text = info.reservationTime.category,
-            textColor = chipTextColor,
-            backgroundColor = chipBackgroundColor,
-            onclick = {}
+            checked = info.isToggleChecked,
+            checkedTextColor = chipTextColor,
+            uncheckedTextColor = chipTextColor,
+            checkedBackgroundColor = chipBackgroundColor,
+            uncheckedBackgroundColor = chipBackgroundColor,
+            onCheckedChange = {} // 또는 생략 가능: UI용 디스플레이 Chip일 경우
         )
         LimberToggle(
             checked = info.isToggleChecked,
@@ -403,9 +413,8 @@ fun ModifiedRow(
         )
         LimberFilterChip(
             text = info.reservationTime.category,
-            textColor = chipTextColor,
-            backgroundColor = chipBackgroundColor,
-            enabled = false
+            checked = info.isToggleChecked,
+            onCheckedChange = {} // 또는 생략 가능: UI용 디스플레이 Chip일 경우
         )
     }
 }
@@ -421,6 +430,7 @@ fun ReservationFloatingBtn(onClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .size(56.dp)
+                .shadow(12.dp, CircleShape, clip = false) // clip=false!
                 .clip(CircleShape)
                 .then(gradientModifier())
                 .clickable(onClick = onClick),
@@ -433,5 +443,6 @@ fun ReservationFloatingBtn(onClick: () -> Unit) {
                 modifier = Modifier.size(24.dp)
             )
         }
+
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
@@ -41,6 +42,7 @@ fun UnBlockCompleteScreen(
     onNavigateToTimerStartNow: () -> Unit = {}
 ){
     Scaffold(
+        containerColor = Gray50,
         topBar = {
             UnBlockCompleteTopBar(
                 modifier = Modifier

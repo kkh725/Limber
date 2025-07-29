@@ -45,9 +45,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
@@ -434,7 +436,7 @@ fun ReservationTimerSection(
             onClick = { onClickButton(1) }
         )
         ReservationTimerButton(
-            label = "반복",
+            label = "반복 시기",
             time = reservationTime.repeatDays.joinToString(","),
             onClick = { onClickButton(2) }
         )
@@ -467,7 +469,7 @@ fun ReservationTimerButton(
             Text(timeText, style = LimberTextStyle.Heading5, color = Gray800)
             // todo 
             Image(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                painter = painterResource(R.drawable.ic_next),
                 contentDescription = null
             )
         }

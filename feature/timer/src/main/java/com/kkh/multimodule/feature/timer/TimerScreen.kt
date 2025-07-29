@@ -1,6 +1,7 @@
 package com.kkh.multimodule.feature.timer
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -37,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.feature.reservation.ReservationPage
@@ -83,6 +85,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
     }
 
     Scaffold(
+        containerColor = Gray50,
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             TimerScreenTopBar(
@@ -206,21 +209,27 @@ fun TimerScreenTopBar(
 fun TimerSelectorButton(
     modifier: Modifier = Modifier, text: String, isSelected: Boolean, onClick: () -> Unit
 ) {
+
+    val textColor = if (isSelected) Gray800 else LimberColorStyle.Gray400
     Box(
         modifier
+            .background(Color.White)
             .fillMaxHeight()
             .clickable(
                 onClick = onClick
             )
     ) {
         Text(
-            text = text, style = LimberTextStyle.Heading5, modifier = Modifier
+            text = text,
+            style = LimberTextStyle.Heading5,
+            color = textColor,
+            modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp)
         )
 
         HorizontalDivider(
-            color = if (isSelected) LimberColorStyle.Primary_Main else Color.Gray,
+            color = if (isSelected) LimberColorStyle.Primary_Main else LimberColorStyle.Gray300,
             thickness = if (isSelected) 2.dp else 1.dp,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -288,7 +297,7 @@ fun TimerScreenContent(
     ) {
         Spacer(modifier = Modifier.height(48.dp))
         Text(
-            "무엇에 집중하고 싶으신가요?",
+            "어떤 상황에 집중하고 싶은가요?",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = LimberTextStyle.Heading3,
@@ -304,7 +313,7 @@ fun TimerScreenContent(
         Spacer(modifier = Modifier.height(52.dp))
 
         Text(
-            "얼마나 집중하시겠어요?",
+            "얼마 동안 집중할까요?",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = LimberTextStyle.Heading3,

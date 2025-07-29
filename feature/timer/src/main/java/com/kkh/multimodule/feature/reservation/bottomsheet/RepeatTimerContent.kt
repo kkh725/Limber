@@ -2,6 +2,7 @@ package com.kkh.multimodule.feature.reservation.bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -64,12 +66,6 @@ fun RepeatTimerContent(
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(Modifier.height(32.dp))
-            Text(
-                "반복할 주기를 선택해주세요",
-                color = LimberColorStyle.Gray800,
-                style = LimberTextStyle.Heading3
-            )
-            Spacer(Modifier.height(20.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -92,7 +88,7 @@ fun RepeatTimerContent(
             }
             Spacer(Modifier.height(30.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(9.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

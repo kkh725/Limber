@@ -9,7 +9,6 @@ import com.kkh.multimodule.core.ui.R
 
 object LimberTextStyle {
     private val suitSemiboldFamily = FontFamily(Font(R.font.suit_semibold))
-    private val defaultTextColor = Color(0xFF1D1A22)
     private val fontWeightSemiBold = FontWeight(600)
     private val fontWeightMedium = FontWeight(500)
 
@@ -19,7 +18,6 @@ object LimberTextStyle {
             lineHeight = 48.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
-            color = defaultTextColor
         )
 
     val DisPlay2: TextStyle
@@ -28,7 +26,6 @@ object LimberTextStyle {
             lineHeight = 33.6.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
-            color = defaultTextColor
         )
 
     val Heading1: TextStyle
@@ -37,7 +34,6 @@ object LimberTextStyle {
             lineHeight = 33.6.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
-            color = defaultTextColor
         )
 
     val Heading2: TextStyle
@@ -46,7 +42,6 @@ object LimberTextStyle {
             lineHeight = 28.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
-            color = defaultTextColor
         )
 
     val Heading3: TextStyle
@@ -55,7 +50,6 @@ object LimberTextStyle {
             lineHeight = 25.2.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
-            color = defaultTextColor
         )
 
     val Heading4: TextStyle
@@ -64,7 +58,6 @@ object LimberTextStyle {
             lineHeight = 22.4.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightSemiBold,
-            color = defaultTextColor
         )
 
     val Heading5: TextStyle
@@ -73,7 +66,6 @@ object LimberTextStyle {
             lineHeight = 22.4.sp,
             fontFamily = FontFamily(Font(R.font.suit_semibold)),
             fontWeight = FontWeight(600),
-            color = defaultTextColor,
             textAlign = TextAlign.Center,
         )
 
@@ -83,7 +75,6 @@ object LimberTextStyle {
             lineHeight = 22.4.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightMedium,
-            color = defaultTextColor
         )
 
     val Body2: TextStyle
@@ -92,7 +83,6 @@ object LimberTextStyle {
             lineHeight = 19.6.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightMedium,
-            color = defaultTextColor
         )
 
     val Body3: TextStyle
@@ -100,8 +90,7 @@ object LimberTextStyle {
             fontSize = 12.sp,
             lineHeight = 16.8.sp,
             fontFamily = suitSemiboldFamily,
-            fontWeight = fontWeightMedium,
-            color = defaultTextColor
+            fontWeight = fontWeightMedium
         )
 
     val Caption1: TextStyle
@@ -110,7 +99,6 @@ object LimberTextStyle {
             lineHeight = 16.8.sp,
             fontFamily = suitSemiboldFamily,
             fontWeight = fontWeightMedium,
-            color = defaultTextColor
         )
 
     val graphBody3_Gray400 : TextStyle

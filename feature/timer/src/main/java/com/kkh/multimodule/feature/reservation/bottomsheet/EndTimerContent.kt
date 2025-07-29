@@ -59,12 +59,6 @@ fun EndTimerContent(
             .padding(it)
             .padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(32.dp))
-            Text(
-                "종료할 시간을 선택해주세요",
-                color = LimberColorStyle.Gray800,
-                style = LimberTextStyle.Heading3
-            )
-            Spacer(Modifier.height(12.dp))
 
             LimberTimePicker(
                 selectedTime = selectedTime,

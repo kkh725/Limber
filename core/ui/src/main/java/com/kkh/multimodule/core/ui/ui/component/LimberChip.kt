@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
@@ -87,22 +88,37 @@ fun LimberChipWithPlus(
     }
 }
 
-
-@Preview
 @Composable
 fun LimberFilterChip(
     text: String = "토글",
-    textColor: Color = Color.White,
-    backgroundColor: Color = Gray600,
-    onclick: () -> Unit = {},
-    enabled: Boolean = false,
+    checked: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit = {},
+    checkedTextColor: Color = Color.White,
+    uncheckedTextColor: Color = Gray500,
+    checkedBackgroundColor: Color = Color.Black,
+    uncheckedBackgroundColor: Color = Gray200
 ) {
+    val backgroundColor by animateColorAsState(
+        targetValue = if (checked) checkedBackgroundColor else uncheckedBackgroundColor,
+        label = "FilterChipBackground"
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (checked) checkedTextColor else uncheckedTextColor,
+        label = "FilterChipText"
+    )
+
     Box(
-        Modifier
-            .clickable(onClick = onclick, enabled = enabled)
-            .background(color = backgroundColor, shape = RoundedCornerShape(size = 100.dp))
-            .padding(start = 12.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
+        modifier = Modifier
+            .background(color = backgroundColor, shape = RoundedCornerShape(100.dp))
+            .clip(RoundedCornerShape(100.dp))
+            .clickable { onCheckedChange(!checked) }
+            .padding(horizontal = 16.dp, vertical = 6.dp)
     ) {
-        Text(text, style = LimberTextStyle.Body2, color = textColor, textAlign = TextAlign.Center)
+        Text(
+            text = text,
+            style = LimberTextStyle.Body2,
+            color = textColor,
+            textAlign = TextAlign.Center
+        )
     }
 }

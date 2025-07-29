@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.UnBlockWarnModal
@@ -54,7 +55,7 @@ fun BlockScreen(
             // 배경이미지
         }
         Scaffold(
-            containerColor = Color.Transparent,
+            containerColor = Gray50,
             bottomBar = {
                 BlockScreenBottomBar(
                     modifier = Modifier.padding(bottom = 20.dp).navigationBarsPadding(),
