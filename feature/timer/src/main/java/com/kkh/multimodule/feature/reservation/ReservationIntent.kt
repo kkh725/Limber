@@ -18,7 +18,7 @@ sealed class BottomSheetState {
 data class ReservationState(
     val reservationScreenState: ReservationScreenState,
     val reservationItemList: List<ReservationInfo>,
-    val reservationTime : ReservationTime,
+    val reservationTime: ReservationTime,
     val isClickedAllSelected: Boolean,
     val reservationBottomSheetState: BottomSheetState,
     val repeatOptionList: List<ChipInfo>,
@@ -31,12 +31,42 @@ data class ReservationState(
             reservationScreenState = ReservationScreenState.Idle,
             isClickedAllSelected = false,
             reservationItemList = listOf(
-                ReservationInfo(1, ReservationTime.init(),isToggleChecked = true,isRemoveChecked = false),
-                ReservationInfo(2, ReservationTime.init(),isToggleChecked = true,isRemoveChecked = false),
-                ReservationInfo(3, ReservationTime.init(),isToggleChecked = true,isRemoveChecked = false),
-                ReservationInfo(4, ReservationTime.init(),isToggleChecked = true,isRemoveChecked = false),
-                ReservationInfo(5, ReservationTime.init(),isToggleChecked = true,isRemoveChecked = false),
-                ReservationInfo(6, ReservationTime.init(),isToggleChecked = true,isRemoveChecked = false)
+                ReservationInfo(
+                    1,
+                    ReservationTime.init(),
+                    isToggleChecked = true,
+                    isRemoveChecked = false
+                ),
+                ReservationInfo(
+                    2,
+                    ReservationTime.init(),
+                    isToggleChecked = true,
+                    isRemoveChecked = false
+                ),
+                ReservationInfo(
+                    3,
+                    ReservationTime.init(),
+                    isToggleChecked = true,
+                    isRemoveChecked = false
+                ),
+                ReservationInfo(
+                    4,
+                    ReservationTime.init(),
+                    isToggleChecked = true,
+                    isRemoveChecked = false
+                ),
+                ReservationInfo(
+                    5,
+                    ReservationTime.init(),
+                    isToggleChecked = true,
+                    isRemoveChecked = false
+                ),
+                ReservationInfo(
+                    6,
+                    ReservationTime.init(),
+                    isToggleChecked = true,
+                    isRemoveChecked = false
+                )
             ),
             chipList = listOf(
                 ChipInfo("하나"),
@@ -81,9 +111,9 @@ sealed class ReservationEvent : UiEvent {
         data class OnClickRepeatOptionChip(val chipText: String) : BottomSheet()
         data class OnClickDayChip(val chipText: String) : BottomSheet()
         data object OnClickRepeatOptionCompleteButton : BottomSheet()
-        data class OnClickStartTimeCompleteButton(val time : LocalTime) : BottomSheet()
-        data class OnClickEndTimeCompleteButton(val time : LocalTime) : BottomSheet()
-        data class OnClickReservationButton(val title : String) : BottomSheet()
+        data class OnClickStartTimeCompleteButton(val time: LocalTime) : BottomSheet()
+        data class OnClickEndTimeCompleteButton(val time: LocalTime) : BottomSheet()
+        data class OnClickReservationButton(val title: String) : BottomSheet()
     }
 }
 
@@ -113,7 +143,7 @@ class ReservationReducer(state: ReservationState) :
             is ReservationEvent.OnClickAllSelected -> {
                 val newAllSelected = !oldState.isClickedAllSelected
                 var newList = oldState.reservationItemList
-                newList = if (newAllSelected){
+                newList = if (newAllSelected) {
                     oldState.reservationItemList.map {
                         it.copy(isRemoveChecked = true)
                     }
@@ -122,7 +152,12 @@ class ReservationReducer(state: ReservationState) :
                         it.copy(isRemoveChecked = false)
                     }
                 }
-                setState(oldState.copy(reservationItemList = newList, isClickedAllSelected = newAllSelected))
+                setState(
+                    oldState.copy(
+                        reservationItemList = newList,
+                        isClickedAllSelected = newAllSelected
+                    )
+                )
             }
 
             is ReservationEvent.OnClickModifyCompleteButton -> {
@@ -235,6 +270,10 @@ class ReservationReducer(state: ReservationState) :
 
             // 바텀시트 day 클릭이벤트. 여러개 클릭가능
             is ReservationEvent.BottomSheet.OnClickDayChip -> {
+                val everyDay = setOf("월", "화", "수","목","금","토","일")
+                val weekDay = setOf("월", "화", "수", "목", "금")
+                val weekend = setOf("토", "일")
+
                 val newList = oldState.dayList.map { chip ->
                     if (chip.text == event.chipText) {
                         chip.copy(isSelected = !chip.isSelected) // 내가 누른 것만 토글
@@ -242,8 +281,41 @@ class ReservationReducer(state: ReservationState) :
                         chip
                     }
                 }
-                val newOptionList = oldState.repeatOptionList.map { option ->
-                    option.copy(isSelected = false)
+                val selectedDayTexts = newList.filter { it.isSelected }.map { it.text }.toSet()
+                val newOptionList = when (selectedDayTexts) {
+                    everyDay -> oldState.repeatOptionList.map { option ->
+                        if (option.text == "매일") {
+                            option.copy(isSelected = true)
+                        } else {
+                            option.copy(isSelected = false)
+                        }
+                    }
+
+                    weekDay -> {
+                        oldState.repeatOptionList.map { option ->
+                            if (option.text == "평일") {
+                                option.copy(isSelected = true)
+                            } else {
+                                option.copy(isSelected = false)
+                            }
+                        }
+                    }
+
+                    weekend -> {
+                        oldState.repeatOptionList.map { option ->
+                            if (option.text == "주말") {
+                                option.copy(isSelected = true)
+                            } else {
+                                option.copy(isSelected = false)
+                            }
+                        }
+                    }
+
+                    else -> {
+                        oldState.repeatOptionList.map { option ->
+                            option.copy(isSelected = false)
+                        }
+                    }
                 }
                 setState(oldState.copy(repeatOptionList = newOptionList, dayList = newList))
             }
@@ -292,7 +364,7 @@ class ReservationReducer(state: ReservationState) :
             // 바텀시트 최종 예약하기 버튼
             is ReservationEvent.BottomSheet.OnClickReservationButton -> {
                 val newReservationTime = oldState.reservationTime.copy(title = event.title)
-                
+
                 setState(
                     oldState.copy(
                         reservationTime = newReservationTime,
