@@ -3,6 +3,7 @@ package com.kkh.multimodule.feature.timer
 import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
@@ -13,6 +14,7 @@ import kotlinx.datetime.LocalTime
 data class ChipInfo(
     val text: String,
     val isSelected: Boolean = false,
+    val imageResId : Int = R.drawable.ic_info
 )
 
 data class TimerState(
@@ -27,11 +29,11 @@ data class TimerState(
         fun init() = TimerState(
             timerScreenState = TimerScreenType.Now,
             chipList = listOf(
-                ChipInfo("학습"),
-                ChipInfo("업무"),
-                ChipInfo("회의"),
-                ChipInfo("작업"),
-                ChipInfo("독서"),
+                ChipInfo("학습", imageResId = R.drawable.ic_study),
+                ChipInfo("업무", imageResId = R.drawable.ic_study),
+                ChipInfo("회의", imageResId = R.drawable.ic_study),
+                ChipInfo("작업", imageResId = R.drawable.ic_study),
+                ChipInfo("독서", imageResId = R.drawable.ic_study),
                 ChipInfo("직접 추가")
             ),
             appDataList = emptyList(),

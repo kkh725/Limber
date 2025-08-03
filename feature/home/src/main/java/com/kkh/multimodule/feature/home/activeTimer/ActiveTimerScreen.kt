@@ -111,7 +111,7 @@ fun ActiveTimerScreen(
                 countdownSeconds = i
                 delay(1000)
             }
-            onNavigateToRecall()
+//            onNavigateToRecall()
         }
     }
 
@@ -241,6 +241,7 @@ fun CircularProgressBarWithHandleImage(
             .height(screenWidthDp),
         contentAlignment = Alignment.Center
     ) {
+
         Canvas(
             modifier = Modifier
                 .fillMaxSize()

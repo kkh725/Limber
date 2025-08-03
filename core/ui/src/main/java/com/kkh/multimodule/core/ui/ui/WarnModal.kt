@@ -86,7 +86,7 @@ fun WarnDialog(
                         .padding(bottom = 16.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_checked),
+                        painter = painterResource(id = R.drawable.ic_info),
                         contentDescription = "",
                         modifier = Modifier
                             .size(80.dp)

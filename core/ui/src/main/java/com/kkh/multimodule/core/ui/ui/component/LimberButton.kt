@@ -134,7 +134,7 @@ fun LimberCheckButton(
 ) {
     IconButton(onClick = { onClick(!isChecked) }, modifier = Modifier.size(24.dp)) {
         Crossfade(targetState = isChecked, label = "CheckIconCrossfade") { checked ->
-            val imageResource = if (checked) R.drawable.ic_checked else R.drawable.ic_unchecked
+            val imageResource = if (checked) R.drawable.ic_unchecked else R.drawable.ic_unchecked
             val painter = painterResource(imageResource)
 
             Icon(

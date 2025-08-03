@@ -140,7 +140,7 @@ fun RecallScreen(
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color.Gray)
+            .background(Color.Black)
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
             .statusBarsPadding()

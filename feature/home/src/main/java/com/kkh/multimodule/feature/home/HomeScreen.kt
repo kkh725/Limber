@@ -43,6 +43,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,6 +97,12 @@ fun HomeScreen(
         }
     }
 
+    Image(
+        painterResource(R.drawable.bg_home),
+        contentDescription = null,
+        contentScale = ContentScale.None,
+    )
+
     Column(
         Modifier
             .fillMaxSize()
@@ -147,7 +154,7 @@ private fun HomeScreenMainBody(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_lv1),
+                painter = painterResource(R.drawable.ic_lv1_good),
                 modifier = Modifier.size(114.dp),
                 contentDescription = null
             )
@@ -442,19 +449,20 @@ fun TimerButton(onClick: () -> Unit, timerText: String = "22:22:22") {
         Modifier
             .height(60.dp)
             .clip(RoundedCornerShape(100.dp))
-            .clickable(onClick = onClick, enabled = false)
+            .clickable(onClick = onClick)
             .background(Color.Red)
             .then(backgroundModifier)
-            .padding(horizontal = 8.dp, vertical = 20.dp),
+            .padding(horizontal = 12.dp, vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_clock),
-            modifier = Modifier.size(20.dp),
+            painter = painterResource(R.drawable.ic_timer),
+            modifier = Modifier.size(36.dp),
             contentDescription = null
         )
+        Spacer(Modifier.width(21.5.dp))
         Text(timerText, style = LimberTextStyle.Heading2, color = Color.White)
+        Spacer(Modifier.width(8.dp))
         Image(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             modifier = Modifier.size(20.dp),
