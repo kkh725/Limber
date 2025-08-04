@@ -1,5 +1,10 @@
 package com.kkh.multimodule.feature.permission
 
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -73,6 +78,27 @@ fun AccessPermissionScreen(navigateToManageApp: () -> Unit) {
     }
 
     var animationPlaying by remember { mutableStateOf(false) }
+
+    /**
+     * 알람매니저 사용을 위한 권한 추가필요
+     */
+
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (!alarmManager.canScheduleExactAlarms()) {
+            // 사용자에게 권한 설정 페이지로 유도
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+            // 혹은 권한 없을 때 동작을 제한하거나 대체하는 로직 필요
+        } else {
+            // 권한 있음 -> 알람 예약 가능
+        }
+    } else {
+        // Android 11 이하 버전에서는 권한 필요 없음
+    }
+
 
     // app이 세팅창으로 갔다가 돌아오면 재검사.
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {

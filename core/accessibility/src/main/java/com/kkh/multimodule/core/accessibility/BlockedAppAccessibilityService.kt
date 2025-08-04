@@ -3,6 +3,7 @@ package com.kkh.multimodule.core.accessibility
 import android.accessibilityservice.AccessibilityService
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -19,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -43,6 +45,30 @@ class BlockedAppAccessibilityService : AccessibilityService() {
 
     private val isBlockedState = MutableStateFlow(false)
     private val blockedPackageListState = MutableStateFlow(listOf<String>())
+
+    // BroadcastReceiver를 object로 중첩 정의
+    object BlockTriggerReceiver : BroadcastReceiver() {
+        // 외부 클래스 인스턴스를 참조할 수 없으므로
+        // 외부 서비스 인스턴스를 참조하도록 lateinit으로 둔다
+        lateinit var serviceInstance: BlockedAppAccessibilityService
+
+        override fun onReceive(context: Context, intent: Intent) {
+            val reservationId = intent.getIntExtra("reservation_id", -1)
+            val isStartTrigger = intent.getBooleanExtra("is_start_trigger", true)
+
+            // serviceInstance의 appDataRepository를 사용
+            if (reservationId != -1) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (isStartTrigger) {
+                        serviceInstance.appDataRepository.setBlockMode(true)
+                    } else {
+                        serviceInstance.appDataRepository.setBlockMode(false)
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun scheduleStartBlockTrigger(reservation: ReservationItemModel) {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
@@ -94,13 +120,15 @@ class BlockedAppAccessibilityService : AccessibilityService() {
         super.onCreate()
 
         coroutineScope.launch {
-            // blockMode 관찰
             appDataRepository.observeBlockMode().collect { newState ->
                 blockedPackageListState.value = appDataRepository.getBlockedPackageList()
                 isBlockedState.value = newState
             }
-            // 예약 리스트 관찰.
+        }
+
+        coroutineScope.launch {
             blockReservationRepository.observeReservationList().collect { reservationList ->
+                Log.d("TAG", "saveReservationInfoList: 방출 완")
                 reservationList.filter { it.isToggleChecked }.forEach { reservation ->
                     scheduleStartBlockTrigger(reservation)
                     scheduleEndBlockTrigger(reservation)

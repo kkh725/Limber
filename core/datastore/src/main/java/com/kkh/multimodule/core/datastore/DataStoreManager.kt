@@ -1,6 +1,7 @@
 package com.kkh.multimodule.core.datastore
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -41,11 +42,21 @@ object DataStoreManager {
         dataStore.edit { preferences -> preferences[key] = value.toSet() }
     }
 
-    suspend fun saveReservationInfoList(reservationKey : Preferences.Key<Set<String>>,list: List<ReservationItemModel>) {
-        val jsonSet = list.map { Json.encodeToString(it) }.toSet()
+    suspend fun saveReservationInfoList(
+        reservationKey: Preferences.Key<Set<String>>,
+        list: List<ReservationItemModel>
+    ) {
+        // JSON 문자열 + 난수 suffix로 고유값 보장
+        val jsonSet = list.map { item ->
+            val json = Json.encodeToString(item)
+            "$json#${System.nanoTime()}" // suffix 추가
+        }.toSet()
+
         dataStore.edit { prefs ->
             prefs[reservationKey] = jsonSet
         }
+
+        Log.d("TAG", "saveReservationInfoList: 저장완료 $list")
     }
 
 
@@ -58,12 +69,17 @@ object DataStoreManager {
         }.map { it[key]?.toList() ?: emptyList() }
     }
 
-    fun readReservationInfoList(reservationKey : Preferences.Key<Set<String>>) : Flow<List<ReservationItemModel>> {
+    fun readReservationInfoList(
+        reservationKey: Preferences.Key<Set<String>>
+    ): Flow<List<ReservationItemModel>> {
         return dataStore.data
             .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }
             .map { prefs ->
                 val jsonSet = prefs[reservationKey] ?: emptySet()
-                jsonSet.map { Json.decodeFromString<ReservationItemModel>(it) }
+                jsonSet.map { jsonWithSuffix ->
+                    val pureJson = jsonWithSuffix.substringBefore("#") // ✅ suffix 제거
+                    Json.decodeFromString<ReservationItemModel>(pureJson)
+                }
             }
     }
 
