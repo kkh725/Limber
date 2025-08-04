@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -103,7 +105,9 @@ fun RegisterBlockAppBottomSheet(
                         sheetState.hide()
                         onClickComplete(selectedApps) // ✅ 선택된 리스트를 넘김
                     }
-                }, contentPadding = PaddingValues(0.dp)) {
+                }, enabled = appList.filterIndexed { index, _ -> checkedList[index] }.isNotEmpty(),
+                    colors = ButtonDefaults.textButtonColors(disabledContentColor = Gray400),
+                    contentPadding = PaddingValues(0.dp)) {
                     Text(
                         "선택 완료",
                         style = LimberTextStyle.Body2,

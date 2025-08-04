@@ -56,7 +56,7 @@ fun LimberNavHost(
             onNavigateToRecall = navController::navigateToRecallScreen
         )
 
-        timerNavGraph(onNavigateToActiveTimer = {
+        timerNavGraph(onNavigateToActiveHome = {
             navController.navigateToHomeScreen()
             rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
         })

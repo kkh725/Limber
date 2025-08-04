@@ -8,13 +8,13 @@ object TimerRoute{
     const val ROUTE = "TIMER"
 }
 
-fun NavController.navigateToActiveTimer() =
+fun NavController.navigateToTimer() =
     navigate(route = TimerRoute.ROUTE)
 
 fun NavGraphBuilder.timerNavGraph(
-    onNavigateToActiveTimer: () -> Unit
+    onNavigateToActiveHome: () -> Unit
 ) {
     composable(TimerRoute.ROUTE) {
-        TimerScreen(onNavigateToActiveTimer)
+        TimerScreen(onNavigateToActiveHome)
     }
 }

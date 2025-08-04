@@ -201,7 +201,7 @@ fun HomeTopBar(
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
                     .background(Color(0xFF9133E6))
-                    .clickable(enabled = false) { onClick() }
+                    .clickable { onClick() }
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

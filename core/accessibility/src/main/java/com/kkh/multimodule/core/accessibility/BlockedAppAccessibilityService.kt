@@ -1,6 +1,9 @@
 package com.kkh.multimodule.core.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -18,8 +21,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.jvm.java
 
 //접근성 서비스가 켜져 있는 동안 (접근성 설정 메뉴에서 내 서비스가 활성화된 상태)
 //시스템은 계속해서 onAccessibilityEvent()를 호출해서 이벤트를 전달합니다.
@@ -36,80 +42,68 @@ class BlockedAppAccessibilityService : AccessibilityService() {
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val isBlockedState = MutableStateFlow(false)
-    private val isTimeBlockedState = MutableStateFlow(false)
     private val blockedPackageListState = MutableStateFlow(listOf<String>())
-    private val blockedReservationListState = MutableStateFlow(listOf<ReservationItemModel>())
-    private val currentBlockedId = MutableStateFlow<Int>(-1)
 
-    // 예약 정보 안에 현재 시각 유무
-    private fun isCurrentTimeInAnyReservation(): Boolean {
-        val now = LocalTime.now()
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-        val currentReservation = blockedReservationListState.value
-            .filter { it.isToggleChecked } // 토글 켜진 예약만 필터
-            .firstOrNull() { reservation ->
-                val startStr = reservation.reservationInfo.startTime.replace(" ", "")
-                val endStr = reservation.reservationInfo.endTime.replace(" ", "")
-                val start = LocalTime.parse(startStr, formatter)
-                val end = LocalTime.parse(endStr, formatter)
-
-                if (end.isAfter(start) || end == start) {
-                    !now.isBefore(start) && !now.isAfter(end)
-                } else {
-                    !now.isBefore(start) || !now.isAfter(end)
-                }
-            }
-        currentReservation?.let {
-            currentBlockedId.value = it.id
+    private fun scheduleStartBlockTrigger(reservation: ReservationItemModel) {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, BlockTriggerReceiver::class.java).apply {
+            putExtra("reservation_id", reservation.id)
+            putExtra("is_start_trigger", true) // 시작 트리거 표시
         }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            reservation.id * 2, // 고유한 requestCode로 충돌 방지
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
-        return currentReservation != null
+        val startTime = LocalTime.parse(reservation.reservationInfo.startTime, DateTimeFormatter.ofPattern("HH:mm"))
+        val triggerTime = startTime.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            pendingIntent
+        )
     }
 
+    private fun scheduleEndBlockTrigger(reservation: ReservationItemModel) {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, BlockTriggerReceiver::class.java).apply {
+            putExtra("reservation_id", reservation.id)
+            putExtra("is_start_trigger", false) // 종료 트리거 표시
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            reservation.id * 2 + 1, // start와 구분되는 requestCode
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val endTime = LocalTime.parse(reservation.reservationInfo.endTime, DateTimeFormatter.ofPattern("HH:mm"))
+        val triggerTime = endTime.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            pendingIntent
+        )
+    }
 
     override fun onCreate() {
         super.onCreate()
-        // blockMode 관찰
+
         coroutineScope.launch {
+            // blockMode 관찰
             appDataRepository.observeBlockMode().collect { newState ->
+                blockedPackageListState.value = appDataRepository.getBlockedPackageList()
                 isBlockedState.value = newState
             }
-        }
-        // blockedPackage 변화 관찰
-        coroutineScope.launch {
-            appDataRepository.observeBlockedPackageList().collect { packageList ->
-                Log.d("TAG", "packageList: ${packageList.firstOrNull()}")
-                blockedPackageListState.value = packageList
-            }
-        }
-        // blocked 예약 정보 변화 관찰
-        coroutineScope.launch {
+            // 예약 리스트 관찰.
             blockReservationRepository.observeReservationList().collect { reservationList ->
-                blockedReservationListState.value = reservationList
-            }
-        }
-        // 매 초마다 예약시간 내에 있는지 검사.
-        coroutineScope.launch {
-            while (isActive) {
-                isTimeBlockedState.value = isCurrentTimeInAnyReservation()
-                delay(1000L) // 1초마다 검사
-            }
-        }
-        // 예약시간이 종료되었다면 토글 값을 false로 변경.
-        coroutineScope.launch {
-            isTimeBlockedState.collect {
-                val oldList = blockReservationRepository.getReservationList()
-
-                if (currentBlockedId.value != -1) {
-                    val newList = oldList.map { reservation ->
-                        if (reservation.id == currentBlockedId.value) {
-                            // 토글 값을 false로 변경한 새 객체 반환 (데이터 클래스라면 copy() 사용)
-                            reservation.copy(isToggleChecked = false)
-                        } else {
-                            reservation
-                        }
-                    }
-                    blockReservationRepository.setReservationList(newList)
+                reservationList.filter { it.isToggleChecked }.forEach { reservation ->
+                    scheduleStartBlockTrigger(reservation)
+                    scheduleEndBlockTrigger(reservation)
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
 import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
@@ -54,7 +55,7 @@ data class TimerState(
     val isModalVisible: Boolean = false,
     val appDataList: List<AppInfo>,
     val modalAppDataList: List<AppInfo>,
-    val startBlockReservationInfo : ReservationInfo
+    val startBlockReservationInfo : ReservationItemModel
 ) : UiState {
     companion object {
         fun init() = TimerState(
@@ -62,7 +63,7 @@ data class TimerState(
             chipList = ChipInfo.mockList,
             appDataList = emptyList(),
             modalAppDataList = emptyList(),
-            startBlockReservationInfo = ReservationInfo.init()
+            startBlockReservationInfo = ReservationItemModel.mockList().first()
         )
     }
 }
@@ -73,7 +74,7 @@ sealed class TimerEvent : UiEvent {
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean, val context: Context) : TimerEvent()
     data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
-    data class OnClickModalCompleteButton(val startBlockReservationInfo : ReservationInfo) : TimerEvent()
+    data class OnClickModalCompleteButton(val startBlockReservationInfo : ReservationItemModel) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {

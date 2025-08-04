@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
@@ -58,7 +59,7 @@ import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
+fun TimerScreen(onNavigateToActiveHome: () -> Unit) {
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
 
@@ -114,7 +115,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 24.dp),
                     enabled = chipList.any { it.isSelected },
-                    onClick = { timerViewModel.sendEvent(TimerEvent.ShowModal(true,context)) }
+                    onClick = { timerViewModel.sendEvent(TimerEvent.ShowModal(true, context)) }
                 )
             }
         }
@@ -147,7 +148,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
         }
     }
     if (isModalVisible) {
-        Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false,context)) }) {
+        Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false, context)) }) {
             WarnDialog(
                 title = "${selectedTime.hour}시간 ${selectedTime.minute}분 동안\n 다음의 앱들이 차단돼요",
                 appInfoList = modalAppList,
@@ -155,18 +156,22 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                     timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
                 },
                 onClickStartButton = {
-                    onNavigateToActiveTimer()
+                    onNavigateToActiveHome()
                     val (startTime, endTime) = getStartAndEndTime(selectedTime.toString())
 
-                    timerViewModel.sendEvent(TimerEvent.OnClickModalCompleteButton(
-                        startBlockReservationInfo = ReservationInfo.init().copy(
-                            startTime = startTime,
-                            endTime = endTime,
-                        ))
+                    timerViewModel.sendEvent(
+                        TimerEvent.OnClickModalCompleteButton(
+                            startBlockReservationInfo = ReservationItemModel.currentActive.copy(
+                                reservationInfo = ReservationInfo.init().copy(
+                                    startTime = startTime,
+                                    endTime = endTime,
+                                )
+                            )
+                        )
                     )
                 },
                 onDismissRequest = {
-                    timerViewModel.sendEvent(TimerEvent.ShowModal(false,context))
+                    timerViewModel.sendEvent(TimerEvent.ShowModal(false, context))
                 }
             )
         }

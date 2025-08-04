@@ -5,6 +5,8 @@ import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
 import com.kkh.multimodule.core.domain.ScreenState
 import com.kkh.multimodule.feature.home.HomeRoutes
+import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
+import com.kkh.multimodule.feature.timer.TimerRoute
 import com.kkh.multimodule.limber.navigation.BottomNavRoutes
 
 data class RootState(
@@ -34,11 +36,11 @@ class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
                         setState(oldState.copy(screenState = ScreenState.HOME_SCREEN))
                     }
 
-                    BottomNavRoutes.TIMER -> {
+                    TimerRoute.ROUTE -> {
                         setState(oldState.copy(screenState = ScreenState.TIMER_SCREEN))
                     }
 
-                    BottomNavRoutes.LABORATORY -> {
+                    LaboratoryRoutes.LABORATORY -> {
                         setState(oldState.copy(screenState = ScreenState.LABORATORY_SCREEN))
                     }
 

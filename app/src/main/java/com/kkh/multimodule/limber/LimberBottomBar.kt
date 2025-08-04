@@ -52,7 +52,7 @@ fun LimberBottomBar(
         BottomNavItem.Home,
         BottomNavItem.TIMER,
         BottomNavItem.LABORATORY,
-//        BottomNavItem.MORE
+        BottomNavItem.MORE
     )
     val navBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = navBackStackEntry?.destination?.route
@@ -79,7 +79,7 @@ fun LimberBottomBar(
                     selected = currentRoute == screen.route,
                     onClick = {
                         if (currentRoute != screen.route) {
-                            onScreenSelected(screen.route) // 🔥 상태 업데이트
+
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.startDestinationId) {
                                     saveState = true
@@ -87,6 +87,7 @@ fun LimberBottomBar(
                                 launchSingleTop = true
                                 restoreState = true
                             }
+                            onScreenSelected(screen.route) // 🔥 상태 업데이트
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
@@ -100,5 +101,4 @@ fun LimberBottomBar(
             }
         }
     }
-
 }

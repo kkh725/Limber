@@ -3,13 +3,27 @@ package com.kkh.multimodule.core.domain.model
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
 
+@Serializable
 data class ReservationItemModel(
     val id: Int,
     val reservationInfo: ReservationInfo,
     var isToggleChecked: Boolean = false,
     var isRemoveChecked: Boolean = false,
-){
-    companion object{
+) {
+    companion object {
+        val currentActive = ReservationItemModel(
+            id = -1,
+            reservationInfo = ReservationInfo.init(),
+            isToggleChecked = true,
+            isRemoveChecked = false
+            )
+        val init = ReservationItemModel(
+            id = 0,
+            reservationInfo = ReservationInfo.init(),
+            isToggleChecked = false,
+            isRemoveChecked = false
+        )
+
         fun mockList() = mockReservationItems()
     }
 }

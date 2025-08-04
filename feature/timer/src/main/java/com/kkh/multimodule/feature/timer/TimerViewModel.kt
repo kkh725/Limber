@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfoProvider.getAppInfoListFromPackageNames
 import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,7 @@ class TimerViewModel @Inject constructor(
             when (e) {
                 is TimerEvent.OnClickSheetCompleteButton -> {
                     // modal 에서 시작하기를 눌러야 차단해야할듯.
-//                    setBlockedPackageList()
+                    setBlockedPackageList()
                 }
 
                 is TimerEvent.ShowModal -> {
@@ -43,8 +44,11 @@ class TimerViewModel @Inject constructor(
                 is TimerEvent.OnClickModalCompleteButton -> {
                     val type = uiState.value.chipList.find { it.isSelected }
                     type?.let {
-                        val reservationInfo = e.startBlockReservationInfo.copy(category = it.text)
-                        setBlockNow(reservationInfo)
+                        val newReservation = e.startBlockReservationInfo.reservationInfo.copy(category = it.text)
+                        val reservationItem = e.startBlockReservationInfo.copy(reservationInfo = newReservation)
+                        // 타이머 지금 시작 추가.
+                        setActiveBlockReservation(reservationItem)
+
                     }
                 }
 
@@ -65,21 +69,15 @@ class TimerViewModel @Inject constructor(
         appDataRepository.setBlockedPackageList(packageList)
     }
 
-    private suspend fun setBlockNow(
-        startReservationInfo: ReservationInfo
+    // 당장 타이머 시작.
+    private suspend fun setActiveBlockReservation(
+        startReservationInfo: ReservationItemModel
     ) {
-        val type = uiState.value.chipList.find { it.isSelected }
-        val blockAppList = uiState.value.modalAppDataList
-
         // 예약 리스트에 당장 추가.
         val oldReservationList = reservationRepository.getReservationList()
         val newReservationList = oldReservationList.toMutableList().apply {
             add(startReservationInfo)
         }
         reservationRepository.setReservationList(newReservationList)
-
-        // local에서 당장 block 시작.
-        appDataRepository.setBlockedPackageList(blockAppList.map { it.packageName })
-        appDataRepository.setBlockMode(true)
     }
 }

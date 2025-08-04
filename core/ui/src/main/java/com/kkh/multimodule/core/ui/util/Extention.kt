@@ -2,6 +2,7 @@ package com.kkh.multimodule.core.ui.util
 
 import android.annotation.SuppressLint
 import android.os.Build
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.time.LocalDate
@@ -56,4 +57,12 @@ fun getStartAndEndTime(selectedTime: String): Pair<String, String> {
         .plusMinutes(additionalTime.minute.toLong())
 
     return now.format(formatter) to endTime.format(formatter)
+}
+
+fun updateToggle(id: Int, list: List<ReservationItemModel>): List<ReservationItemModel> {
+    return list.map { item ->
+        if (item.id == id) {
+            item.copy(isToggleChecked = !item.isToggleChecked)
+        } else item
+    }
 }

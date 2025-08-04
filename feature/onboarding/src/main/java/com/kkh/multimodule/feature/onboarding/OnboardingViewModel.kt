@@ -22,7 +22,6 @@ class OnboardingViewModel @Inject constructor(private val appDataRepository: App
             when (e) {
                 is OnboardingEvent.OnCompleteRegisterButton -> {
                     setBlockedPackageList(e.appList)
-                    setBlockModeOn()
                 }
                 else -> {}
             }
