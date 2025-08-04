@@ -24,8 +24,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
@@ -49,23 +47,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
-import com.kkh.multimodule.feature.reservation.ReservationEvent
-import com.kkh.multimodule.feature.reservation.ReservationViewModel
-import com.kkh.multimodule.feature.reservation.BottomSheetState
-import com.kkh.multimodule.feature.timer.ChipInfo
-import com.kkh.multimodule.feature.timer.FocusChipRow
-import com.kkh.multimodule.feature.timer.ReservationTime
 import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.core.ui.ui.component.LimberOutlinedTextField
+import com.kkh.multimodule.feature.reservation.BottomSheetState
+import com.kkh.multimodule.feature.reservation.ReservationEvent
+import com.kkh.multimodule.feature.reservation.ReservationViewModel
+import com.kkh.multimodule.feature.timer.ChipInfo
+import com.kkh.multimodule.feature.timer.FocusChipRow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +82,7 @@ fun ReservationBottomSheet(
     val chipList = uiState.chipList
     val repeatOptionList = uiState.repeatOptionList
     val dayList = uiState.dayList
-    val reservationTime = uiState.reservationTime
+    val ReservationInfo = uiState.ReservationInfo
 
     val targetHeightFraction = when (bottomSheetState) {
         BottomSheetState.Idle -> 0.9f
@@ -137,7 +134,7 @@ fun ReservationBottomSheet(
                 when (state) {
                     BottomSheetState.Idle -> {
                         ReservationBottomSheetContent(
-                            reservationTime = reservationTime,
+                            ReservationInfo = ReservationInfo,
                             value = titleText,
                             onValueChange = {
                                 titleText = it
@@ -162,10 +159,18 @@ fun ReservationBottomSheet(
                             chipList = chipList,
                             // 집중 칩 변경 이벤트
                             onSelectedChanged = { chipText ->
-                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.OnClickFocusChip(chipText))
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.OnClickFocusChip(
+                                        chipText
+                                    )
+                                )
                             },
                             onClickReservationButton = {
-                                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.OnClickReservationButton(titleText))
+                                reservationViewModel.sendEvent(
+                                    ReservationEvent.BottomSheet.OnClickReservationButton(
+                                        titleText
+                                    )
+                                )
                             }
                         )
                     }
@@ -182,9 +187,10 @@ fun ReservationBottomSheet(
                                 }
                             },
                             onClickComplete = { selectedTime ->
+                                val time = selectedTime.toString()
                                 reservationViewModel.sendEvent(
                                     ReservationEvent.BottomSheet.OnClickStartTimeCompleteButton(
-                                        selectedTime
+                                        time
                                     )
                                 )
                             },
@@ -204,15 +210,15 @@ fun ReservationBottomSheet(
                                 }
                             },
                             onClickComplete = { selectedTime ->
+                                val time = selectedTime.toString()
                                 reservationViewModel.sendEvent(
                                     ReservationEvent.BottomSheet.OnClickEndTimeCompleteButton(
-                                        selectedTime
+                                        time
                                     )
                                 )
                             },
                             head = "반복 설정",
-
-                            )
+                        )
                     }
 
                     BottomSheetState.Repeat -> {
@@ -286,7 +292,7 @@ fun ReservationBottomSheetContent(
     chipList: List<ChipInfo> = listOf(),
     value: String,
     onValueChange: (String) -> Unit,
-    reservationTime : ReservationTime,
+    ReservationInfo: ReservationInfo,
     onSelectedChanged: (String) -> Unit = {},
     onClickTimerButton: (Int) -> Unit = {},
     onClickReservationButton: () -> Unit = {}
@@ -312,7 +318,10 @@ fun ReservationBottomSheetContent(
                 onSelectedChanged = onSelectedChanged
             )
 
-            ReservationTimerSection(reservationTime = reservationTime, onClickButton = onClickTimerButton)
+            ReservationInforSection(
+                ReservationInfo = ReservationInfo,
+                onClickButton = onClickTimerButton
+            )
             Spacer(Modifier.height(120.dp))
 
         }
@@ -416,8 +425,8 @@ fun ReservationSetting(
 }
 
 @Composable
-fun ReservationTimerSection(
-    reservationTime : ReservationTime,
+fun ReservationInforSection(
+    ReservationInfo: ReservationInfo,
     onClickButton: (Int) -> Unit = {}
 ) {
     Spacer(Modifier.height(20.dp))
@@ -425,26 +434,26 @@ fun ReservationTimerSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
-        ReservationTimerButton(
+        ReservationInforButton(
             label = "시작",
-            time = reservationTime.startTime.toString(),
+            time = ReservationInfo.startTime.toString(),
             onClick = { onClickButton(0) }
         )
-        ReservationTimerButton(
+        ReservationInforButton(
             label = "종료",
-            time = reservationTime.endTime.toString(),
+            time = ReservationInfo.endTime.toString(),
             onClick = { onClickButton(1) }
         )
-        ReservationTimerButton(
+        ReservationInforButton(
             label = "반복 시기",
-            time = reservationTime.repeatDays.joinToString(","),
+            time = ReservationInfo.repeatDays.joinToString(","),
             onClick = { onClickButton(2) }
         )
     }
 }
 
 @Composable
-fun ReservationTimerButton(
+fun ReservationInforButton(
     label: String,
     time: String,
     onClick: () -> Unit

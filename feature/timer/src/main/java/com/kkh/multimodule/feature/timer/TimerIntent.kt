@@ -14,8 +14,37 @@ import kotlinx.datetime.LocalTime
 data class ChipInfo(
     val text: String,
     val isSelected: Boolean = false,
-    val imageResId : Int = R.drawable.ic_info
-)
+    val imageResId: Int = R.drawable.ic_info
+) {
+    companion object {
+        val mockList = listOf(
+            ChipInfo("학습", imageResId = R.drawable.ic_study),
+            ChipInfo("업무", imageResId = R.drawable.ic_study),
+            ChipInfo("회의", imageResId = R.drawable.ic_study),
+            ChipInfo("작업", imageResId = R.drawable.ic_study),
+            ChipInfo("독서", imageResId = R.drawable.ic_study),
+        )
+
+        val dayList = listOf(
+            ChipInfo("월"),
+            ChipInfo("화"),
+            ChipInfo("수"),
+            ChipInfo("목"),
+            ChipInfo("금"),
+            ChipInfo("토"),
+            ChipInfo("일"),
+        )
+
+        val repeatOptionList = listOf(
+            ChipInfo("매일"),
+            ChipInfo("평일"),
+            ChipInfo("주말"),
+        )
+
+        val init = ChipInfo("Chip 1")
+    }
+}
+
 
 data class TimerState(
     val timerScreenState: TimerScreenType,
@@ -28,14 +57,7 @@ data class TimerState(
     companion object {
         fun init() = TimerState(
             timerScreenState = TimerScreenType.Now,
-            chipList = listOf(
-                ChipInfo("학습", imageResId = R.drawable.ic_study),
-                ChipInfo("업무", imageResId = R.drawable.ic_study),
-                ChipInfo("회의", imageResId = R.drawable.ic_study),
-                ChipInfo("작업", imageResId = R.drawable.ic_study),
-                ChipInfo("독서", imageResId = R.drawable.ic_study),
-                ChipInfo("직접 추가")
-            ),
+            chipList = ChipInfo.mockList,
             appDataList = emptyList(),
             modalAppDataList = emptyList()
         )

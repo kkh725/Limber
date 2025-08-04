@@ -1,12 +1,15 @@
 package com.kkh.multimodule.feature.reservation
 
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.mockReservationItems
 import com.kkh.multimodule.feature.timer.ReservationScreenState
 import com.kkh.multimodule.feature.timer.ChipInfo
-import com.kkh.multimodule.feature.timer.ReservationTime
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
 import kotlinx.datetime.LocalTime
+import kotlin.collections.map
 
 sealed class BottomSheetState {
     data object Idle : BottomSheetState()
@@ -17,8 +20,8 @@ sealed class BottomSheetState {
 
 data class ReservationState(
     val reservationScreenState: ReservationScreenState,
-    val reservationItemList: List<ReservationInfo>,
-    val reservationTime: ReservationTime,
+    val ReservationItemModelList: List<ReservationItemModel>,
+    val ReservationInfo: ReservationInfo,
     val isClickedAllSelected: Boolean,
     val reservationBottomSheetState: BottomSheetState,
     val repeatOptionList: List<ChipInfo>,
@@ -30,67 +33,12 @@ data class ReservationState(
         fun init() = ReservationState(
             reservationScreenState = ReservationScreenState.Idle,
             isClickedAllSelected = false,
-            reservationItemList = listOf(
-                ReservationInfo(
-                    1,
-                    ReservationTime.init(),
-                    isToggleChecked = true,
-                    isRemoveChecked = false
-                ),
-                ReservationInfo(
-                    2,
-                    ReservationTime.init(),
-                    isToggleChecked = true,
-                    isRemoveChecked = false
-                ),
-                ReservationInfo(
-                    3,
-                    ReservationTime.init(),
-                    isToggleChecked = true,
-                    isRemoveChecked = false
-                ),
-                ReservationInfo(
-                    4,
-                    ReservationTime.init(),
-                    isToggleChecked = true,
-                    isRemoveChecked = false
-                ),
-                ReservationInfo(
-                    5,
-                    ReservationTime.init(),
-                    isToggleChecked = true,
-                    isRemoveChecked = false
-                ),
-                ReservationInfo(
-                    6,
-                    ReservationTime.init(),
-                    isToggleChecked = true,
-                    isRemoveChecked = false
-                )
-            ),
-            chipList = listOf(
-                ChipInfo("하나"),
-                ChipInfo("둘"),
-                ChipInfo("셋"),
-                ChipInfo("넷"),
-                ChipInfo("직접 추가")
-            ),
-            repeatOptionList = listOf(
-                ChipInfo("매일"),
-                ChipInfo("평일"),
-                ChipInfo("주말"),
-            ),
+            ReservationItemModelList = ReservationItemModel.mockList(),
+            chipList = ChipInfo.mockList,
+            repeatOptionList = ChipInfo.repeatOptionList,
             reservationBottomSheetState = BottomSheetState.Idle,
-            reservationTime = ReservationTime.init(),
-            dayList = listOf(
-                ChipInfo("월"),
-                ChipInfo("화"),
-                ChipInfo("수"),
-                ChipInfo("목"),
-                ChipInfo("금"),
-                ChipInfo("토"),
-                ChipInfo("일")
-            )
+            ReservationInfo = ReservationInfo.init(),
+            dayList = ChipInfo.dayList
         )
     }
 }
@@ -111,8 +59,8 @@ sealed class ReservationEvent : UiEvent {
         data class OnClickRepeatOptionChip(val chipText: String) : BottomSheet()
         data class OnClickDayChip(val chipText: String) : BottomSheet()
         data object OnClickRepeatOptionCompleteButton : BottomSheet()
-        data class OnClickStartTimeCompleteButton(val time: LocalTime) : BottomSheet()
-        data class OnClickEndTimeCompleteButton(val time: LocalTime) : BottomSheet()
+        data class OnClickStartTimeCompleteButton(val time: String) : BottomSheet()
+        data class OnClickEndTimeCompleteButton(val time: String) : BottomSheet()
         data class OnClickReservationButton(val title: String) : BottomSheet()
     }
 }
@@ -126,48 +74,48 @@ class ReservationReducer(state: ReservationState) :
             }
 
             is ReservationEvent.OnToggleChanged -> {
-                val newList = oldState.reservationItemList.map {
+                val newList = oldState.ReservationItemModelList.map {
                     if (it.id == event.id) it.copy(isToggleChecked = event.checked) else it
                 }
-                setState(oldState.copy(reservationItemList = newList))
+                setState(oldState.copy(ReservationItemModelList = newList))
             }
 
             is ReservationEvent.OnRemoveCheckChanged -> {
-                val newList = oldState.reservationItemList.map {
+                val newList = oldState.ReservationItemModelList.map {
                     if (it.id == event.id) it.copy(isRemoveChecked = event.checked) else it
                 }
-                setState(oldState.copy(reservationItemList = newList))
+                setState(oldState.copy(ReservationItemModelList = newList))
             }
 
             // 수정페이지 전체선택.
             is ReservationEvent.OnClickAllSelected -> {
                 val newAllSelected = !oldState.isClickedAllSelected
-                var newList = oldState.reservationItemList
+                var newList = oldState.ReservationItemModelList
                 newList = if (newAllSelected) {
-                    oldState.reservationItemList.map {
+                    oldState.ReservationItemModelList.map {
                         it.copy(isRemoveChecked = true)
                     }
                 } else {
-                    oldState.reservationItemList.map {
+                    oldState.ReservationItemModelList.map {
                         it.copy(isRemoveChecked = false)
                     }
                 }
                 setState(
                     oldState.copy(
-                        reservationItemList = newList,
+                        ReservationItemModelList = newList,
                         isClickedAllSelected = newAllSelected
                     )
                 )
             }
 
             is ReservationEvent.OnClickModifyCompleteButton -> {
-                val newList = oldState.reservationItemList.map {
+                val newList = oldState.ReservationItemModelList.map {
                     it.copy(isRemoveChecked = false)
                 }
                 setState(
                     oldState.copy(
                         reservationScreenState = ReservationScreenState.Idle,
-                        reservationItemList = newList,
+                        ReservationItemModelList = newList,
                         isClickedAllSelected = false
                     )
                 )
@@ -212,7 +160,7 @@ class ReservationReducer(state: ReservationState) :
                     oldState.copy(
                         reservationBottomSheetState = BottomSheetState.Idle,
                         isSheetVisible = false,
-                        reservationTime = ReservationTime.init()
+                        ReservationInfo = ReservationInfo.init()
                     )
                 )
             }
@@ -337,37 +285,37 @@ class ReservationReducer(state: ReservationState) :
                         repeatOptionList = initRepeatOption,
                         dayList = initDayOption,
                         reservationBottomSheetState = BottomSheetState.Idle,
-                        reservationTime = oldState.reservationTime.copy(repeatDays = dayList)
+                        ReservationInfo = oldState.ReservationInfo.copy(repeatDays = dayList)
                     )
                 )
             }
             // 바텀시트 시작 시각 저장 이벤트
             is ReservationEvent.BottomSheet.OnClickStartTimeCompleteButton -> {
-                val newTime = oldState.reservationTime.copy(startTime = event.time)
+                val newTime = oldState.ReservationInfo.copy(startTime = event.time)
                 setState(
                     oldState.copy(
-                        reservationTime = newTime,
+                        ReservationInfo = newTime,
                         reservationBottomSheetState = BottomSheetState.Idle
                     )
                 )
             }
             // 바텀시트 종료 시각 저장 이벤트
             is ReservationEvent.BottomSheet.OnClickEndTimeCompleteButton -> {
-                val newTime = oldState.reservationTime.copy(endTime = event.time)
+                val newTime = oldState.ReservationInfo.copy(endTime = event.time)
                 setState(
                     oldState.copy(
-                        reservationTime = newTime,
+                        ReservationInfo = newTime,
                         reservationBottomSheetState = BottomSheetState.Idle
                     )
                 )
             }
             // 바텀시트 최종 예약하기 버튼
             is ReservationEvent.BottomSheet.OnClickReservationButton -> {
-                val newReservationTime = oldState.reservationTime.copy(title = event.title)
+                val newReservationInfo = oldState.ReservationInfo.copy(title = event.title)
 
                 setState(
                     oldState.copy(
-                        reservationTime = newReservationTime,
+                        ReservationInfo = newReservationInfo,
                         isSheetVisible = false
                     )
                 )

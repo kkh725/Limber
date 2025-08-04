@@ -5,14 +5,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kkh.multimodule.limber.RootViewModel
-import com.kkh.multimodule.core.domain.model.ScreenState
+import com.kkh.multimodule.core.domain.ScreenState
 import com.kkh.multimodule.feature.home.HomeRoutes
 import com.kkh.multimodule.feature.laboratory.laboratoryGraph
 import com.kkh.multimodule.feature.home.homeNavGraph
 import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
 import com.kkh.multimodule.feature.home.navigateToHomeScreen
 import com.kkh.multimodule.feature.home.navigateToRecallScreen
-import com.kkh.multimodule.feature.onboarding.OnBoardingRoute
 import com.kkh.multimodule.limber.intent.RootEvent
 import com.kkh.multimodule.feature.timer.timerNavGraph
 import com.kkh.multimodule.feature.onboarding.navigateToAccessPermissionScreen

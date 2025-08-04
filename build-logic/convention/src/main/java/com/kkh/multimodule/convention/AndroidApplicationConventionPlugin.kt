@@ -31,17 +31,17 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 // 🔒 Signing 설정
                 signingConfigs {
                     create("release") {
-                        val keystoreProps = Properties().apply {
-                            val propsFile = File(rootDir, "local.properties")
-                            if (propsFile.exists()) {
-                                load(propsFile.inputStream())
-                            }
-                        }
-
-                        storeFile = file(keystoreProps["KEYSTORE_FILE"] as String)
-                        storePassword = keystoreProps["KEYSTORE_PASSWORD"] as String
-                        keyAlias = keystoreProps["KEY_ALIAS"] as String
-                        keyPassword = keystoreProps["KEY_PASSWORD"] as String
+//                        val keystoreProps = Properties().apply {
+//                            val propsFile = File(rootDir, "local.properties")
+//                            if (propsFile.exists()) {
+//                                load(propsFile.inputStream())
+//                            }
+//                        }
+//
+//                        storeFile = file(keystoreProps["KEYSTORE_FILE"] as String)
+//                        storePassword = keystoreProps["KEYSTORE_PASSWORD"] as String
+//                        keyAlias = keystoreProps["KEY_ALIAS"] as String
+//                        keyPassword = keystoreProps["KEY_PASSWORD"] as String
                     }
                 }
 

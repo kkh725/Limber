@@ -44,6 +44,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
@@ -59,19 +61,10 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.designsystem.gradientModifier
 import com.kkh.multimodule.feature.reservation.bottomsheet.ReservationBottomSheet
 import com.kkh.multimodule.feature.timer.ReservationScreenState
-import com.kkh.multimodule.feature.timer.ReservationTime
 import com.kkh.multimodule.core.ui.ui.component.LimberCheckButton
 import com.kkh.multimodule.core.ui.ui.component.LimberFilterChip
 import com.kkh.multimodule.core.ui.ui.component.LimberRoundButton
 import com.kkh.multimodule.core.ui.ui.component.LimberToggle
-
-data class ReservationInfo(
-    val id: Int,
-    val reservationTime: ReservationTime,
-    var isToggleChecked: Boolean,
-    var isRemoveChecked: Boolean = false,
-)
-
 
 @Preview(showBackground = true)
 @Composable
@@ -138,7 +131,7 @@ fun ReservationPage(modifier: Modifier = Modifier) {
         ) {
             ReservationList(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                reservationList = uiState.reservationItemList,
+                reservationList = uiState.ReservationItemModelList,
                 reservationScreenState = uiState.reservationScreenState,
                 onToggleChanged = { id, checked ->
                     reservationViewModel.sendEvent(ReservationEvent.OnToggleChanged(id, checked))
@@ -274,7 +267,7 @@ fun ModifyButton(onClick: () -> Unit = {}) {
 @Composable
 fun ReservationList(
     modifier: Modifier = Modifier,
-    reservationList: List<ReservationInfo>,
+    reservationList: List<ReservationItemModel>,
     reservationScreenState: ReservationScreenState,
     onToggleChanged: (id: Int, checked: Boolean) -> Unit,
     onCheckButtonClicked: (id: Int, checked: Boolean) -> Unit
@@ -284,7 +277,7 @@ fun ReservationList(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(reservationList) { item ->
-            ReservationItemComposable(
+            ReservationItemModelComposable(
                 info = item,
                 reservationScreenState = reservationScreenState,
                 onToggleChanged = { checked ->
@@ -302,8 +295,8 @@ fun ReservationList(
 }
 
 @Composable
-fun ReservationItemComposable(
-    info: ReservationInfo,
+fun ReservationItemModelComposable(
+    info: ReservationItemModel,
     reservationScreenState: ReservationScreenState,
     onToggleChanged: (Boolean) -> Unit,
     onCheckButtonClicked: (Boolean) -> Unit = {}
@@ -353,13 +346,13 @@ fun ReservationItemComposable(
 
         Spacer(Modifier.height(12.dp))
         Text(
-            text = info.reservationTime.title,
+            text = info.reservationInfo.title,
             style = LimberTextStyle.Heading3,
             color = if (info.isToggleChecked) Gray800 else Gray600
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = info.reservationTime.category,
+            text = info.reservationInfo.category,
             style = LimberTextStyle.Body2,
             color = descriptionColor
         )
@@ -368,7 +361,7 @@ fun ReservationItemComposable(
 
 @Composable
 fun IdleRow(
-    info: ReservationInfo,
+    info: ReservationItemModel,
     chipTextColor: Color,
     chipBackgroundColor: Color,
     onToggleChanged: (Boolean) -> Unit
@@ -379,7 +372,7 @@ fun IdleRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         LimberFilterChip(
-            text = info.reservationTime.category,
+            text = info.reservationInfo.category,
             checked = info.isToggleChecked,
             checkedTextColor = chipTextColor,
             uncheckedTextColor = chipTextColor,
@@ -397,7 +390,7 @@ fun IdleRow(
 
 @Composable
 fun ModifiedRow(
-    info: ReservationInfo,
+    info: ReservationItemModel,
     chipTextColor: Color,
     chipBackgroundColor: Color,
     onClickCheckButton: (Boolean) -> Unit
@@ -412,7 +405,7 @@ fun ModifiedRow(
             onClick = onClickCheckButton
         )
         LimberFilterChip(
-            text = info.reservationTime.category,
+            text = info.reservationInfo.category,
             checked = info.isToggleChecked,
             onCheckedChange = {} // 또는 생략 가능: UI용 디스플레이 Chip일 경우
         )

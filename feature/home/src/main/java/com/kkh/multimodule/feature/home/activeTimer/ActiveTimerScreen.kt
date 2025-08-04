@@ -438,7 +438,11 @@ fun BottomSheetContent(appInfoList: List<AppInfo>, onClose: () -> Unit) {
 
             }
             Spacer(Modifier.height(33.dp))
-            AppList(appInfoList = appInfoList, onClickModifyButton = {})
+            AppList(
+                appInfoList = appInfoList,
+                onClickModifyButton = {},
+                onClickEmptyBox = {}
+            )
             Spacer(Modifier.height(24.dp))
 
         }

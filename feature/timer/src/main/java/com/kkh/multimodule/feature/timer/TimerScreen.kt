@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
@@ -146,7 +147,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
         Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
             WarnDialog(
                 title = "${selectedTime.hour}시간 ${selectedTime.minute}분 동안\n 다음의 앱들이 차단돼요",
-                appinfoList = modalAppList,
+                appInfoList = modalAppList,
                 onClickModifyButton = {
                     timerViewModel.sendEvent(TimerEvent.ShowSheet(true, context))
                 },
@@ -172,16 +173,11 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
 
 @Preview
 @Composable
-fun TimerScreenPreview() {
-    TimerScreen {}
-}
-
-@Composable
 fun TimerScreenTopBar(
     modifier: Modifier = Modifier,
-    selectedTimerType: TimerScreenType,
-    onClickStartNowBtn: () -> Unit,
-    onClickReservationBtn: () -> Unit
+    selectedTimerType: TimerScreenType = TimerScreenType.Now,
+    onClickStartNowBtn: () -> Unit = {},
+    onClickReservationBtn: () -> Unit = {}
 ) {
 
     Row(
@@ -280,14 +276,21 @@ fun FocusChipRow(
     }
 }
 
-
+@Preview(showBackground = true)
 @Composable
 fun TimerScreenContent(
-    chipList: List<ChipInfo>,
-    onSelectedChanged: (String) -> Unit,
+    chipList: List<ChipInfo> = listOf(
+        ChipInfo("학습", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
+        ChipInfo("업무", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
+        ChipInfo("회의", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
+        ChipInfo("작업", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
+        ChipInfo("독서", imageResId = R.drawable.ic_study),
+        ChipInfo("직접 추가"))
+        ,
+    onSelectedChanged: (String) -> Unit = {},
     modifier: Modifier = Modifier,
-    selectedTime: LocalTime,
-    onValueChanged: (LocalTime) -> Unit
+    selectedTime: LocalTime = LocalTime.fromSecondOfDay(1200),
+    onValueChanged: (LocalTime) -> Unit = {}
 ) {
 
     Column(

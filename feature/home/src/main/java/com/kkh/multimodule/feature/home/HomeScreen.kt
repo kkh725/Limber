@@ -376,7 +376,7 @@ fun TodayActivityBar(
         ) {
             Image(
                 modifier = Modifier.size(24.dp),
-                painter = painterResource(R.drawable.ic_fire),
+                painter = painterResource(R.drawable.ic_star),
                 contentDescription = "Star"
             )
             Spacer(Modifier.width(10.dp))

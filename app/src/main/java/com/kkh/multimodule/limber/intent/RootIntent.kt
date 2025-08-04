@@ -3,7 +3,7 @@ package com.kkh.multimodule.limber.intent
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
-import com.kkh.multimodule.core.domain.model.ScreenState
+import com.kkh.multimodule.core.domain.ScreenState
 import com.kkh.multimodule.feature.home.HomeRoutes
 import com.kkh.multimodule.limber.navigation.BottomNavRoutes
 
