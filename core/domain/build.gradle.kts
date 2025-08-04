@@ -10,6 +10,9 @@ kotlin {
     jvmToolchain(17)
 }
 
+
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
 }

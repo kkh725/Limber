@@ -8,6 +8,7 @@ android {
     namespace = "com.kkh.multimodule.core.datastore"
 }
 
+
 dependencies {
 
     implementation(project(":core:domain"))

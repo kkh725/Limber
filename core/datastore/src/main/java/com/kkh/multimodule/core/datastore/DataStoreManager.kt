@@ -7,13 +7,16 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import com.kkh.multimodule.core.domain.model.ReservationInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import java.io.IOException
+import kotlin.collections.map
 
 object DataStoreManager {
-    private lateinit var dataStore: DataStore<Preferences>
+    lateinit var dataStore: DataStore<Preferences>
 
     fun init(context: Context) {
         dataStore = PreferenceDataStoreFactory.create {
@@ -37,6 +40,14 @@ object DataStoreManager {
         dataStore.edit { preferences -> preferences[key] = value.toSet() }
     }
 
+    suspend fun saveReservationInfoList(reservationKey : Preferences.Key<Set<String>>,list: List<ReservationInfo>) {
+        val jsonSet = list.map { Json.encodeToString(it) }.toSet()
+        dataStore.edit { prefs ->
+            prefs[reservationKey] = jsonSet
+        }
+    }
+
+
     fun readString(key: Preferences.Key<String>): Flow<String> = read(key, "")
     fun readInt(key: Preferences.Key<Int>): Flow<Int> = read(key, 0)
     fun readBool(key: Preferences.Key<Boolean>): Flow<Boolean> = read(key, false)
@@ -44,6 +55,15 @@ object DataStoreManager {
         return dataStore.data.catch { e ->
             if (e is IOException) emit(emptyPreferences()) else throw e
         }.map { it[key]?.toList() ?: emptyList() }
+    }
+
+    fun readReservationInfoList(reservationKey : Preferences.Key<Set<String>>) : Flow<List<ReservationInfo>> {
+        return dataStore.data
+            .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }
+            .map { prefs ->
+                val jsonSet = prefs[reservationKey] ?: emptySet()
+                jsonSet.map { Json.decodeFromString<ReservationInfo>(it) }
+            }
     }
 
     private fun <T> read(key: Preferences.Key<T>, defaultValue: T): Flow<T> {

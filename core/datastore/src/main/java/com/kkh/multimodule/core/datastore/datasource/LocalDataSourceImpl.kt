@@ -5,18 +5,22 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.kkh.multimodule.core.datastore.DataStoreManager
+import com.kkh.multimodule.core.domain.model.ReservationInfo
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 
 internal class LocalDataSourceImpl @Inject constructor() :
     LocalDataSource {
     private val keyString = stringPreferencesKey("CUSTOM_TEXT")
     private val keyBoolean = booleanPreferencesKey("CUSTOM_BOOL")
     private val keyInt = intPreferencesKey("CUSTOM_INT")
-    private val packageListKey = stringSetPreferencesKey("CUSTOM_STRING_LIST")
 
+    private val packageListKey = stringSetPreferencesKey("CUSTOM_STRING_LIST")
+    private val reservationListKey = stringSetPreferencesKey("RESERVATION_LIST")
     private val isBlockMode = booleanPreferencesKey("IS_BLOCK_MODE")
+
     /**
      * 패키지명 로컬 저장
      */
@@ -46,5 +50,21 @@ internal class LocalDataSourceImpl @Inject constructor() :
 
     override fun observeBlockMode(): Flow<Boolean> {
         return DataStoreManager.readBool(isBlockMode)
+    }
+
+    /**
+     * 차단 예약 관리.
+     */
+
+    override suspend fun setReservationList(reservationList: List<ReservationInfo>) {
+        DataStoreManager.saveReservationInfoList(reservationListKey, reservationList)
+    }
+
+    override suspend fun getReservationList(): List<ReservationInfo> {
+        return DataStoreManager.readReservationInfoList(reservationListKey).first()
+    }
+
+    override fun observeReservationList(): Flow<List<ReservationInfo>> {
+        return DataStoreManager.readReservationInfoList(reservationListKey)
     }
 }

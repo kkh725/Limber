@@ -22,11 +22,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,6 +48,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import com.kkh.multimodule.core.ui.ui.component.LimberText
@@ -57,7 +56,7 @@ import com.kkh.multimodule.core.ui.ui.component.LimberText
 @Preview
 @Composable
 fun WarnDialog(
-    appInfoList: List<AppInfo> = emptyList<AppInfo>(),
+    appInfoList: List<AppInfo> = emptyList(),
     title: String = "1시간 4분동안\n다음의 앱들이 차단돼요",
     onClickModifyButton: () -> Unit = {},
     onClickStartButton: () -> Unit = {},
@@ -84,7 +83,7 @@ fun WarnDialog(
                     painter = painterResource(id = R.drawable.bg_warn_modal),
                     contentDescription = "",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.FillHeight
                 )
 
                 Box(
@@ -92,20 +91,7 @@ fun WarnDialog(
                         .align(Alignment.TopEnd)
                         .padding(top = 32.dp, end = 20.dp)
                 ) {
-                    IconButton(
-                        onClick = {
-                            onDismissRequest()
-                        },
-                        modifier = Modifier
-                            .size(24.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "",
-                            modifier = Modifier.fillMaxSize(),
-                            tint = Gray400
-                        )
-                    }
+                    LimberCloseButton { onDismissRequest() }
                 }
             }
 

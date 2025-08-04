@@ -1,5 +1,6 @@
 package com.kkh.multimodule.core.domain.model
 
+import kotlinx.serialization.Serializable
 import java.time.LocalTime
 
 data class ReservationItemModel(
@@ -13,6 +14,7 @@ data class ReservationItemModel(
     }
 }
 
+@Serializable
 data class ReservationInfo(
     val title: String,
     val category: String,
