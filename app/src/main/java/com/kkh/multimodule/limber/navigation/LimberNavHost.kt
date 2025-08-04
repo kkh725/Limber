@@ -12,6 +12,7 @@ import com.kkh.multimodule.feature.home.homeNavGraph
 import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
 import com.kkh.multimodule.feature.home.navigateToHomeScreen
 import com.kkh.multimodule.feature.home.navigateToRecallScreen
+import com.kkh.multimodule.feature.onboarding.OnBoardingRoute
 import com.kkh.multimodule.limber.intent.RootEvent
 import com.kkh.multimodule.feature.timer.timerNavGraph
 import com.kkh.multimodule.feature.onboarding.navigateToAccessPermissionScreen
@@ -28,11 +29,11 @@ fun LimberNavHost(
     rootViewModel: RootViewModel
 ) {
 
-    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+//    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
 
     NavHost(
         navController = navController,
-        startDestination = HomeRoutes.HOME,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
+        startDestination = OnBoardingRoute.Onboarding,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
         modifier = modifier,
     ) {
         onBoardingNavGraph(

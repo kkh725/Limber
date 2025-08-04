@@ -6,7 +6,7 @@ import java.time.LocalTime
 data class ReservationItemModel(
     val id: Int,
     val reservationInfo: ReservationInfo,
-    var isToggleChecked: Boolean,
+    var isToggleChecked: Boolean = false,
     var isRemoveChecked: Boolean = false,
 ){
     companion object{

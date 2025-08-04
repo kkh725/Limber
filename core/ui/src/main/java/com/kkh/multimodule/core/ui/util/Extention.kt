@@ -43,3 +43,17 @@ fun decrementOneSecond(timeStr: String): String {
     val ns = totalSec % 60
     return "%02d:%02d:%02d".format(nh, nm, ns)
 }
+
+fun getStartAndEndTime(selectedTime: String): Pair<String, String> {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.KOREAN)
+    val selectedFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.KOREAN)
+
+    val now = LocalTime.now() // 현재 시간
+    val additionalTime = LocalTime.parse(selectedTime, selectedFormatter)
+
+    val endTime = now
+        .plusHours(additionalTime.hour.toLong())
+        .plusMinutes(additionalTime.minute.toLong())
+
+    return now.format(formatter) to endTime.format(formatter)
+}

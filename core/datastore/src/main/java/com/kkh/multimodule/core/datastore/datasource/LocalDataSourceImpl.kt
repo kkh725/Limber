@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.kkh.multimodule.core.datastore.DataStoreManager
 import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -56,15 +57,15 @@ internal class LocalDataSourceImpl @Inject constructor() :
      * 차단 예약 관리.
      */
 
-    override suspend fun setReservationList(reservationList: List<ReservationInfo>) {
+    override suspend fun setReservationList(reservationList: List<ReservationItemModel>) {
         DataStoreManager.saveReservationInfoList(reservationListKey, reservationList)
     }
 
-    override suspend fun getReservationList(): List<ReservationInfo> {
+    override suspend fun getReservationList(): List<ReservationItemModel> {
         return DataStoreManager.readReservationInfoList(reservationListKey).first()
     }
 
-    override fun observeReservationList(): Flow<List<ReservationInfo>> {
+    override fun observeReservationList(): Flow<List<ReservationItemModel>> {
         return DataStoreManager.readReservationInfoList(reservationListKey)
     }
 }

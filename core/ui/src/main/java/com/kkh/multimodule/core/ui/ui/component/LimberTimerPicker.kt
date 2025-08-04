@@ -1,5 +1,7 @@
 package com.kkh.multimodule.core.ui.ui.component
 
+import android.R.attr.textColor
+import android.R.attr.textStyle
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,17 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dongchyeon.timepicker.ItemLabel
+import com.dongchyeon.timepicker.PickerStyle
 import com.dongchyeon.timepicker.TimeFormat
 import com.dongchyeon.timepicker.TimePicker
 import com.dongchyeon.timepicker.TimePickerDefaults
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun LimberTimePicker(
@@ -46,11 +48,11 @@ fun LimberTimePicker(
                 .fillMaxSize()
                 .align(Alignment.Center),
             initialTime = selectedTime,
-            timeFormat = TimeFormat.TWELVE_HOUR_KOREAN,
-            itemLabel = ItemLabel(
-                style = LimberTextStyle.Heading2,
-                color = Gray800
+            style = PickerStyle(
+                textStyle = LimberTextStyle.Body2,
+                textColor = Gray800, itemSpacing = 5.dp
             ),
+            timeFormat = TimeFormat.TWELVE_HOUR_KOREAN,
             selector = TimePickerDefaults.pickerSelector(
                 color = Gray200,
                 shape = RoundedCornerShape(8.dp)
@@ -67,10 +69,11 @@ fun LimberTimePicker(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview
 @Composable
 fun LimberTimePickerPreview() {
-    var selectedTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
+    var selectedTime by remember { mutableStateOf(kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
     LimberTimePicker24(selectedTime = selectedTime, timeFormat = TimeFormat.TWENTY_FOUR_HOUR, onValueChanged = { selectedTime = it })
 }
 
@@ -90,9 +93,9 @@ fun LimberTimePicker24(
                 .align(Alignment.Center),
             initialTime = selectedTime,
             timeFormat = timeFormat,
-            itemLabel = ItemLabel(
-                style = LimberTextStyle.Heading2,
-                color = Gray800
+            style = PickerStyle(
+                textStyle = LimberTextStyle.Body2,
+                textColor = Gray800, itemSpacing = 5.dp
             ),
             selector = TimePickerDefaults.pickerSelector(
                 color = Gray200,

@@ -1,6 +1,7 @@
 package com.kkh.multimodule.feature.timer
 
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
@@ -49,6 +51,8 @@ import com.kkh.multimodule.core.ui.ui.component.LimberChipWithPlus
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.core.ui.ui.component.LimberTimePicker24
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
+import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
+import com.kkh.multimodule.core.ui.util.getStartAndEndTime
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 
@@ -76,7 +80,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
     val modalAppList = uiState.modalAppDataList
 
     var selectedTime by remember { mutableStateOf(LocalTime(1, 0)) }
-
+    Log.d("TAG", "TimerScreen: ${selectedTime}")
 
     LaunchedEffect(pagerState.currentPage) {
         when (pagerState.currentPage) {
@@ -110,7 +114,7 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 24.dp),
                     enabled = chipList.any { it.isSelected },
-                    onClick = { timerViewModel.sendEvent(TimerEvent.ShowModal(true)) }
+                    onClick = { timerViewModel.sendEvent(TimerEvent.ShowModal(true,context)) }
                 )
             }
         }
@@ -141,10 +145,9 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                 )
             }
         }
-
     }
     if (isModalVisible) {
-        Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false)) }) {
+        Dialog({ timerViewModel.sendEvent(TimerEvent.ShowModal(false,context)) }) {
             WarnDialog(
                 title = "${selectedTime.hour}시간 ${selectedTime.minute}분 동안\n 다음의 앱들이 차단돼요",
                 appInfoList = modalAppList,
@@ -153,10 +156,17 @@ fun TimerScreen(onNavigateToActiveTimer: () -> Unit) {
                 },
                 onClickStartButton = {
                     onNavigateToActiveTimer()
-                    timerViewModel.sendEvent(TimerEvent.ShowModal(false))
+                    val (startTime, endTime) = getStartAndEndTime(selectedTime.toString())
+
+                    timerViewModel.sendEvent(TimerEvent.OnClickModalCompleteButton(
+                        startBlockReservationInfo = ReservationInfo.init().copy(
+                            startTime = startTime,
+                            endTime = endTime,
+                        ))
+                    )
                 },
                 onDismissRequest = {
-                    timerViewModel.sendEvent(TimerEvent.ShowModal(false))
+                    timerViewModel.sendEvent(TimerEvent.ShowModal(false,context))
                 }
             )
         }
@@ -279,14 +289,7 @@ fun FocusChipRow(
 @Preview(showBackground = true)
 @Composable
 fun TimerScreenContent(
-    chipList: List<ChipInfo> = listOf(
-        ChipInfo("학습", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
-        ChipInfo("업무", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
-        ChipInfo("회의", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
-        ChipInfo("작업", imageResId = com.kkh.multimodule.core.ui.R.drawable.ic_study),
-        ChipInfo("독서", imageResId = R.drawable.ic_study),
-        ChipInfo("직접 추가"))
-        ,
+    chipList: List<ChipInfo> = ChipInfo.mockList,
     onSelectedChanged: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     selectedTime: LocalTime = LocalTime.fromSecondOfDay(1200),

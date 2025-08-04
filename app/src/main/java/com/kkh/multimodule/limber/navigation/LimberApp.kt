@@ -30,9 +30,7 @@ fun LimberApp() {
     val rootState by rootViewModel.uiState.collectAsState()
     val screenState = rootState.screenState
 
-    // 👉 현재 백스택 Entry 를 State로 가져오기
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
-    // 👉 현재 라우트 (destination.route)
     val currentRoute = navBackStackEntry?.destination?.route
 
     Box(Modifier.fillMaxSize().background(Gray50)) {

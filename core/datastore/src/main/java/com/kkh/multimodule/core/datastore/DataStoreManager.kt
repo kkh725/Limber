@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -40,7 +41,7 @@ object DataStoreManager {
         dataStore.edit { preferences -> preferences[key] = value.toSet() }
     }
 
-    suspend fun saveReservationInfoList(reservationKey : Preferences.Key<Set<String>>,list: List<ReservationInfo>) {
+    suspend fun saveReservationInfoList(reservationKey : Preferences.Key<Set<String>>,list: List<ReservationItemModel>) {
         val jsonSet = list.map { Json.encodeToString(it) }.toSet()
         dataStore.edit { prefs ->
             prefs[reservationKey] = jsonSet
@@ -57,12 +58,12 @@ object DataStoreManager {
         }.map { it[key]?.toList() ?: emptyList() }
     }
 
-    fun readReservationInfoList(reservationKey : Preferences.Key<Set<String>>) : Flow<List<ReservationInfo>> {
+    fun readReservationInfoList(reservationKey : Preferences.Key<Set<String>>) : Flow<List<ReservationItemModel>> {
         return dataStore.data
             .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }
             .map { prefs ->
                 val jsonSet = prefs[reservationKey] ?: emptySet()
-                jsonSet.map { Json.decodeFromString<ReservationInfo>(it) }
+                jsonSet.map { Json.decodeFromString<ReservationItemModel>(it) }
             }
     }
 

@@ -2,7 +2,7 @@ package com.kkh.multimodule.core.datastore.datasource
 
 import android.app.usage.UsageStats
 import android.content.Context
-import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -15,7 +15,7 @@ interface LocalDataSource {
     suspend fun getBlockMode(): Boolean
     fun observeBlockMode(): Flow<Boolean>
 
-    suspend fun setReservationList(reservationList: List<ReservationInfo>)
-    suspend fun getReservationList(): List<ReservationInfo>
-    fun observeReservationList(): Flow<List<ReservationInfo>>
+    suspend fun setReservationList(reservationList: List<ReservationItemModel>)
+    suspend fun getReservationList(): List<ReservationItemModel>
+    fun observeReservationList(): Flow<List<ReservationItemModel>>
 }

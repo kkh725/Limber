@@ -31,6 +31,22 @@ object AppInfoProvider {
         return appList
     }
 
+    // 패키지명 리스트로 앱 info 받아오기.
+    fun getAppInfoListFromPackageNames(context: Context, packageNames: List<String>): List<AppInfo> {
+        val packageManager = context.packageManager
+        return packageNames.mapNotNull { packageName ->
+            try {
+                val appInfo = packageManager.getApplicationInfo(packageName, 0)
+                val appName = packageManager.getApplicationLabel(appInfo).toString()
+                val icon = packageManager.getApplicationIcon(packageName)
+                AppInfo(appName, packageName, icon)
+            } catch (e: PackageManager.NameNotFoundException) {
+                null // 존재하지 않는 패키지는 제외
+            }
+        }
+    }
+
+
     // appIcon 출력
     fun getAppIcon(context: Context, packageName: String): Drawable? {
         val packageManager = context.packageManager

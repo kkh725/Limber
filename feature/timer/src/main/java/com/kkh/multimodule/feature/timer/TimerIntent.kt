@@ -3,6 +3,7 @@ package com.kkh.multimodule.feature.timer
 import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
@@ -52,14 +53,16 @@ data class TimerState(
     val isSheetVisible: Boolean = false,
     val isModalVisible: Boolean = false,
     val appDataList: List<AppInfo>,
-    val modalAppDataList: List<AppInfo>
+    val modalAppDataList: List<AppInfo>,
+    val startBlockReservationInfo : ReservationInfo
 ) : UiState {
     companion object {
         fun init() = TimerState(
             timerScreenState = TimerScreenType.Now,
             chipList = ChipInfo.mockList,
             appDataList = emptyList(),
-            modalAppDataList = emptyList()
+            modalAppDataList = emptyList(),
+            startBlockReservationInfo = ReservationInfo.init()
         )
     }
 }
@@ -68,9 +71,9 @@ sealed class TimerEvent : UiEvent {
     data class OnClickTimerScreenButton(val timerScreenState: TimerScreenType) : TimerEvent()
     data class OnClickFocusChip(val chipText: String) : TimerEvent()
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
-    data class ShowModal(val isModalVisible: Boolean) : TimerEvent()
+    data class ShowModal(val isModalVisible: Boolean, val context: Context) : TimerEvent()
     data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
-    data class OnClickModalCompleteButton(val selectedTime : LocalTime) : TimerEvent()
+    data class OnClickModalCompleteButton(val startBlockReservationInfo : ReservationInfo) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
@@ -132,8 +135,10 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
 
             // 모달 최종 시작하기 버튼
             is TimerEvent.OnClickModalCompleteButton -> {
+                val startBlockReservationInfo = event.startBlockReservationInfo
                 setState(
                     oldState.copy(
+                        startBlockReservationInfo = startBlockReservationInfo,
                         isModalVisible = false
                     )
                 )
