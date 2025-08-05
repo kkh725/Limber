@@ -4,12 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
+import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRepository) :
+class HomeViewModel @Inject constructor(
+    private val appDataRepository: AppDataRepository,
+    private val reservationRepository: BlockReservationRepository
+) :
     ViewModel() {
 
     private val reducer = HomeReducer(HomeState.init())
@@ -27,6 +31,7 @@ class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRe
                 }
 
                 is HomeEvent.EnterHomeScreen -> {
+                    setBlockReservationList()
                     setPackageList()
                 }
 
@@ -44,8 +49,13 @@ class HomeViewModel @Inject constructor(private val appDataRepository: AppDataRe
         sendEvent(HomeEvent.SetBlockingAppList(appDataRepository.getBlockedPackageList()))
     }
 
-    private suspend fun setBlockModeOn(){
+    private suspend fun setBlockModeOn() {
         appDataRepository.setBlockMode(true)
+    }
+
+    private suspend fun setBlockReservationList() {
+        val list = reservationRepository.getReservationList()
+        reducer.setState(uiState.value.copy(blockReservationItemList = list))
     }
 
 }

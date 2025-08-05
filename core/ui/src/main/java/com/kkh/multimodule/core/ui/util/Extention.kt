@@ -3,6 +3,7 @@ package com.kkh.multimodule.core.ui.util
 import android.annotation.SuppressLint
 import android.os.Build
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import java.time.Duration
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.time.LocalDate
@@ -66,3 +67,38 @@ fun updateToggle(id: Int, list: List<ReservationItemModel>): List<ReservationIte
         } else item
     }
 }
+
+fun isNowWithinTimeRange(startTimeStr: String, endTimeStr: String): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val now = LocalTime.now()
+    val startTime = LocalTime.parse(startTimeStr, formatter)
+    val endTime = LocalTime.parse(endTimeStr, formatter)
+
+    return if (endTime.isAfter(startTime)) {
+        // 같은 날 범위 (ex: 10:00 ~ 18:00)
+        now >= startTime && now <= endTime
+    } else {
+        // 자정 넘어가는 범위 (ex: 23:00 ~ 02:00)
+        now >= startTime || now <= endTime
+    }
+}
+
+@SuppressLint("DefaultLocale")
+fun getRemainingTimeFormatted(endTimeStr: String): String {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val now = LocalTime.now()
+    val endTime = LocalTime.parse(endTimeStr, formatter)
+
+    val duration = if (endTime.isAfter(now)) {
+        Duration.between(now, endTime)
+    } else {
+        Duration.between(now, endTime.plusHours(24))
+    }
+
+    val hours = duration.toHours()
+    val minutes = duration.toMinutesPart()
+    val seconds = duration.toSecondsPart()
+
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}
+

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
@@ -12,7 +13,8 @@ import kotlinx.coroutines.withContext
 
 data class HomeState(
     val usageAppInfoList: List<AppInfo>,
-    val blockingAppPackageList: List<String>
+    val blockingAppPackageList: List<String>,
+    val blockReservationItemList: List<ReservationItemModel> = emptyList()
 ) : UiState {
     companion object {
         fun init() = HomeState(

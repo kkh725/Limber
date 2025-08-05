@@ -65,6 +65,8 @@ import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.multimodule.core.ui.util.decrementOneSecond
 import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
+import com.kkh.multimodule.core.ui.util.getRemainingTimeFormatted
+import com.kkh.multimodule.core.ui.util.isNowWithinTimeRange
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -78,6 +80,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val appInfoList = uiState.usageAppInfoList
     val blockingAppPackageList = uiState.blockingAppPackageList
+    val localBlockReservationList = uiState.blockReservationItemList
 
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -89,10 +92,19 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        while (isActive) {
-            delay(1000)
-            if (timerText != "00:00:00") {
-                timerText = decrementOneSecond(timerText)
+        // 현재 진행되고 있는 타이머가 존재하는지 확인.
+        val activeReservation = localBlockReservationList.firstOrNull {
+            isNowWithinTimeRange(it.reservationInfo.startTime, it.reservationInfo.endTime)
+        }
+
+        // 존재한다면 endTime까지 몇분남았는지 체크하고 1초씩 줄어들게 만듦.
+        activeReservation?.let {
+            timerText = getRemainingTimeFormatted(it.reservationInfo.endTime)
+            while (isActive) {
+                    delay(1000)
+                if (timerText != "00:00:00") {
+                    timerText = decrementOneSecond(timerText)
+                }
             }
         }
     }
