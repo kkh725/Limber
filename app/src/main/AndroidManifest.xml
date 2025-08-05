@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -60,10 +61,10 @@
             </intent-filter>
         </activity>
 
+        <!-- AndroidManifest.xml 내 application 태그 안 -->
         <receiver
             android:name="com.kkh.multimodule.core.accessibility.BlockTriggerReceiver"
-            android:exported="false">
-        </receiver>
+            android:exported="true"/>
 
 
     </application>

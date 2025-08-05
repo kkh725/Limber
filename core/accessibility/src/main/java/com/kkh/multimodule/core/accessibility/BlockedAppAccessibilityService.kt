@@ -1,11 +1,14 @@
 package com.kkh.multimodule.core.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
@@ -18,10 +21,8 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -46,78 +47,9 @@ class BlockedAppAccessibilityService : AccessibilityService() {
     private val isBlockedState = MutableStateFlow(false)
     private val blockedPackageListState = MutableStateFlow(listOf<String>())
 
-    // BroadcastReceiver를 object로 중첩 정의
-    object BlockTriggerReceiver : BroadcastReceiver() {
-        // 외부 클래스 인스턴스를 참조할 수 없으므로
-        // 외부 서비스 인스턴스를 참조하도록 lateinit으로 둔다
-        lateinit var serviceInstance: BlockedAppAccessibilityService
-
-        override fun onReceive(context: Context, intent: Intent) {
-            val reservationId = intent.getIntExtra("reservation_id", -1)
-            val isStartTrigger = intent.getBooleanExtra("is_start_trigger", true)
-
-            // serviceInstance의 appDataRepository를 사용
-            if (reservationId != -1) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (isStartTrigger) {
-                        serviceInstance.appDataRepository.setBlockMode(true)
-                    } else {
-                        serviceInstance.appDataRepository.setBlockMode(false)
-                    }
-                }
-            }
-        }
-    }
-
-
-    private fun scheduleStartBlockTrigger(reservation: ReservationItemModel) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, BlockTriggerReceiver::class.java).apply {
-            putExtra("reservation_id", reservation.id)
-            putExtra("is_start_trigger", true) // 시작 트리거 표시
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            reservation.id * 2, // 고유한 requestCode로 충돌 방지
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val startTime = LocalTime.parse(reservation.reservationInfo.startTime, DateTimeFormatter.ofPattern("HH:mm"))
-        val triggerTime = startTime.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            triggerTime,
-            pendingIntent
-        )
-    }
-
-    private fun scheduleEndBlockTrigger(reservation: ReservationItemModel) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, BlockTriggerReceiver::class.java).apply {
-            putExtra("reservation_id", reservation.id)
-            putExtra("is_start_trigger", false) // 종료 트리거 표시
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            reservation.id * 2 + 1, // start와 구분되는 requestCode
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val endTime = LocalTime.parse(reservation.reservationInfo.endTime, DateTimeFormatter.ofPattern("HH:mm"))
-        val triggerTime = endTime.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            triggerTime,
-            pendingIntent
-        )
-    }
-
     override fun onCreate() {
         super.onCreate()
+        registerReceiverIfNeeded()
 
         coroutineScope.launch {
             appDataRepository.observeBlockMode().collect { newState ->
@@ -125,15 +57,39 @@ class BlockedAppAccessibilityService : AccessibilityService() {
                 isBlockedState.value = newState
             }
         }
-
         coroutineScope.launch {
-            blockReservationRepository.observeReservationList().collect { reservationList ->
+            blockReservationRepository.observeReservationList().distinctUntilChanged().collect { reservationList ->
                 Log.d("TAG", "saveReservationInfoList: 방출 완")
                 reservationList.filter { it.isToggleChecked }.forEach { reservation ->
-                    scheduleStartBlockTrigger(reservation)
-                    scheduleEndBlockTrigger(reservation)
+                    BlockAlarmScheduler.scheduleBlockTrigger(
+                        this@BlockedAppAccessibilityService,
+                        reservation,
+                        true
+                    )
+                    BlockAlarmScheduler.scheduleBlockTrigger(
+                        this@BlockedAppAccessibilityService,
+                        reservation,
+                        false
+                    )
                 }
             }
+        }
+    }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private fun registerReceiverIfNeeded() {
+        val filter = IntentFilter("com.kkh.multimodule.ACTION_BLOCK_TRIGGER")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                BlockTriggerReceiver(),
+                filter,
+                RECEIVER_EXPORTED // 또는 Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            registerReceiver(
+                BlockTriggerReceiver(),
+                filter
+            )
         }
     }
 
@@ -177,7 +133,6 @@ class BlockedAppAccessibilityService : AccessibilityService() {
 
         Toast.makeText(this, "$packageName 사용이 차단되었습니다", Toast.LENGTH_SHORT).show()
     }
-
 
     override fun onDestroy() {
         coroutineScope.cancel()

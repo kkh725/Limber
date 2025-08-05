@@ -56,7 +56,7 @@ fun DopamineActBox(
             )
         }else{
             LazyColumn(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                items(appInfoList) { appInfo ->
+                items(appInfoList.take(3)) { appInfo ->
                     val bitmap = appInfo.appIcon?.toBitmap()
                     val imageBitmap = bitmap?.asImageBitmap()
                     val painter = imageBitmap?.let { BitmapPainter(it) }
