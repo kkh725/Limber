@@ -1,5 +1,6 @@
 package com.kkh.multimodule.feature.home
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable

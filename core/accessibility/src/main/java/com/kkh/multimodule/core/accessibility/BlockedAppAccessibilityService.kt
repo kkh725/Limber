@@ -61,12 +61,12 @@ class BlockedAppAccessibilityService : AccessibilityService() {
             blockReservationRepository.observeReservationList().distinctUntilChanged().collect { reservationList ->
                 Log.d("TAG", "saveReservationInfoList: 방출 완")
                 reservationList.filter { it.isToggleChecked }.forEach { reservation ->
-                    BlockAlarmScheduler.scheduleBlockTrigger(
+                    BlockAlarmManager.scheduleBlockTrigger(
                         this@BlockedAppAccessibilityService,
                         reservation,
                         true
                     )
-                    BlockAlarmScheduler.scheduleBlockTrigger(
+                    BlockAlarmManager.scheduleBlockTrigger(
                         this@BlockedAppAccessibilityService,
                         reservation,
                         false

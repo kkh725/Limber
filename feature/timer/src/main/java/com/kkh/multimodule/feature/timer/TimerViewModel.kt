@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfoProvider.getAppInfoListFromPackageNames
+import com.kkh.multimodule.core.accessibility.BlockAlarmManager
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
@@ -18,8 +19,7 @@ import java.time.temporal.TemporalQueries.localTime
 class TimerViewModel @Inject constructor(
     private val appDataRepository: AppDataRepository,
     private val reservationRepository: BlockReservationRepository
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val reducer = TimerReducer(TimerState.init())
     val uiState get() = reducer.uiState
@@ -30,6 +30,9 @@ class TimerViewModel @Inject constructor(
             reducer.sendEvent(e)
 
             when (e) {
+                is TimerEvent.OnEnterTimerScreen -> {
+                    setTimerState()
+                }
                 is TimerEvent.OnClickSheetCompleteButton -> {
                     // modal 에서 시작하기를 눌러야 차단해야할듯.
                     setBlockedPackageList()
@@ -37,17 +40,20 @@ class TimerViewModel @Inject constructor(
 
                 is TimerEvent.ShowModal -> {
                     if (e.isModalVisible){
-                        getBlockedAppList(e.context)
+                        setBlockedAppList(e.context)
                     }
                 }
 
-                is TimerEvent.OnClickModalCompleteButton -> {
+                is TimerEvent.OnClickStartTimerNow -> {
                     val type = uiState.value.chipList.find { it.isSelected }
                     type?.let {
                         val newReservation = e.startBlockReservationInfo.reservationInfo.copy(category = it.text)
                         val reservationItem = e.startBlockReservationInfo.copy(reservationInfo = newReservation)
                         // 타이머 지금 시작 추가.
-                        setActiveBlockReservation(reservationItem)
+                        setActiveBlockReservation(
+                            context = e.context,
+                            startReservationInfo = reservationItem
+                        )
 
                     }
                 }
@@ -57,7 +63,7 @@ class TimerViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getBlockedAppList(context : Context){
+    private suspend fun setBlockedAppList(context : Context){
         val blockedPackageList = appDataRepository.getBlockedPackageList()
         val blockedAppList = getAppInfoListFromPackageNames(context , blockedPackageList)
 
@@ -69,15 +75,18 @@ class TimerViewModel @Inject constructor(
         appDataRepository.setBlockedPackageList(packageList)
     }
 
+    private suspend fun setTimerState(){
+        val isTimerActive = appDataRepository.getBlockMode()
+        reducer.setState(uiState.value.copy(isTimerActive = isTimerActive))
+    }
+
     // 당장 타이머 시작.
     private suspend fun setActiveBlockReservation(
+        context : Context,
         startReservationInfo: ReservationItemModel
     ) {
-        // 예약 리스트에 당장 추가.
-        val oldReservationList = reservationRepository.getReservationList()
-        val newReservationList = oldReservationList.toMutableList().apply {
-            add(startReservationInfo)
-        }
-        reservationRepository.setReservationList(newReservationList)
+        // 지금 당장 시작 후 종료 예약 트리거 on.
+        appDataRepository.setBlockMode(true)
+        BlockAlarmManager.scheduleBlockTrigger(context = context, reservation = startReservationInfo, isStart = false)
     }
 }

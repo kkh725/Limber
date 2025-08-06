@@ -35,13 +35,13 @@ fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {})
         Spacer(Modifier.height(66.dp))
         Text(
             "이제 림버와 함께\n" +
-                    "집중 실험을 시작해보세요!",
+                    "집중 실험을 시작할 수 있어요!!",
             textAlign = TextAlign.Center,
             style = LimberTextStyle.Heading3,
             color = Gray800
         )
         Spacer(Modifier.height(90.dp))
-        Image(painter = painterResource(R.drawable.ic_star), contentDescription = null)
+        Image(painter = painterResource(R.drawable.onboarding_start), contentDescription = null)
         Spacer(Modifier.weight(1f))
         Box(
             Modifier
@@ -52,14 +52,14 @@ fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {})
                 onClick = {
                     navigateToHome()
                 },
-                text = "림버 시작하기"
+                text = "시작하기"
             )
         }
         Spacer(Modifier.height(20.dp))
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun StartScreenPreview() {
     StartScreen({})

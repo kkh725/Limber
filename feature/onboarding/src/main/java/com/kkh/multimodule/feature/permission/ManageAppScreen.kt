@@ -43,7 +43,7 @@ import com.kkh.multimodule.feature.onboarding.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageAppScreen(navigateToSelectType : () -> Unit) {
+fun ManageAppScreen(navigateToStart : () -> Unit) {
 
     var isSheetVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -70,8 +70,8 @@ fun ManageAppScreen(navigateToSelectType : () -> Unit) {
         LimberProgressBar(0.8f)
         Spacer(Modifier.height(40.dp))
         Text(
-            "림버를 통해\n" +
-                    "관리할 앱을 등록해주세요",
+            "집중을 방해하는 앱을\n" +
+                    "등록해주세요",
             textAlign = TextAlign.Center,
             style = LimberTextStyle.Heading3,
             color = Gray800
@@ -80,9 +80,9 @@ fun ManageAppScreen(navigateToSelectType : () -> Unit) {
         Text(
             "최대 10개까지 등록할 수 있으며 언제든 변경 가능해요", style = LimberTextStyle.Body2, color = Gray600
         )
-        Spacer(Modifier.height(40.dp))
+        Spacer(Modifier.height(120.dp))
 
-        Image(painter = painterResource(R.drawable.ic_star), contentDescription = null)
+        Image(painter = painterResource(R.drawable.bg_manage_app), contentDescription = null)
         Spacer(Modifier.weight(1f))
         Box(
             Modifier
@@ -106,7 +106,7 @@ fun ManageAppScreen(navigateToSelectType : () -> Unit) {
             onClickComplete = { checkedAppList ->
                 isSheetVisible = false
                 viewModel.sendEvent(OnCompleteRegisterButton(checkedAppList))
-                navigateToSelectType()
+                navigateToStart()
             },
             appList = appList,
         )

@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,21 +45,21 @@ fun BlockScreen(
 ) {
 
     var isWarnModalVisible by remember { mutableStateOf(false) }
-    val viewModel : BlockViewModel = hiltViewModel()
 
     Box(Modifier.fillMaxSize()) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .background(Color.LightGray)
-        ) {
-            // 배경이미지
-        }
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillHeight,
+            painter = painterResource(R.drawable.bg_all_blocking),
+            contentDescription = "Background Image"
+        )
         Scaffold(
-            containerColor = Gray50,
+            containerColor = Color.Transparent,
             bottomBar = {
                 BlockScreenBottomBar(
-                    modifier = Modifier.padding(bottom = 20.dp).navigationBarsPadding(),
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .navigationBarsPadding(),
                     onClickUnBlock = {
                         isWarnModalVisible = true
                     },
@@ -83,7 +84,7 @@ fun BlockScreen(
 
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun BlockScreenPreview() {
     BlockScreen({}, {})
@@ -97,11 +98,11 @@ fun BlockScreenContent(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(R.drawable.logo_limber),
-            modifier = Modifier.size(180.dp),
+            painter = painterResource(R.drawable.char_block),
+            modifier = Modifier.size(240.dp),
             contentDescription = "Limber Logo"
         )
-        BlockAppText("youtube")
+        Text("차단중..", style = LimberTextStyle.Heading1, color = Color.White)
         Spacer(Modifier.height(12.dp))
 
         Text(

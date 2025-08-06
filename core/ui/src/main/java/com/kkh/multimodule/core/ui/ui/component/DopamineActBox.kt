@@ -70,7 +70,7 @@ fun DopamineActBox(
                             )
                         } else {
                             Image(
-                                painter = painterResource(R.drawable.ic_data),
+                                painter = painterResource(R.drawable.ic_lv1_good),
                                 contentDescription = "App Icon",
                                 modifier = Modifier.size(18.dp) // 원하는 크기 지정
                             )

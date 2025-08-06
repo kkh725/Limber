@@ -31,6 +31,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 is HomeEvent.EnterHomeScreen -> {
+                    setTimerState()
                     setBlockReservationList()
                     setPackageList()
                 }
@@ -51,6 +52,11 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun setBlockModeOn() {
         appDataRepository.setBlockMode(true)
+    }
+
+    private suspend fun setTimerState(){
+        val isTimerActive = appDataRepository.getBlockMode()
+        reducer.setState(uiState.value.copy(isTimerActive = isTimerActive))
     }
 
     private suspend fun setBlockReservationList() {

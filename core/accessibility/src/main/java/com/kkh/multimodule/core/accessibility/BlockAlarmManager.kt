@@ -11,7 +11,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-object BlockAlarmScheduler {
+object BlockAlarmManager {
     fun scheduleBlockTrigger(
         context: Context,
         reservation: ReservationItemModel,

@@ -31,6 +31,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
@@ -50,6 +52,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import kotlinx.coroutines.launch
 
@@ -97,7 +100,8 @@ fun RegisterBlockAppBottomSheet(
                         onDismissRequest()
                     }
                 }
-                TextButton(onClick = {
+                TextButton(
+                    onClick = {
                     // ✅ 선택된 앱 리스트 추출
                     val selectedApps = appList.filterIndexed { index, _ -> checkedList[index] }
 
@@ -105,9 +109,11 @@ fun RegisterBlockAppBottomSheet(
                         sheetState.hide()
                         onClickComplete(selectedApps) // ✅ 선택된 리스트를 넘김
                     }
-                }, enabled = appList.filterIndexed { index, _ -> checkedList[index] }.isNotEmpty(),
+                },
+                    enabled = appList.filterIndexed { index, _ -> checkedList[index] }.isNotEmpty(),
                     colors = ButtonDefaults.textButtonColors(disabledContentColor = Gray400),
-                    contentPadding = PaddingValues(0.dp)) {
+                    contentPadding = PaddingValues(0.dp)
+                ) {
                     Text(
                         "선택 완료",
                         style = LimberTextStyle.Body2,
@@ -116,25 +122,49 @@ fun RegisterBlockAppBottomSheet(
                 }
             }
             Spacer(Modifier.height(12.dp))
-            Text("관리할 앱을 최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray500)
-            Spacer(Modifier.height(11.dp))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(100.dp))
-                    .background(LimberColorStyle.Primary_BG_Dark)
-                    .padding(vertical = 4.dp, horizontal = 12.dp)
-            ) {
-                Row {
-                    Text(
-                        "${checkedList.count { it }}",
-                        style = LimberTextStyle.Heading4, color = LimberColorStyle.Primary_Main
-                    )
-                    Text(
-                        "/${appList.size}",
-                        style = LimberTextStyle.Heading4
-                    )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    "방해되는 앱을\n" +
+                            "최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray800
+                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(100.dp))
+                        .background(LimberColorStyle.Primary_BG_Dark)
+                        .padding(vertical = 4.dp, horizontal = 12.dp)
+                ) {
+                    Row {
+                        Text(
+                            "${checkedList.count { it }}",
+                            style = LimberTextStyle.Heading4, color = LimberColorStyle.Primary_Main
+                        )
+                        Text(
+                            "/10",
+                            style = LimberTextStyle.Heading4
+                        )
+                    }
                 }
             }
+            Spacer(Modifier.height(8.dp))
+
+            Row {
+                Text(
+                    "선택된 앱은 타이머와 홈에 반영돼요",
+                    style = LimberTextStyle.Body2,
+                    color = Gray600,
+                    modifier = Modifier.alignByBaseline()
+                )
+                Spacer(Modifier.width(2.dp))
+                Image(
+                    painter = painterResource(R.drawable.ic_info),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .alignByBaseline()
+                        .size(20.dp)
+                )
+            }
+            Spacer(Modifier.height(11.dp))
+
 
             Spacer(Modifier.height(24.dp))
             RegisterAppNotice()
@@ -236,18 +266,16 @@ fun RegisterAppNotice() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_info),
+            painter = painterResource(R.drawable.ic_clock),
             contentDescription = null,
             modifier = Modifier.size(20.dp)
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            "최근 한 달 동안 하루 평균 사용 시간이 많은 순서예요",
+            "최근 한 달 동안 사용 시간이 많은 순서예요",
             style = LimberTextStyle.Body2,
             color = Gray600
         )
     }
 }
-
-
 

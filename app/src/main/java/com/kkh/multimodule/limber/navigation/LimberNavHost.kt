@@ -42,7 +42,6 @@ fun LimberNavHost(
             navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
             navigateToAlertPermission = navController::navigateToAlertPermissionScreen,
             navigateToManageAppScreen = navController::navigateToManageAppScreen,
-            navigateToSelectTypeScreen = navController::navigateToSelectTypeScreen,
             navigateToStartScreenScreen = navController::navigateToStartScreenScreen,
             navigateToHome = {
                 navController.navigateToHomeScreen()

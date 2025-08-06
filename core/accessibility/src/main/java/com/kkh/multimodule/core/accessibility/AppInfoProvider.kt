@@ -80,12 +80,12 @@ object AppInfoProvider {
     }
 
     // 하루의 앱 usage를 appInfo로 변환하여 출력.
-    fun getMonthUsageAppInfoList(context: Context): List<AppInfo> {
-        return getUsageStats(context, UsageStatsManager.INTERVAL_MONTHLY)
+    fun getUsageAppInfoList(context: Context, period : Int): List<AppInfo> {
+        return getUsageStats(context, period)
             .filter { it.totalTimeInForeground > 0 }
             .distinctBy { it.packageName }
             .sortedByDescending { it.totalTimeInForeground }
-            .take(10)
+            .take(20)
             .map { convertUsageStatsToAppInfo(context, it) }
     }
 }

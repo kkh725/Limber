@@ -1,6 +1,7 @@
 package com.kkh.multimodule.feature.onboarding
 
 import android.annotation.SuppressLint
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.util.Log
 import com.kkh.multimodule.core.accessibility.AppInfo
@@ -36,7 +37,7 @@ class OnboardingReducer(state: OnBoardingState) : Reducer<OnBoardingState, Onboa
 
                 val startTime = System.currentTimeMillis()
                 val newList = withContext(Dispatchers.IO) {
-                    AppInfoProvider.getMonthUsageAppInfoList(context)
+                    AppInfoProvider.getUsageAppInfoList(context, UsageStatsManager.INTERVAL_MONTHLY)
                 }
                 val endTime = System.currentTimeMillis()
 

@@ -1,6 +1,7 @@
 package com.kkh.multimodule.feature.home
 
 import android.annotation.SuppressLint
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
@@ -14,7 +15,8 @@ import kotlinx.coroutines.withContext
 data class HomeState(
     val usageAppInfoList: List<AppInfo>,
     val blockingAppPackageList: List<String>,
-    val blockReservationItemList: List<ReservationItemModel> = emptyList()
+    val blockReservationItemList: List<ReservationItemModel> = emptyList(),
+    val isTimerActive: Boolean = false
 ) : UiState {
     companion object {
         fun init() = HomeState(
@@ -39,7 +41,7 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
                 val context = event.context.applicationContext
 
                 val newList = withContext(Dispatchers.IO) {
-                    AppInfoProvider.getMonthUsageAppInfoList(context)
+                    AppInfoProvider.getUsageAppInfoList(context, UsageStatsManager.INTERVAL_DAILY)
                 }
 
                 // UI 스레드에서 상태 업데이트

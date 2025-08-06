@@ -1,5 +1,6 @@
 package com.kkh.multimodule.feature.timer
 
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
@@ -55,7 +56,8 @@ data class TimerState(
     val isModalVisible: Boolean = false,
     val appDataList: List<AppInfo>,
     val modalAppDataList: List<AppInfo>,
-    val startBlockReservationInfo : ReservationItemModel
+    val startBlockReservationInfo : ReservationItemModel,
+    val isTimerActive : Boolean
 ) : UiState {
     companion object {
         fun init() = TimerState(
@@ -63,18 +65,20 @@ data class TimerState(
             chipList = ChipInfo.mockList,
             appDataList = emptyList(),
             modalAppDataList = emptyList(),
-            startBlockReservationInfo = ReservationItemModel.mockList().first()
+            startBlockReservationInfo = ReservationItemModel.mockList().first(),
+            isTimerActive = false
         )
     }
 }
 
 sealed class TimerEvent : UiEvent {
+    data object OnEnterTimerScreen : TimerEvent()
     data class OnClickTimerScreenButton(val timerScreenState: TimerScreenType) : TimerEvent()
     data class OnClickFocusChip(val chipText: String) : TimerEvent()
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean, val context: Context) : TimerEvent()
     data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
-    data class OnClickModalCompleteButton(val startBlockReservationInfo : ReservationItemModel) : TimerEvent()
+    data class OnClickStartTimerNow(val startBlockReservationInfo : ReservationItemModel, val context: Context) : TimerEvent()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
@@ -95,7 +99,7 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
             is TimerEvent.ShowSheet -> {
                 // sheet이 올라오는지 내려가는지 확인
                 val newList = if (event.isSheetVisible) withContext(Dispatchers.IO) {
-                    AppInfoProvider.getMonthUsageAppInfoList(event.context)
+                    AppInfoProvider.getUsageAppInfoList(event.context, period = UsageStatsManager.INTERVAL_MONTHLY)
                 } else emptyList()
 
                 setState(
@@ -135,7 +139,7 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
             }
 
             // 모달 최종 시작하기 버튼
-            is TimerEvent.OnClickModalCompleteButton -> {
+            is TimerEvent.OnClickStartTimerNow -> {
                 val startBlockReservationInfo = event.startBlockReservationInfo
                 setState(
                     oldState.copy(
@@ -144,6 +148,7 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
                     )
                 )
             }
+            else -> {}
         }
     }
 }

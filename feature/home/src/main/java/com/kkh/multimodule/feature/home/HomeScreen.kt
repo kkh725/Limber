@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.AppInfoProvider.getUsageAppInfoList
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
@@ -63,10 +64,12 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.DopamineActBox
 import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
+import com.kkh.multimodule.core.ui.util.convertTimeStringToMinutes
 import com.kkh.multimodule.core.ui.util.decrementOneSecond
 import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
 import com.kkh.multimodule.core.ui.util.getRemainingTimeFormatted
 import com.kkh.multimodule.core.ui.util.isNowWithinTimeRange
+import com.kkh.multimodule.core.ui.util.sumTimeStringsToHourMinuteFormat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -81,11 +84,16 @@ fun HomeScreen(
     val appInfoList = uiState.usageAppInfoList
     val blockingAppPackageList = uiState.blockingAppPackageList
     val localBlockReservationList = uiState.blockReservationItemList
+    val isTimerActive = uiState.isTimerActive
 
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+
     var timerText by remember { mutableStateOf(getCurrentTimeInKoreanFormat()) }
+
+    val totalDopamineTime =
+        sumTimeStringsToHourMinuteFormat(appInfoList.take(3).map { it.usageTime })
 
     LaunchedEffect(Unit) {
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
@@ -93,15 +101,11 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         // 현재 진행되고 있는 타이머가 존재하는지 확인.
-        val activeReservation = localBlockReservationList.firstOrNull {
-            isNowWithinTimeRange(it.reservationInfo.startTime, it.reservationInfo.endTime)
-        }
-
-        // 존재한다면 endTime까지 몇분남았는지 체크하고 1초씩 줄어들게 만듦.
-        activeReservation?.let {
-            timerText = getRemainingTimeFormatted(it.reservationInfo.endTime)
+        if (isTimerActive) {
+            // 현재 진행중인 타이머는 서버에서 내려줄것.
+//            timerText = getRemainingTimeFormatted(it.reservationInfo.endTime)
             while (isActive) {
-                    delay(1000)
+                delay(1000)
                 if (timerText != "00:00:00") {
                     timerText = decrementOneSecond(timerText)
                 }
@@ -135,7 +139,11 @@ fun HomeScreen(
                 .fillMaxSize(),
             appInfoList = appInfoList,
             navigateToActiveTimer = onNavigateToActiveTimer,
-            timerText = timerText
+            navigateToSetTimer = onNavigateToActiveTimer, // todo 수정필요
+            timerText = timerText,
+            totalFocusTime = totalDopamineTime,
+            totalDopamineTime = totalDopamineTime,
+            isTimerActive = isTimerActive
         )
     }
 
@@ -157,7 +165,11 @@ private fun HomeScreenMainBody(
     modifier: Modifier = Modifier,
     appInfoList: List<AppInfo>,
     navigateToActiveTimer: () -> Unit = {},
-    timerText: String = "00:00:00"
+    navigateToSetTimer: () -> Unit = {},
+    timerText: String = "00:00:00",
+    totalFocusTime: String = "1시간 2분",
+    totalDopamineTime: String = "1시간 0분",
+    isTimerActive: Boolean = false
 ) {
     Box(modifier = modifier) {
         Column(
@@ -171,11 +183,16 @@ private fun HomeScreenMainBody(
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
-            TimerButton(onClick = navigateToActiveTimer, timerText = timerText)
+            TimerButton(
+                onClickActiveTimer = navigateToActiveTimer,
+                onClickStartTimer = {},
+                timerText = timerText,
+                isTimerActive = isTimerActive
+            )
             Spacer(Modifier.height(24.dp))
             TodayActivityBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                onClick = {}
+                onClick = navigateToSetTimer
             )
             Spacer(Modifier.height(13.dp))
             HomeMainContent(
@@ -183,8 +200,8 @@ private fun HomeScreenMainBody(
                     .padding(bottom = 20.dp)
                     .padding(horizontal = 20.dp),
                 appInfoList = appInfoList,
-                focusTime = "1시간 2분",
-                dopamineTime = "1시간 0분"
+                focusTime = totalFocusTime,
+                dopamineTime = totalDopamineTime
             )
         }
     }
@@ -253,6 +270,12 @@ fun HomeMainContent(
     val focusTimeColor = if (focusTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
     val dopamineTimeColor = if (dopamineTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
 
+    val focusMinutes = convertTimeStringToMinutes(focusTime)
+    val dopamineMinutes = convertTimeStringToMinutes(dopamineTime)
+    val total = focusMinutes + dopamineMinutes
+    val focusRatio = if (total > 0) focusMinutes.toFloat() / total else 0.5f
+    val dopamineRatio = 1f - focusRatio
+
     // 카드 형태 컨테이너
     Box(
         modifier = modifier
@@ -294,10 +317,15 @@ fun HomeMainContent(
             Spacer(Modifier.height(12.dp))
 
             // 그래프(바 형태)
-            Row(Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+            ) {
                 Box(
                     Modifier
-                        .size(120.dp, 24.dp)
+                        .weight(focusRatio)
+                        .fillMaxHeight()
                         .clip(
                             RoundedCornerShape(
                                 topStart = 100.dp,
@@ -315,8 +343,8 @@ fun HomeMainContent(
                 Spacer(Modifier.width(2.dp))
                 Box(
                     Modifier
-                        .weight(1f)
-                        .height(24.dp)
+                        .weight(dopamineRatio)
+                        .fillMaxHeight()
                         .clip(
                             RoundedCornerShape(
                                 topStart = 0.dp,
@@ -447,7 +475,12 @@ fun FocusActBox(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TimerButton(onClick: () -> Unit, timerText: String = "22:22:22") {
+fun TimerButton(
+    onClickActiveTimer: () -> Unit,
+    onClickStartTimer: () -> Unit,
+    timerText: String = "22:22:22",
+    isTimerActive: Boolean
+) {
 
     val backgroundModifier = Modifier.background(
         brush = Brush.linearGradient(
@@ -456,32 +489,56 @@ fun TimerButton(onClick: () -> Unit, timerText: String = "22:22:22") {
             end = Offset.Infinite           // 우하단 (혹은 원하는 크기에 맞게 조절)
         )
     )
-
-    Row(
-        Modifier
-            .height(60.dp)
-            .clip(RoundedCornerShape(100.dp))
-            .clickable(onClick = onClick)
-            .background(Color.Red)
-            .then(backgroundModifier)
-            .padding(horizontal = 12.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ic_timer),
-            modifier = Modifier.size(36.dp),
-            contentDescription = null
-        )
-        Spacer(Modifier.width(21.5.dp))
-        Text(timerText, style = LimberTextStyle.Heading2, color = Color.White)
-        Spacer(Modifier.width(8.dp))
-        Image(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            modifier = Modifier.size(20.dp),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(Color.White)
-        )
+    if (isTimerActive) {
+        Row(
+            Modifier
+                .height(60.dp)
+                .clip(RoundedCornerShape(100.dp))
+                .clickable(onClick = onClickActiveTimer)
+                .background(Color.Red)
+                .then(backgroundModifier)
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_timer),
+                contentDescription = null,
+            )
+            Spacer(Modifier.width(21.5.dp))
+            Text(
+                text = timerText,
+                style = LimberTextStyle.Heading2,
+                color = Color.White,
+            )
+            Spacer(Modifier.width(8.dp))
+            Image(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                modifier = Modifier
+                    .size(20.dp),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(Color.White)
+            )
+        }
+    } else {
+        Row(
+            Modifier
+                .height(60.dp)
+                .clip(RoundedCornerShape(100.dp))
+                .clickable(onClick = onClickStartTimer)
+                .background(Color.Red)
+                .then(backgroundModifier)
+                .padding(horizontal = 24.dp, vertical = 20.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "집중 시작하기",
+                style = LimberTextStyle.Heading2,
+                color = Color.White
+            )
+        }
     }
+
+
 }
 
 @Preview

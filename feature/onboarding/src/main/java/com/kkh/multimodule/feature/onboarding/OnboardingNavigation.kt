@@ -48,7 +48,6 @@ fun NavGraphBuilder.onBoardingNavGraph(
     navigateToAccessPermissionScreen: () -> Unit,
     navigateToManageAppScreen: () -> Unit,
     navigateToAlertPermission : () -> Unit,
-    navigateToSelectTypeScreen: () -> Unit = {},
     navigateToStartScreenScreen: () -> Unit = {},
     navigateToHome: () -> Unit = {},
     onClickBack: () -> Unit = {}
@@ -75,17 +74,9 @@ fun NavGraphBuilder.onBoardingNavGraph(
     }
     composable(OnBoardingRoute.ManageApp) {
         RightHorizontalEnterAnimation {
-            ManageAppScreen(navigateToSelectType = navigateToSelectTypeScreen)
+            ManageAppScreen(navigateToStart = navigateToStartScreenScreen)
         }
         BackHandler(enabled = true){}
-    }
-    composable(OnBoardingRoute.SelectType) {
-        RightHorizontalEnterAnimation {
-            SelectTypeScreen(
-                navigateToStart = navigateToStartScreenScreen,
-                onClickBack = onClickBack
-            )
-        }
     }
     composable(OnBoardingRoute.StartScreen) {
         RightHorizontalEnterAnimation {

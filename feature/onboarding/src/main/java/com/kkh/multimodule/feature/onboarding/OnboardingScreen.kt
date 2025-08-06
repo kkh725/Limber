@@ -14,6 +14,7 @@ import com.kkh.multimodule.core.ui.R
 
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,29 +29,18 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(navigateToScreenTimePermissionScreen: () -> Unit = {}) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 4 })
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
     val scope = rememberCoroutineScope()
 
     val title: String = when (pagerState.currentPage) {
-        1 -> "도파민 앱 관리하기"
-        2 -> "실험 타이머 시작하기"
-        3 -> "실험 결과 확인하기"
+        0 -> "집중에 방해되는\n" +
+                "도파민 앱을 선택하고"
+        1 -> "타이머를 설정해\n" +
+                "집중 실험을 시작해요"
+        2 -> "실험이 끝나면\n" +
+                "집중 기록을 확인해요"
         else -> ""
     }
-    val description: String = when (pagerState.currentPage) {
-        1 -> "집중에 방해되는 앱을 선택해 관리해요"
-        2 -> "목표에 집중할 수 있도록 방해되는 앱을 차단해요"
-        3 -> "실험이 끝난 후 나의 집중 기록을 확인해요."
-        else -> ""
-    }
-
-    val imageResource: Int = when (pagerState.currentPage) {
-        1 -> R.drawable.ic_no1
-        2 -> R.drawable.ic_no2
-        3 -> R.drawable.ic_no3
-        else -> R.drawable.ic_no1
-    }
-
 
     Column(
         modifier = Modifier
@@ -66,8 +56,6 @@ fun OnboardingScreen(navigateToScreenTimePermissionScreen: () -> Unit = {}) {
             OnBoardingContent(
                 currentPage = pagerState.currentPage,
                 title = title,
-                description = description,
-                imageResource =  imageResource
             )
         }
 
@@ -78,7 +66,7 @@ fun OnboardingScreen(navigateToScreenTimePermissionScreen: () -> Unit = {}) {
                 .padding(bottom = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            repeat(4) { index ->
+            repeat(3) { index ->
                 val isSelected = pagerState.currentPage == index
                 Box(
                     modifier = Modifier
@@ -114,7 +102,14 @@ fun OnboardingScreen(navigateToScreenTimePermissionScreen: () -> Unit = {}) {
 }
 
 @Composable
-fun OnBoardingContent(currentPage: Int, title: String, description: String, imageResource: Int) {
+fun OnBoardingContent(currentPage: Int, title: String) {
+
+    val onBoardingBg = when(currentPage){
+        0 -> R.drawable.bg_onboarding1
+        1 -> R.drawable.bg_onboarding2
+        2 -> R.drawable.bg_onboarding3
+        else -> R.drawable.bg_onboarding1
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -124,22 +119,22 @@ fun OnBoardingContent(currentPage: Int, title: String, description: String, imag
                 .fillMaxWidth()
                 .fillMaxHeight(0.8f)
         ) {
-            Image(painter = painterResource(R.drawable.ic_star), contentDescription = null)
+            Image(
+                painter = painterResource(onBoardingBg),
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier.fillMaxSize()
+            )
         }
-        if (currentPage == 0) {
-            OnBoardingContent1()
-        } else {
-            OnBoardingContent2(title, description, imageResource)
-        }
+        OnBoardingContent1(title)
     }
 }
 
 @Composable
-fun OnBoardingContent1() {
+fun OnBoardingContent1(text : String) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Text(
-            text = "환영해요!\n" +
-                    "림버와 함께 집중 실험을 시작해볼까요?",
+            text = text,
             style = LimberTextStyle.Heading3,
             textAlign = TextAlign.Center,
             color = Gray800

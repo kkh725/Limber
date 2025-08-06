@@ -102,3 +102,33 @@ fun getRemainingTimeFormatted(endTimeStr: String): String {
     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
 
+fun sumTimeStringsToHourMinuteFormat(timeStrings: List<String>): String {
+    var totalMinutes = 0
+
+    for (timeStr in timeStrings) {
+        val hourRegex = Regex("(\\d+)시간")
+        val minuteRegex = Regex("(\\d+)분")
+
+        val hours = hourRegex.find(timeStr)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+        val minutes = minuteRegex.find(timeStr)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+
+        totalMinutes += hours * 60 + minutes
+    }
+
+    val totalHours = totalMinutes / 60
+    val remainingMinutes = totalMinutes % 60
+
+    return "${totalHours}시간 ${remainingMinutes}분"
+}
+
+fun convertTimeStringToMinutes(time: String): Int {
+    val hourRegex = Regex("(\\d+)시간")
+    val minuteRegex = Regex("(\\d+)분")
+
+    val hours = hourRegex.find(time)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+    val minutes = minuteRegex.find(time)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+
+    return hours * 60 + minutes
+}
+
+

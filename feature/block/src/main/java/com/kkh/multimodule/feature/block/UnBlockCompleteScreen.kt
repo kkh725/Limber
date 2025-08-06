@@ -40,7 +40,7 @@ import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 fun UnBlockCompleteScreen(
     onClickCloseScreen: () -> Unit,
     onNavigateToTimerStartNow: () -> Unit = {}
-){
+) {
     Scaffold(
         containerColor = Gray50,
         topBar = {
@@ -58,7 +58,8 @@ fun UnBlockCompleteScreen(
                     .padding(bottom = 20.dp)
                     .navigationBarsPadding(),
                 onClickCloseScreen = onClickCloseScreen,
-                onClickMakeOtherTimer = onNavigateToTimerStartNow)
+                onClickMakeOtherTimer = onNavigateToTimerStartNow
+            )
         }
     ) { paddingValues ->
         UnBlockReasonContent(
@@ -118,7 +119,11 @@ fun UnBlockReasonContent(
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(16.dp))
-        Image(painter = painterResource(R.drawable.ic_star), contentDescription = "ic_star")
+        Image(
+            painter = painterResource(R.drawable.char_sad),
+            contentDescription = "ic_star",
+            modifier = Modifier.size(280.dp)
+        )
     }
 }
 
