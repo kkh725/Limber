@@ -41,6 +41,24 @@ object PermissionManager {
         }
     }
 
+    /**
+     * 정확한 알람 권한 설정 화면으로 이동합니다.
+     */
+    fun openExactAlarmSettings(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("AlarmPermission", "정확한 알람 설정 화면 열기 실패", e)
+            }
+        } else {
+            Log.i("AlarmPermission", "Android 11 이하에서는 정확한 알람 권한이 필요하지 않습니다.")
+        }
+    }
+
     // usageStats 권한 있는지 체크.
     fun hasUsageStatsPermission(context: Context): Boolean {
         val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager

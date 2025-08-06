@@ -16,6 +16,7 @@ import com.kkh.multimodule.feature.onboarding.OnBoardingRoute
 import com.kkh.multimodule.limber.intent.RootEvent
 import com.kkh.multimodule.feature.timer.timerNavGraph
 import com.kkh.multimodule.feature.onboarding.navigateToAccessPermissionScreen
+import com.kkh.multimodule.feature.onboarding.navigateToAlertPermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToStartScreenScreen
 import com.kkh.multimodule.feature.onboarding.navigateToManageAppScreen
 import com.kkh.multimodule.feature.onboarding.navigateToScreenTimePermissionScreen
@@ -39,6 +40,7 @@ fun LimberNavHost(
         onBoardingNavGraph(
             navigateToScreenTimePermissionScreen = navController::navigateToScreenTimePermissionScreen,
             navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
+            navigateToAlertPermission = navController::navigateToAlertPermissionScreen,
             navigateToManageAppScreen = navController::navigateToManageAppScreen,
             navigateToSelectTypeScreen = navController::navigateToSelectTypeScreen,
             navigateToStartScreenScreen = navController::navigateToStartScreenScreen,

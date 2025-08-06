@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.kkh.multimodule.core.accessibility.BlockedAppAccessibilityService
 import com.kkh.multimodule.core.accessibility.PermissionManager
 import com.kkh.multimodule.core.accessibility.PermissionManager.openAccessibilitySettings
+import com.kkh.multimodule.core.accessibility.PermissionManager.openExactAlarmSettings
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
@@ -61,46 +62,47 @@ import com.kkh.multimodule.core.ui.ui.component.LimberAnimation
 import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import kotlinx.coroutines.delay
-
 @Composable
-fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
-
+fun AlarmPermissionScreen(navigateToManageApp: () -> Unit) {
     val context = LocalContext.current
-    var isRequestingPermission by remember { mutableStateOf(false) }
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    var hasPermission by remember {
+    var isRequestingPermission by remember { mutableStateOf(false) }
+    var hasAlarmPermission by remember {
         mutableStateOf(
-            PermissionManager.isAccessibilityServiceEnabled(
-                context = context,
-                service = BlockedAppAccessibilityService::class.java
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                alarmManager.canScheduleExactAlarms()
+            } else {
+                true // Android 11 이하에서는 권한 필요 없음
+            }
         )
     }
-
     var animationPlaying by remember { mutableStateOf(false) }
 
-    // app이 세팅창으로 갔다가 돌아오면 재검사.
+    // 앱이 설정 화면에서 돌아왔을 때 권한 재확인
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
         if (isRequestingPermission) {
-            hasPermission = PermissionManager.isAccessibilityServiceEnabled(
-                context = context,
-                service = BlockedAppAccessibilityService::class.java
-            )
+            isRequestingPermission = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                hasAlarmPermission = alarmManager.canScheduleExactAlarms()
+            }
         }
     }
 
     // permission이 있다면 다음페이지로 이동
-    LaunchedEffect(hasPermission) {
-        if (hasPermission) {
+    LaunchedEffect(hasAlarmPermission) {
+        if (hasAlarmPermission) {
             animationPlaying = true
             delay(1000)
             animationPlaying = false
-            navigateToAlertPermission()
+            navigateToManageApp()
         }
     }
 
-    Box(Modifier
-        .fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+    ) {
         Column(
             Modifier
                 .fillMaxSize()
@@ -111,12 +113,12 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
                     .height(84.dp)
             )
 
-            LimberProgressBar(0.4f)
+            LimberProgressBar(0.6f)
 
             Spacer(Modifier.height(40.dp))
             Text(
-                "방해되는 앱을 차단하기 위해\n" +
-                        "접근성 허용이 필요해요",
+                "알림을 수신받으려면\n" +
+                        "알림 허용이 필요해요",
                 textAlign = TextAlign.Center,
                 style = LimberTextStyle.Heading3,
                 color = Gray800
@@ -126,7 +128,11 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
                 "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
             )
             Spacer(Modifier.height(40.dp))
-            PermissionBox(headText = "접근성 허용", bodyText = "앱 차단 허용")
+            PermissionBox(
+                headText = "알림 허용",
+                bodyText = "앱 차단 허용",
+                imgResId = R.drawable.ic_permission_alert
+            )
             Spacer(Modifier.weight(1f))
             Box(
                 Modifier
@@ -135,8 +141,8 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
                 LimberGradientButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        if (!hasPermission) {
-                            openAccessibilitySettings(context)
+                        if (!hasAlarmPermission) {
+                            openExactAlarmSettings(context)
                             isRequestingPermission = true
                         }
                     },
@@ -155,69 +161,6 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
                     .size(50.dp),
                 resId = R.raw.loading_dark
             )
-        }
-    }
-}
-
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
-@Composable
-fun AccessPermissionScreenPreview() {
-    AccessPermissionScreen({})
-}
-
-@Composable
-fun TopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
-    Row(
-        modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        LimberBackButton(onClick = onClickBack)
-        TextButton({}, enabled = false, contentPadding = PaddingValues(0.dp)) {}
-    }
-}
-
-@Composable
-fun LimberProgressBar(percentage: Float) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(6.dp)
-            .background(color = LimberColorStyle.Gray200, shape = RoundedCornerShape(100.dp)) // 배경 바
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(percentage.coerceIn(0f, 1f)) // 퍼센트만큼 채움
-                .background(
-                    color = LimberColorStyle.Primary_Main,
-                    shape = RoundedCornerShape(100.dp)
-                )
-        )
-    }
-}
-
-@Composable
-fun PermissionBox(headText: String, bodyText: String, imgResId : Int = R.drawable.ic_data) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .border(1.dp, color = Gray300, shape = RoundedCornerShape(10.dp))
-            .padding(16.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(painter = painterResource(imgResId), contentDescription = "info")
-            Spacer(Modifier.width(16.dp))
-            Column(verticalArrangement = Arrangement.Center) {
-                Text(
-                    headText, style = LimberTextStyle.Heading4, color = Gray800
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    bodyText, style = LimberTextStyle.Body2, color = Gray500
-                )
-            }
         }
     }
 }

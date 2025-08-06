@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kkh.multimodule.core.ui.ui.RightHorizontalEnterAnimation
 import com.kkh.multimodule.feature.permission.AccessPermissionScreen
+import com.kkh.multimodule.feature.permission.AlarmPermissionScreen
 import com.kkh.multimodule.feature.permission.ManageAppScreen
 import com.kkh.multimodule.feature.permission.ScreenTimePermissionScreen
 import com.kkh.multimodule.feature.permission.SelectTypeScreen
@@ -16,6 +17,7 @@ object OnBoardingRoute {
     const val AccessPermission = "access_permission"
     const val ManageApp = "manage_app"
     const val ScreenTimePermission = "screen_time_permission"
+    const val AlertPermission = "alert_permission"
     const val SelectType = "select_type"
     const val StartScreen = "final_onboarding"
 }
@@ -32,6 +34,9 @@ fun NavController.navigateToManageAppScreen() =
 fun NavController.navigateToScreenTimePermissionScreen() =
     navigate(OnBoardingRoute.ScreenTimePermission)
 
+fun NavController.navigateToAlertPermissionScreen() =
+    navigate(OnBoardingRoute.AlertPermission)
+
 fun NavController.navigateToSelectTypeScreen() =
     navigate(OnBoardingRoute.SelectType)
 
@@ -42,6 +47,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
     navigateToScreenTimePermissionScreen: () -> Unit,
     navigateToAccessPermissionScreen: () -> Unit,
     navigateToManageAppScreen: () -> Unit,
+    navigateToAlertPermission : () -> Unit,
     navigateToSelectTypeScreen: () -> Unit = {},
     navigateToStartScreenScreen: () -> Unit = {},
     navigateToHome: () -> Unit = {},
@@ -58,9 +64,13 @@ fun NavGraphBuilder.onBoardingNavGraph(
     }
     composable(OnBoardingRoute.AccessPermission) {
         RightHorizontalEnterAnimation {
-            AccessPermissionScreen(navigateToManageApp = navigateToManageAppScreen)
+            AccessPermissionScreen(navigateToAlertPermission = navigateToAlertPermission)
         }
         // 👇 여기에 BackHandler 추가
+        BackHandler(enabled = true){}
+    }
+    composable(OnBoardingRoute.AlertPermission){
+        AlarmPermissionScreen(navigateToManageApp = navigateToManageAppScreen)
         BackHandler(enabled = true){}
     }
     composable(OnBoardingRoute.ManageApp) {
