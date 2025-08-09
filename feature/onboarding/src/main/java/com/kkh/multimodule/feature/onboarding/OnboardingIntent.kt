@@ -25,6 +25,7 @@ data class OnBoardingState(
 sealed class OnboardingEvent : UiEvent {
     data class OnClickRegisterButton(val context: Context) : OnboardingEvent()
     data class OnCompleteRegisterButton (val appList : List<AppInfo>): OnboardingEvent()
+    data object OnCompleteOnBoarding : OnboardingEvent()
 }
 
 class OnboardingReducer(state: OnBoardingState) : Reducer<OnBoardingState, OnboardingEvent>(state) {

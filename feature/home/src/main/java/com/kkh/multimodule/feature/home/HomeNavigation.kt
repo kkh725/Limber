@@ -13,8 +13,12 @@ object HomeRoutes {
     const val RECALL = "recall"
 }
 
-fun NavController.navigateToHomeScreen() =
-    navigate(HomeRoutes.HOME)
+fun NavController.navigateToHomeScreen() {
+    navigate(HomeRoutes.HOME) {
+        popUpTo(0) { inclusive = true }  // 스택 전체 제거
+        launchSingleTop = true           // 동일 화면 중복 방지
+    }
+}
 
 fun NavController.navigateToActiveTimerScreen() =
     navigate(HomeRoutes.ACTIVE_TIMER)

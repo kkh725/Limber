@@ -65,15 +65,14 @@ fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
         }
     }
 
-    Box(Modifier.fillMaxSize()){
+    Box(Modifier.fillMaxSize()) {
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//        TopBar(Modifier.padding(vertical = 20.dp).systemBarsPadding(), onClickBack = {})
-            Spacer(Modifier
-                .height(84.dp))
+            TopBar(Modifier
+                .padding(vertical = 18.dp), onClickBack = {})
 
             LimberProgressBar(0.2f)
 
@@ -124,7 +123,7 @@ fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ScreenTimePermissionScreenPreview() {
     ScreenTimePermissionScreen()

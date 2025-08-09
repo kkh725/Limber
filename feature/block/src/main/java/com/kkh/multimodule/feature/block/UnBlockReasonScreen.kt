@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
@@ -96,10 +97,11 @@ fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Uni
             )
         }
         if (isLoading) {
-            LoadingUnBlockScreen()
+            Dialog({}) {
+                LoadingUnBlockScreen()
+            }
         }
     }
-
 }
 
 @Composable
@@ -229,28 +231,22 @@ fun UnBlockBottomButton(onClick: () -> Unit, enabled: Boolean) {
 
 @Composable
 fun LoadingUnBlockScreen() {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)), contentAlignment = Alignment.Center
+    Column(
+        Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LimberAnimation(
-                modifier = Modifier.size(50.dp),
-                resId = R.raw.loading_dark
-            )
-            Spacer(Modifier.height(32.dp))
-            Text(text = "실험 중단 중...", style = LimberTextStyle.Heading1, color = Color.White)
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = "조금만 기다려 주세요! 집중 실험을 마무리하고 있어요.",
-                style = LimberTextStyle.Body2,
-                color = LimberColorStyle.Gray400
-            )
-        }
+        LimberAnimation(
+            modifier = Modifier.size(50.dp),
+            resId = R.raw.loading_dark
+        )
+        Spacer(Modifier.height(32.dp))
+        Text(text = "실험 중단 중...", style = LimberTextStyle.Heading1, color = Color.White)
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = "조금만 기다려 주세요! 집중 실험을 마무리하고 있어요.",
+            style = LimberTextStyle.Body2,
+            color = LimberColorStyle.Gray400
+        )
     }
 }

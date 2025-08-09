@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
+import com.kkh.multimodule.core.domain.repository.OnBoardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(private val appDataRepository: AppDataRepository) :
-    ViewModel() {
+class OnboardingViewModel @Inject constructor(
+    private val appDataRepository: AppDataRepository,
+    private val onBoardingRepository: OnBoardingRepository
+) : ViewModel() {
 
     private val reducer = OnboardingReducer(OnBoardingState.init())
     val uiState get() = reducer.uiState
@@ -23,6 +26,11 @@ class OnboardingViewModel @Inject constructor(private val appDataRepository: App
                 is OnboardingEvent.OnCompleteRegisterButton -> {
                     setBlockedPackageList(e.appList)
                 }
+
+                is OnboardingEvent.OnCompleteOnBoarding -> {
+                    setIsCheckedOnBoarding(true)
+                }
+
                 else -> {}
             }
         }
@@ -33,7 +41,7 @@ class OnboardingViewModel @Inject constructor(private val appDataRepository: App
         appDataRepository.setBlockedPackageList(packageList)
     }
 
-    private suspend fun setBlockModeOn() {
-        appDataRepository.setBlockMode(true)
+    private suspend fun setIsCheckedOnBoarding(isChecked: Boolean) {
+        onBoardingRepository.setIsCheckedOnBoarding(isChecked)
     }
 }

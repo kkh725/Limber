@@ -114,18 +114,14 @@ fun OnBoardingContent(currentPage: Int, title: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
+        Image(
+            painter = painterResource(onBoardingBg),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.fillMaxWidth()
                 .fillMaxHeight(0.8f)
-        ) {
-            Image(
-                painter = painterResource(onBoardingBg),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        )
+        Spacer(Modifier.height(24.dp))
         OnBoardingContent1(title)
     }
 }

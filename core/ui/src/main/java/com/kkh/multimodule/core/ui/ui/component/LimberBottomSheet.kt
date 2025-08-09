@@ -56,13 +56,15 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import kotlinx.coroutines.launch
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterBlockAppBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onClickComplete: (List<AppInfo>) -> Unit, // ✅ 변경: 선택된 리스트를 넘겨줌,
+    onClickComplete: (List<AppInfo>) -> Unit,
     appList: List<AppInfo>
 ) {
 
@@ -81,107 +83,132 @@ fun RegisterBlockAppBottomSheet(
                 onDismissRequest()
             }
         },
+        dragHandle = {
+            Box(Modifier.height(28.dp).background(Color.White))
+        },
         sheetState = sheetState
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.9f)
-                .padding(horizontal = 20.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                LimberBackButton {
-                    scope.launch {
-                        sheetState.hide()
-                        onDismissRequest()
-                    }
-                }
-                TextButton(
-                    onClick = {
-                    // ✅ 선택된 앱 리스트 추출
-                    val selectedApps = appList.filterIndexed { index, _ -> checkedList[index] }
-
-                    scope.launch {
-                        sheetState.hide()
-                        onClickComplete(selectedApps) // ✅ 선택된 리스트를 넘김
-                    }
-                },
-                    enabled = appList.filterIndexed { index, _ -> checkedList[index] }.isNotEmpty(),
-                    colors = ButtonDefaults.textButtonColors(disabledContentColor = Gray400),
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Text(
-                        "선택 완료",
-                        style = LimberTextStyle.Body2,
-                        color = LimberColorStyle.Primary_Main
-                    )
+        RegisterBlockAppBottomSheetContent(
+            sheetState = sheetState,
+            onDismissRequest = onDismissRequest,
+            onClickComplete = onClickComplete,
+            appList = appList,
+            checkedList = checkedList,
+            onCheckClicked = { index ->
+                checkedList = checkedList.toMutableList().also {
+                    it[index] = !it[index]
                 }
             }
-            Spacer(Modifier.height(12.dp))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(
-                    "방해되는 앱을\n" +
-                            "최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray800
-                )
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(100.dp))
-                        .background(LimberColorStyle.Primary_BG_Dark)
-                        .padding(vertical = 4.dp, horizontal = 12.dp)
-                ) {
-                    Row {
-                        Text(
-                            "${checkedList.count { it }}",
-                            style = LimberTextStyle.Heading4, color = LimberColorStyle.Primary_Main
-                        )
-                        Text(
-                            "/10",
-                            style = LimberTextStyle.Heading4
-                        )
-                    }
-                }
-            }
-            Spacer(Modifier.height(8.dp))
-
-            Row {
-                Text(
-                    "선택된 앱은 타이머와 홈에 반영돼요",
-                    style = LimberTextStyle.Body2,
-                    color = Gray600,
-                    modifier = Modifier.alignByBaseline()
-                )
-                Spacer(Modifier.width(2.dp))
-                Image(
-                    painter = painterResource(R.drawable.ic_info),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .alignByBaseline()
-                        .size(20.dp)
-                )
-            }
-            Spacer(Modifier.height(11.dp))
-
-
-            Spacer(Modifier.height(24.dp))
-            RegisterAppNotice()
-
-            CheckAppList(
-                appList = appList,
-                checkedList = checkedList,
-                onCheckClicked = { index ->
-                    checkedList = checkedList.toMutableList().also {
-                        it[index] = !it[index]
-                    }
-                }
-            )
-        }
+        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterBlockAppBottomSheetContent(
+    modifier: Modifier = Modifier,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onClickComplete: (List<AppInfo>) -> Unit,
+    appList: List<AppInfo>,
+    checkedList: List<Boolean>,
+    onCheckClicked: (Int) -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val countColor = if (checkedList.count { it } == 0) Gray500 else LimberColorStyle.Primary_Main
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.9f)
+            .padding(horizontal = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            LimberBackButton {
+                scope.launch {
+                    sheetState.hide()
+                    onDismissRequest()
+                }
+            }
+            TextButton(
+                onClick = {
+                    // 선택된 앱 리스트 추출
+                    val selectedApps = appList.filterIndexed { index, _ -> checkedList[index] }
+                    scope.launch {
+                        sheetState.hide()
+                        onClickComplete(selectedApps)
+                    }
+                },
+                enabled = appList.filterIndexed { index, _ -> checkedList[index] }.isNotEmpty(),
+                colors = ButtonDefaults.textButtonColors(disabledContentColor = Gray400),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    "선택 완료",
+                    style = LimberTextStyle.Body2,
+                    color = LimberColorStyle.Primary_Main
+                )
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                "방해되는 앱을\n" +
+                        "최대 10개까지 등록해주세요", style = LimberTextStyle.Heading4, color = Gray800
+            )
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(LimberColorStyle.Primary_BG_Dark)
+                    .padding(vertical = 4.dp, horizontal = 12.dp)
+            ) {
+                Row {
+                    Text(
+                        "${checkedList.count { it }}",
+                        style = LimberTextStyle.Heading4,
+                        color = countColor
+                    )
+                    Text(
+                        "/10",
+                        style = LimberTextStyle.Heading4
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+
+        Row {
+            Text(
+                "선택된 앱은 타이머와 홈에 반영돼요",
+                style = LimberTextStyle.Body2,
+                color = Gray600,
+                modifier = Modifier.alignByBaseline()
+            )
+            Spacer(Modifier.width(2.dp))
+            Image(
+                painter = painterResource(R.drawable.ic_info),
+                contentDescription = null,
+                modifier = Modifier
+                    .alignByBaseline()
+                    .size(20.dp)
+            )
+        }
+        Spacer(Modifier.height(20.dp))
+
+
+        RegisterAppNotice()
+
+        CheckAppList(
+            appList = appList,
+            checkedList = checkedList,
+            onCheckClicked = onCheckClicked
+        )
+    }
+}
 
 @Composable
 fun CheckAppItem(
@@ -236,7 +263,7 @@ fun CheckAppList(
     } else {
         LazyColumn {
             itemsIndexed(appList) { index, item ->
-                val canCheck = checkedCount < 10 || checkedList[index] // 이미 선택된 경우는 해제할 수 있어야 함
+                val canCheck = checkedCount < 10 || checkedList[index]
 
                 CheckAppItem(
                     appInfo = item,
@@ -261,7 +288,7 @@ fun RegisterAppNotice() {
             .fillMaxWidth()
             .height(44.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Gray100)
+            .background(LimberColorStyle.Primary_BG_Normal)
             .padding(start = 12.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -278,4 +305,19 @@ fun RegisterAppNotice() {
         )
     }
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun PreviewRegisterBlockAppBottomSheetContent() {
+    val sheetState = rememberModalBottomSheetState()
+    val appList = AppInfo.mockList.take(3)
+    val checkedList = listOf(false, false, false)
+    RegisterBlockAppBottomSheetContent(
+        sheetState = sheetState,
+        onDismissRequest = {},
+        onClickComplete = {},
+        appList = appList,
+        checkedList = checkedList,
+        onCheckClicked = {}
+    )
+}

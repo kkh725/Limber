@@ -1,7 +1,6 @@
 package com.kkh.multimodule.core.domain.model
 
 import kotlinx.serialization.Serializable
-import java.time.LocalTime
 
 @Serializable
 data class ReservationItemModel(

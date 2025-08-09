@@ -18,4 +18,7 @@ interface LocalDataSource {
     suspend fun setReservationList(reservationList: List<ReservationItemModel>)
     suspend fun getReservationList(): List<ReservationItemModel>
     fun observeReservationList(): Flow<List<ReservationItemModel>>
+
+    suspend fun setIsOnboardingChecked(isChecked: Boolean)
+    suspend fun getIsOnboardingChecked(): Boolean
 }

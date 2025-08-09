@@ -3,8 +3,10 @@ package com.kkh.multimodule.core.data.di
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.data.repository.AppDataRepositoryImpl
 import com.kkh.multimodule.core.data.repository.BlockReservationRepositoryImpl
+import com.kkh.multimodule.core.data.repository.OnBoardingRepositoryImpl
 import com.kkh.multimodule.core.datastore.datasource.LocalDataSource
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
+import com.kkh.multimodule.core.domain.repository.OnBoardingRepository
 import com.kkh.multimodule.core.network.datasource.TestDataSource
 import dagger.Module
 import dagger.Provides
@@ -30,6 +32,14 @@ object DataModule {
         localDataSource: LocalDataSource
     ): BlockReservationRepository{
         return BlockReservationRepositoryImpl(localDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOnBoardingRepository(
+        localDataSource: LocalDataSource
+    ): OnBoardingRepository{
+        return OnBoardingRepositoryImpl(localDataSource)
     }
 
 }

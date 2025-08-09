@@ -365,7 +365,7 @@ fun HomeMainContent(
                 FocusActBox(
                     modifier = Modifier
                         .weight(1f)
-                        .height(134.dp)
+                        .height(138.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Gray100)
                         .padding(16.dp)
@@ -374,7 +374,7 @@ fun HomeMainContent(
                 DopamineActBox(
                     modifier = Modifier
                         .weight(1f)
-                        .height(134.dp)
+                        .height(138.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Gray100)
                         .padding(16.dp),

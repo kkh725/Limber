@@ -18,14 +18,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
+import com.kkh.multimodule.feature.onboarding.OnboardingEvent
+import com.kkh.multimodule.feature.onboarding.OnboardingViewModel
 
 
 @Composable
 fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {}){
+
+    val viewModel : OnboardingViewModel = hiltViewModel()
+
     Column(
         Modifier
             .fillMaxSize()
@@ -51,6 +57,7 @@ fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {})
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     navigateToHome()
+                    viewModel.sendEvent(OnboardingEvent.OnCompleteOnBoarding)
                 },
                 text = "시작하기"
             )

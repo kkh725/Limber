@@ -21,6 +21,8 @@ internal class LocalDataSourceImpl @Inject constructor() :
     private val packageListKey = stringSetPreferencesKey("CUSTOM_STRING_LIST")
     private val reservationListKey = stringSetPreferencesKey("RESERVATION_LIST")
     private val isBlockMode = booleanPreferencesKey("IS_BLOCK_MODE")
+    private val isOnBoardingChecked = booleanPreferencesKey("IS_ONBOARDING_CHECKED")
+
 
     /**
      * 패키지명 로컬 저장
@@ -67,5 +69,17 @@ internal class LocalDataSourceImpl @Inject constructor() :
 
     override fun observeReservationList(): Flow<List<ReservationItemModel>> {
         return DataStoreManager.readReservationInfoList(reservationListKey)
+    }
+
+    /**
+     * 온보딩 확인 여부 체크
+     */
+
+    override suspend fun setIsOnboardingChecked(isChecked: Boolean) {
+        DataStoreManager.saveBool(isOnBoardingChecked, isChecked)
+    }
+
+    override suspend fun getIsOnboardingChecked(): Boolean {
+        return DataStoreManager.readBool(isOnBoardingChecked).first()
     }
 }
