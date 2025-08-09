@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.permission
+package com.kkh.multimodule.feature.onboarding.contents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,6 +23,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.feature.onboarding.OnboardingEvent
 import com.kkh.multimodule.feature.onboarding.OnboardingViewModel
+import com.kkh.multimodule.feature.onboarding.contents.permission.TopBar
 
 
 @Composable

@@ -5,12 +5,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kkh.multimodule.core.ui.ui.RightHorizontalEnterAnimation
-import com.kkh.multimodule.feature.permission.AccessPermissionScreen
-import com.kkh.multimodule.feature.permission.AlarmPermissionScreen
-import com.kkh.multimodule.feature.permission.ManageAppScreen
-import com.kkh.multimodule.feature.permission.ScreenTimePermissionScreen
-import com.kkh.multimodule.feature.permission.SelectTypeScreen
-import com.kkh.multimodule.feature.permission.StartScreen
+import com.kkh.multimodule.feature.onboarding.contents.ManageAppScreen
+import com.kkh.multimodule.feature.onboarding.contents.StartScreen
+import com.kkh.multimodule.feature.onboarding.contents.permission.AccessPermissionScreen
+import com.kkh.multimodule.feature.onboarding.contents.permission.AlarmPermissionScreen
+import com.kkh.multimodule.feature.onboarding.contents.permission.ScreenTimePermissionScreen
 
 object OnBoardingRoute {
     const val Onboarding = "onboarding"

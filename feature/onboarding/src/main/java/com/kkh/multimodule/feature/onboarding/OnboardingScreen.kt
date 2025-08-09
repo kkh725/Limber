@@ -138,28 +138,6 @@ fun OnBoardingContent1(text : String) {
     }
 }
 
-@Composable
-fun OnBoardingContent2(title: String, description: String, imageResource: Int) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(painter = painterResource(imageResource), contentDescription = null)
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = title,
-            style = LimberTextStyle.Heading4,
-            textAlign = TextAlign.Center,
-            color = Gray800
-        )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            text = description,
-            style = LimberTextStyle.Body1,
-            textAlign = TextAlign.Center,
-            color = Gray600
-        )
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewOnboarding() {

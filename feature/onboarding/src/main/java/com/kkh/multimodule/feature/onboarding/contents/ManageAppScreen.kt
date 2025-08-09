@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.permission
+package com.kkh.multimodule.feature.onboarding.contents
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +36,7 @@ import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.multimodule.feature.onboarding.OnboardingEvent
 import com.kkh.multimodule.feature.onboarding.OnboardingEvent.OnCompleteRegisterButton
 import com.kkh.multimodule.feature.onboarding.OnboardingViewModel
+import com.kkh.multimodule.feature.onboarding.contents.permission.LimberProgressBar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
