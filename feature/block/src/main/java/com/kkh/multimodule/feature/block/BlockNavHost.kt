@@ -19,7 +19,7 @@ fun BlockNavHost(
     ) {
         blockScreen(
             onClickUnBlock = navController::navigateToUnBlockReason,
-            onClickContinue = {}
+            onClickContinue = onClickCloseScreen
         )
         unBlockReasonScreen(
             onClickBack = { navController.popBackStack() },

@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
@@ -36,9 +37,10 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 
+@Preview
 @Composable
 fun UnBlockCompleteScreen(
-    onClickCloseScreen: () -> Unit,
+    onClickCloseScreen: () -> Unit = {},
     onNavigateToTimerStartNow: () -> Unit = {}
 ) {
     Scaffold(

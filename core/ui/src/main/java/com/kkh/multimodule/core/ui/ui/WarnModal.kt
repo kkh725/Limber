@@ -65,7 +65,6 @@ fun WarnDialog(
     Box(
         Modifier
             .fillMaxWidth()
-            .height(536.dp)
             .verticalScroll(rememberScrollState())
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)

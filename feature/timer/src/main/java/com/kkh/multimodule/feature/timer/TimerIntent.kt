@@ -21,11 +21,11 @@ data class ChipInfo(
 ) {
     companion object {
         val mockList = listOf(
-            ChipInfo("학습", imageResId = R.drawable.ic_study),
-            ChipInfo("업무", imageResId = R.drawable.ic_study),
-            ChipInfo("회의", imageResId = R.drawable.ic_study),
-            ChipInfo("작업", imageResId = R.drawable.ic_study),
-            ChipInfo("독서", imageResId = R.drawable.ic_study),
+            ChipInfo("학습", imageResId = R.drawable.ic_working),
+            ChipInfo("업무", imageResId = R.drawable.ic_business),
+            ChipInfo("회의", imageResId = R.drawable.ic_working),
+            ChipInfo("작업", imageResId = R.drawable.ic_working),
+            ChipInfo("독서", imageResId = R.drawable.ic_meeting),
         )
 
         val dayList = listOf(

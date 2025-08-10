@@ -76,7 +76,8 @@ import kotlinx.coroutines.isActive
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToActiveTimer: () -> Unit
+    onNavigateToActiveTimer: () -> Unit,
+    onNavigateToSetTimer : () -> Unit
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsState()
@@ -99,7 +100,7 @@ fun HomeScreen(
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isTimerActive) {
         // 현재 진행되고 있는 타이머가 존재하는지 확인.
         if (isTimerActive) {
             // 현재 진행중인 타이머는 서버에서 내려줄것.
@@ -138,8 +139,9 @@ fun HomeScreen(
                 .weight(1f)
                 .fillMaxSize(),
             appInfoList = appInfoList,
-            navigateToActiveTimer = onNavigateToActiveTimer,
-            navigateToSetTimer = onNavigateToActiveTimer, // todo 수정필요
+            //todo 주석해제필요
+//            navigateToActiveTimer = onNavigateToActiveTimer,
+            navigateToSetTimer = onNavigateToSetTimer,
             timerText = timerText,
             totalFocusTime = totalDopamineTime,
             totalDopamineTime = totalDopamineTime,
@@ -183,16 +185,16 @@ private fun HomeScreenMainBody(
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
+            //todo 주석해제필요
             TimerButton(
                 onClickActiveTimer = navigateToActiveTimer,
-                onClickStartTimer = {},
+                onClickStartTimer = navigateToSetTimer,
                 timerText = timerText,
                 isTimerActive = isTimerActive
             )
             Spacer(Modifier.height(24.dp))
             TodayActivityBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                onClick = navigateToSetTimer
             )
             Spacer(Modifier.height(13.dp))
             HomeMainContent(
@@ -246,13 +248,14 @@ fun HomeTopBar(
                 )
             }
             Spacer(Modifier.width(6.dp))
-            IconButton(onClick = onClickNoti, Modifier) {
-                Image(
-                    painter = painterResource(R.drawable.ic_noti),
-                    modifier = Modifier.size(20.dp),
-                    contentDescription = "Back"
-                )
-            }
+            // todo 주석해제
+//            IconButton(onClick = onClickNoti, Modifier) {
+//                Image(
+//                    painter = painterResource(R.drawable.ic_noti),
+//                    modifier = Modifier.size(20.dp),
+//                    contentDescription = "Back"
+//                )
+//            }
         }
     }
 }
@@ -400,13 +403,11 @@ fun TodayActivityBar(
     modifier: Modifier = Modifier,
     backgroundColor: Color = LimberColorStyle.Primary_BG_Dark,
     textColor: Color = LimberColorStyle.Primary_Vivid,
-    onClick: () -> Unit
 ) {
     Box(modifier = modifier) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
                 .background(
                     color = backgroundColor, shape = RoundedCornerShape(100.dp)
                 )
@@ -522,27 +523,18 @@ fun TimerButton(
     } else {
         Row(
             Modifier
-                .height(60.dp)
                 .clip(RoundedCornerShape(100.dp))
                 .clickable(onClick = onClickStartTimer)
                 .background(Color.Red)
                 .then(backgroundModifier)
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .padding(horizontal = 57.dp, vertical = 17.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "집중 시작하기",
-                style = LimberTextStyle.Heading2,
+                style = LimberTextStyle.Heading5,
                 color = Color.White
             )
         }
     }
-
-
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen {}
 }

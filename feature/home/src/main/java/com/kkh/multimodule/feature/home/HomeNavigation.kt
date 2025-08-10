@@ -30,10 +30,12 @@ fun NavGraphBuilder.homeNavGraph(
     onNavigateToActiveTimer: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToRecall: () -> Unit,
+    onNavigateToSetTimer: () -> Unit,
     onPopBackStack: () -> Unit
 ) {
     composable(HomeRoutes.HOME) {
-        HomeScreen(onNavigateToActiveTimer = onNavigateToActiveTimer)
+        HomeScreen(onNavigateToActiveTimer = onNavigateToActiveTimer,
+            onNavigateToSetTimer = onNavigateToSetTimer)
     }
     composable(HomeRoutes.ACTIVE_TIMER) {
         ActiveTimerScreen(

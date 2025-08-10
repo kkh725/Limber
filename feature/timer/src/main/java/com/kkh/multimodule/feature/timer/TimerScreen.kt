@@ -79,7 +79,8 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit) {
     val isSheetVisible = uiState.isSheetVisible
     val isModalVisible = uiState.isModalVisible
 
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+    // todo 1-> 2로 수정필요
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 1 })
     val coroutineScope = rememberCoroutineScope()
 
     val appList = uiState.appDataList
@@ -217,12 +218,13 @@ fun TimerScreenTopBar(
             isSelected = selectedTimerType == TimerScreenType.Now,
             onClick = onClickStartNowBtn
         )
-        TimerSelectorButton(
-            modifier = Modifier.weight(1f),
-            text = "예약 설정",
-            isSelected = selectedTimerType == TimerScreenType.Reserved,
-            onClick = onClickReservationBtn
-        )
+        //todo 해제필요
+//        TimerSelectorButton(
+//            modifier = Modifier.weight(1f),
+//            text = "예약 설정",
+//            isSelected = selectedTimerType == TimerScreenType.Reserved,
+//            onClick = onClickReservationBtn
+//        )
     }
 }
 
@@ -288,6 +290,7 @@ fun FocusChipRow(
                 LimberChip(
                     text = chip.text,
                     isSelected = chip.isSelected,
+                    imageResId = chip.imageResId,
                     onClick = {
                         if (chip.isSelected) {
                             onSelectedChanged("") // 해제

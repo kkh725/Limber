@@ -34,12 +34,13 @@ datastore = "1.1.7"
 
 
 # Project versions
-projectApplicationId = "com.kkh.multimodule.limber"
-projectVersionName = "0.0.4"
-projectVersionCode = "4"
+projectApplicationId = "com.kkh.cmc.limber"
+projectVersionName = "0.0.1"
+projectVersionCode = "1"
 projectMinSdkVersion = "29"
 projectTargetSdkVersion = "35"
 projectCompileSdkVersion = "35"
+
 desugar_jdk_libs = "2.1.5"
 navigationComposeAndroid = "2.9.3"
 junitJupiter = "5.13.4"

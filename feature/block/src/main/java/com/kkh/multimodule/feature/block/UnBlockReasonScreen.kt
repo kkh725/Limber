@@ -76,9 +76,7 @@ fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Uni
                     modifier = Modifier
                         .padding(top = 20.dp, start = 20.dp)
                         .statusBarsPadding(),
-                    onClickBack = {
-                        onClickBack
-                    }
+                    onClickBack = onClickBack
                 )
             },
             bottomBar = {
@@ -232,7 +230,7 @@ fun UnBlockBottomButton(onClick: () -> Unit, enabled: Boolean) {
 @Composable
 fun LoadingUnBlockScreen() {
     Column(
-        Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
+        Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

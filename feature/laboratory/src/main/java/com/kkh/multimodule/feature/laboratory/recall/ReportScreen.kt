@@ -85,22 +85,24 @@ fun ReportContent() {
                 verticalAlignment = Alignment.Bottom
             ) {
                 LimberText("2025년 06월 23일-29일", style = LimberTextStyle.Heading4, color = Gray500)
-                Row {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_back_small),
-                        contentDescription = null,
-                        tint = Gray600
-                    )
-                    Icon(
-                        painter = painterResource(R.drawable.ic_next),
-                        contentDescription = null,
-                        tint = Gray600
-                    )
-                }
+                //todo 해제
+            //                Row {
+//                    Icon(
+//                        painter = painterResource(R.drawable.ic_back_small),
+//                        contentDescription = null,
+//                        tint = Gray600
+//                    )
+//                    Icon(
+//                        painter = painterResource(R.drawable.ic_next),
+//                        contentDescription = null,
+//                        tint = Gray600
+//                    )
+//                }
             }
             Spacer(Modifier.height(18.dp))
 
             LimberColumnChart()
+            Spacer(Modifier.height(16.dp))
 
             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 TextSwitch(selected = isChecked, onSelectedChange = { isChecked = it })
@@ -129,21 +131,21 @@ fun ReportContent() {
                 subText = "전체 집중 시간의 50%를 차지했어요.",
                 infos = listOf(
                     GoalBarInfo(
-                        iconRes = R.drawable.ic_info,
+                        iconRes = R.drawable.ic_study,
                         goal = "학습",
                         duration = "4시간 12분",
                         percent = 0.5f,
                         barColor = LimberColorStyle.Primary_Main
                     ),
                     GoalBarInfo(
-                        iconRes = R.drawable.ic_info,
+                        iconRes = R.drawable.ic_business,
                         goal = "업무",
                         duration = "3시간 10분",
                         percent = 0.3f,
                         barColor = LimberColorStyle.Primary_Vivid
                     ),
                     GoalBarInfo(
-                        iconRes = R.drawable.ic_info,
+                        iconRes = R.drawable.ic_working,
                         goal = "독서",
                         duration = "2시간",
                         percent = 0.2f,
@@ -160,21 +162,21 @@ fun ReportContent() {
                 subText = "전체 집중 시간의 20%를 차지했어요.",
                 infos = listOf(
                     GoalBarInfo(
-                        iconRes = R.drawable.ic_info,
+                        iconRes = R.drawable.ic_first,
                         goal = "휴식이 필요해요",
                         duration = "6회",
                         percent = 0.5f,
                         barColor = LimberColorStyle.Primary_Main
                     ),
                     GoalBarInfo(
-                        iconRes = R.drawable.ic_info,
+                        iconRes = R.drawable.ic_second,
                         goal = "긴급한 상황이 발생했어요",
                         duration = "3회",
                         percent = 0.3f,
                         barColor = LimberColorStyle.Primary_Vivid
                     ),
                     GoalBarInfo(
-                        iconRes = R.drawable.ic_info,
+                        iconRes = R.drawable.ic_third,
                         goal = "집중 의지가 부족해요",
                         duration = "1회",
                         percent = 0.2f,

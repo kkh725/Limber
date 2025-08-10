@@ -103,20 +103,18 @@ fun LaboratoryScreenTopBar(
                     .fillMaxSize()
                     .weight(1f), contentAlignment = Alignment.BottomStart
             ) {
-                Text(
-                    "림버의 실험실",
-                    style = LimberTextStyle.Heading3,
-                    color = Gray800,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "림버의 실험실",
+                        style = LimberTextStyle.Heading3,
+                        color = Gray800,
+                    )
+                    Image(
+                        painter = painterResource(com.kkh.multimodule.core.ui.R.drawable.ic_info),
+                        contentDescription = "Info"
+                    )
+                }
             }
-
-            Image(
-                painter = painterResource(com.kkh.multimodule.core.ui.R.drawable.ic_info),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-            )
         }
         Row(
             modifier

@@ -31,6 +31,12 @@ class BlockActivity : ComponentActivity() {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     this.startActivity(intent)
+
+                    // 네비게이션 백스택 비우기
+                    navHostController.popBackStack(
+                        route = navHostController.graph.startDestinationRoute ?: return@BlockNavHost,
+                        inclusive = true
+                    )
                 })
         }
     }
