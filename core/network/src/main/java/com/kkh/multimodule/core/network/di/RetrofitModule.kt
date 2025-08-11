@@ -12,22 +12,12 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 
-// NetworkQualifiers.kt
-// baseUrl 이 두 개 이상일 때 retrofit을 다르게 생성 후 주입 필요.
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class TestApi3
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class TestApi2
-
 // NetworkModule.kt
 @Module
 @InstallIn(SingletonComponent::class)
 internal object RetrofitModule {
 
+    private const val BASE_URL = "http://3.35.146.79:8888/"
 
     @Provides
     @Singleton
@@ -39,23 +29,11 @@ internal object RetrofitModule {
             .build()
     }
 
-    @TestApi2
     @Provides
     @Singleton
-    internal fun provideJsonPlaceholderRetrofit(): Retrofit {
+    internal fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(provideOkHttpClient())
-            .build()
-    }
-
-    @TestApi3
-    @Provides
-    @Singleton
-    internal fun provideAnotherApiRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(provideOkHttpClient())
             .build()

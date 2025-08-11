@@ -1,8 +1,6 @@
 package com.kkh.multimodule.core.network.di
 
-import com.kkh.multimodule.core.network.api.TestApi
-import com.kkh.multimodule.core.network.datasource.TestDataSource
-import com.kkh.multimodule.core.network.datasource.TestDataSourceImpl
+import com.kkh.multimodule.core.network.api.timer.TimerApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,21 +14,8 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    internal fun provideTestApi(@TestApi3 retrofit: Retrofit): TestApi {
-        return retrofit.create(TestApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    internal fun provideTestApi2(@TestApi2 retrofit: Retrofit): TestApi2 {
-        return retrofit.create(TestApi2::class.java)
-    }
-
-    //최종적으로 TestDataSource 만 공개함.
-    @Provides
-    @Singleton
-    fun provideTestDataSource(testApi: TestApi) : TestDataSource {
-        return TestDataSourceImpl(testApi)
+    internal fun provideTimerApi(retrofit: Retrofit): TimerApi {
+        return retrofit.create(TimerApi::class.java)
     }
 
 }

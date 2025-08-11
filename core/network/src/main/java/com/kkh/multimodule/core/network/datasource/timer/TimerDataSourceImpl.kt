@@ -1,0 +1,30 @@
+package com.kkh.multimodule.core.network.datasource.timer
+
+import com.kkh.multimodule.core.network.api.timer.TimerApi
+import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
+import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
+import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
+import com.kkh.multimodule.core.network.model.response.TimerListResponse
+import jakarta.inject.Inject
+import retrofit2.Response
+
+internal class TimerDataSourceImpl @Inject constructor(
+    private val timerApi: TimerApi
+) : TimerDataSource {
+
+    override suspend fun reserveTimer(request: SingleTimerStatusDto): SingleTimerResponse {
+        return timerApi.reserveTimer(request)
+    }
+
+    override suspend fun getCurrentTimerStatus(timerId: Int): CurrentTimerStatusResponse {
+        return timerApi.getCurrentTimerStatus(timerId)
+    }
+
+    override suspend fun getSingleTimer(timerId: Int): SingleTimerResponse {
+        return timerApi.getSingleTimer(timerId)
+    }
+
+    override suspend fun getTimerList(userId: String): TimerListResponse {
+        return timerApi.getTimerList(userId)
+    }
+}
