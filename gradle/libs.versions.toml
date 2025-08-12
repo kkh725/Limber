@@ -35,8 +35,8 @@ datastore = "1.1.7"
 
 # Project versions
 projectApplicationId = "com.kkh.cmc.limber"
-projectVersionName = "0.0.1"
-projectVersionCode = "1"
+projectVersionName = "0.0.3"
+projectVersionCode = "3"
 projectMinSdkVersion = "29"
 projectTargetSdkVersion = "35"
 projectCompileSdkVersion = "35"
