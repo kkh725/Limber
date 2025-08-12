@@ -18,16 +18,12 @@ data class SingleTimerStatusDto(
     @SerializedName("endTime")
     val endTime: TimeData,
     @SerializedName("status")
-    val status: String
+    val status: TimerStatus
 ) {
     data class TimeData(
         @SerializedName("hour")
         val hour: Int,
         @SerializedName("minute")
-        val minute: Int,
-        @SerializedName("second")
-        val second: Int,
-        @SerializedName("nano")
-        val nano: Int
+        val minute: Int
     )
 }

@@ -7,12 +7,8 @@ import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import retrofit2.Response
 
 interface TimerDataSource {
-
     suspend fun reserveTimer(request: SingleTimerStatusDto): SingleTimerResponse
-
     suspend fun getCurrentTimerStatus(timerId: Int): CurrentTimerStatusResponse
-
     suspend fun getSingleTimer(timerId: Int): SingleTimerResponse
-
     suspend fun getTimerList(userId: String): TimerListResponse
 }
