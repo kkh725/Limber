@@ -1,6 +1,7 @@
 package com.kkh.multimodule.core.network.api.timer
 
 import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
+import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
@@ -16,7 +17,7 @@ interface TimerApi {
      */
     @POST("/api/timers")
     suspend fun reserveTimer(
-        @Body singleTimerRequest : SingleTimerStatusDto
+        @Body singleTimerRequest : SingleTimerRequestDto
     ): SingleTimerResponse
 
     /**

@@ -1,5 +1,6 @@
 package com.kkh.multimodule.core.domain.model
 
+import com.kkh.multimodule.core.domain.TimerStatusModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,6 +27,24 @@ data class ReservationItemModel(
         fun mockList() = mockReservationItems()
     }
 }
+
+fun ReservationItemModel.toSingleTimerModel(
+    focusTypeId: Int = 1, // 필요 시 호출부에서 전달
+    repeatCycleCode: String = "", // 필요 시 호출부에서 전달
+    status: TimerStatusModel = TimerStatusModel.READY
+): SingleTimerModel {
+    return SingleTimerModel(
+        id = id,
+        title = reservationInfo.title,
+        focusTypeId = focusTypeId,
+        repeatCycleCode = repeatCycleCode,
+        repeatDays = reservationInfo.repeatDays.joinToString(","), // List -> String 변환
+        startTime = reservationInfo.startTime,
+        endTime = reservationInfo.endTime,
+        status = status
+    )
+}
+
 
 @Serializable
 data class ReservationInfo(

@@ -2,6 +2,7 @@ package com.kkh.multimodule.core.network.datasource.timer
 
 import com.kkh.multimodule.core.network.api.timer.TimerApi
 import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
+import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
@@ -12,7 +13,7 @@ internal class TimerDataSourceImpl @Inject constructor(
     private val timerApi: TimerApi
 ) : TimerDataSource {
 
-    override suspend fun reserveTimer(request: SingleTimerStatusDto): SingleTimerResponse {
+    override suspend fun reserveTimer(request: SingleTimerRequestDto): SingleTimerResponse {
         return timerApi.reserveTimer(request)
     }
 

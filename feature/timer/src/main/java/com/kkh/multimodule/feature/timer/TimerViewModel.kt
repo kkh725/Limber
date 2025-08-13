@@ -7,8 +7,11 @@ import com.kkh.multimodule.core.accessibility.AppInfoProvider.getAppInfoListFrom
 import com.kkh.multimodule.core.accessibility.BlockAlarmManager
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import com.kkh.multimodule.core.domain.model.SingleTimerModel
+import com.kkh.multimodule.core.domain.model.toSingleTimerModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
+import com.kkh.multimodule.core.domain.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -18,7 +21,7 @@ import java.time.temporal.TemporalQueries.localTime
 @HiltViewModel
 class TimerViewModel @Inject constructor(
     private val appDataRepository: AppDataRepository,
-    private val reservationRepository: BlockReservationRepository
+    private val timerRepository: TimerRepository
 ) : ViewModel() {
 
     private val reducer = TimerReducer(TimerState.init())
@@ -86,7 +89,15 @@ class TimerViewModel @Inject constructor(
         startReservationInfo: ReservationItemModel
     ) {
         // 지금 당장 시작 후 종료 예약 트리거 on.
-        appDataRepository.setBlockMode(true)
-        BlockAlarmManager.scheduleBlockTrigger(context = context, reservation = startReservationInfo, isStart = false)
+//        appDataRepository.setBlockMode(true)
+//        BlockAlarmManager.scheduleBlockTrigger(context = context, reservation = startReservationInfo, isStart = false)
+
+        //todo 이거 id 수정 필요
+        val request = startReservationInfo.toSingleTimerModel()
+        //api 전송
+        timerRepository.reserveTimer(request)
+            .onFailure {
+                //todo fail 토스트 올리기
+            }
     }
 }

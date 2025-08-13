@@ -2,27 +2,43 @@ package com.kkh.multimodule.core.data.mapper
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
+import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
-import com.kkh.multimodule.core.network.model.SingleTimerStatusDto.TimeData
 import com.kkh.multimodule.core.network.model.TimerStatus
 
 /**
  * singleTimer
  */
+fun SingleTimerRequestDto.toDomain() = SingleTimerModel(
+    id = -1,
+    title= title,
+    focusTypeId= focusTypeId,
+    repeatCycleCode= repeatCycleCode,
+    repeatDays= repeatDays,
+    startTime= startTime,
+    endTime= endTime,
+    status= TimerStatusModel.READY
+)
+
+fun SingleTimerModel.toRequestDto() = SingleTimerRequestDto(
+    userid = "UUID",
+    title = title,
+    focusTypeId = focusTypeId,
+    repeatCycleCode = repeatCycleCode,
+    repeatDays = repeatDays,
+    startTime = startTime,
+    endTime = endTime
+)
+
 fun SingleTimerStatusDto.toDomain() = SingleTimerModel(
     id = id,
     title= title,
     focusTypeId= focusTypeId,
     repeatCycleCode= repeatCycleCode,
     repeatDays= repeatDays,
-    startTime= startTime.toDomain(),
-    endTime= endTime.toDomain(),
+    startTime= startTime,
+    endTime= endTime,
     status= status.toDomain()
-)
-
-fun TimeData.toDomain() = SingleTimerModel.TimeModel(
-    minute = minute,
-    hour = hour
 )
 
 fun SingleTimerModel.toDto() = SingleTimerStatusDto(
@@ -31,14 +47,9 @@ fun SingleTimerModel.toDto() = SingleTimerStatusDto(
     focusTypeId = focusTypeId,
     repeatCycleCode = repeatCycleCode,
     repeatDays = repeatDays,
-    startTime = startTime.toDto(),
-    endTime = endTime.toDto(),
+    startTime = startTime,
+    endTime = endTime,
     status = status.toDto()
-)
-
-fun SingleTimerModel.TimeModel.toDto() = TimeData(
-    minute = minute,
-    hour = hour
 )
 
 /**

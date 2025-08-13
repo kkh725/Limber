@@ -4,9 +4,12 @@ import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.data.repository.AppDataRepositoryImpl
 import com.kkh.multimodule.core.data.repository.BlockReservationRepositoryImpl
 import com.kkh.multimodule.core.data.repository.OnBoardingRepositoryImpl
+import com.kkh.multimodule.core.data.repository.TimerRepositoryImpl
 import com.kkh.multimodule.core.datastore.datasource.LocalDataSource
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import com.kkh.multimodule.core.domain.repository.OnBoardingRepository
+import com.kkh.multimodule.core.domain.repository.TimerRepository
+import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +42,14 @@ object DataModule {
         localDataSource: LocalDataSource
     ): OnBoardingRepository{
         return OnBoardingRepositoryImpl(localDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTimerRepository(
+        timerDataSource: TimerDataSource
+    ): TimerRepository{
+        return TimerRepositoryImpl(timerDataSource)
     }
 
 }
