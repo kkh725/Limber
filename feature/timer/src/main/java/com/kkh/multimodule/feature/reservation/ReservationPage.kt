@@ -33,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -81,6 +82,16 @@ fun ReservationPage(modifier: Modifier = Modifier) {
     val bottomSheetVisible = uiState.isSheetVisible
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isClickedAllSelect = uiState.isClickedAllSelected
+
+    LaunchedEffect(Unit) {
+        reservationViewModel.sendEvent(ReservationEvent.OnEnteredScreen)
+//        reservationViewModel.sideEffect.collect { effect ->
+//            when (effect) {
+//                is SideEffect.NavigateToHome ->
+//
+//            }
+//        }
+    }
 
     Scaffold(
         containerColor = Gray50,

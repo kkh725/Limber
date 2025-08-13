@@ -5,16 +5,10 @@ import com.kkh.multimodule.core.network.model.response.ApiResponse
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 
 enum class TimerStatus {
-    @SerializedName("READY")
-    READY,
-    @SerializedName("RUNNING")
-    RUNNING,
-    @SerializedName("PAUSED")
-    PAUSED,
-    @SerializedName("COMPLETED")
-    COMPLETED,
-    @SerializedName("CANCELED")
-    CANCELED
+    @SerializedName("ON")
+    ON,
+    @SerializedName("OFF")
+    OFF
 }
 typealias CurrentTimerStatusResponse = ApiResponse<TimerStatus>
 

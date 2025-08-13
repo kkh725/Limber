@@ -30,7 +30,7 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
         runCatching {
             val response = timerDataSource.getCurrentTimerStatus(timerId)
             if (response.success) {
-                response.data?.toDomain() ?: TimerStatusModel.READY
+                response.data?.toDomain() ?: TimerStatusModel.OFF
             } else {
                 throw Exception(response.error?.message ?: "Unknown error")
             }

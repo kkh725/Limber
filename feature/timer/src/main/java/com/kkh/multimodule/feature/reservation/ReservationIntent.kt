@@ -6,6 +6,7 @@ import com.kkh.multimodule.core.domain.model.mockReservationItems
 import com.kkh.multimodule.feature.timer.ReservationScreenState
 import com.kkh.multimodule.feature.timer.ChipInfo
 import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
 import kotlinx.datetime.LocalTime
@@ -44,6 +45,7 @@ data class ReservationState(
 }
 
 sealed class ReservationEvent : UiEvent {
+    data object OnEnteredScreen : ReservationEvent()
     data object OnClickModifyButton : ReservationEvent()
     data class OnToggleChanged(val id: Int, val checked: Boolean) : ReservationEvent()
     data object OnClickModifyCompleteButton : ReservationEvent()
@@ -65,10 +67,15 @@ sealed class ReservationEvent : UiEvent {
     }
 }
 
+sealed class SideEffect : UiEffect {
+    data object NavigateToHome : SideEffect()
+}
+
 class ReservationReducer(state: ReservationState) :
     Reducer<ReservationState, ReservationEvent>(state) {
     override suspend fun reduce(oldState: ReservationState, event: ReservationEvent) {
         when (event) {
+
             is ReservationEvent.OnClickModifyButton -> {
                 setState(oldState.copy(reservationScreenState = ReservationScreenState.Modify))
             }
@@ -320,6 +327,7 @@ class ReservationReducer(state: ReservationState) :
                     )
                 )
             }
+            else -> {}
         }
     }
 }

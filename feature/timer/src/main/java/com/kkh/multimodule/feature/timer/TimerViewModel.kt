@@ -8,7 +8,6 @@ import com.kkh.multimodule.core.accessibility.BlockAlarmManager
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
-import com.kkh.multimodule.core.domain.model.toSingleTimerModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository

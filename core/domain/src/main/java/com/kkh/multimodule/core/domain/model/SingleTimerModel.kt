@@ -1,10 +1,11 @@
 package com.kkh.multimodule.core.domain.model
 
+import com.kkh.multimodule.core.domain.RepeatCycleCodeModel
 import com.kkh.multimodule.core.domain.TimerStatusModel
 
 
 data class SingleTimerModel(
-    val id: Int,
+    val id: Int = -1,
     val title: String,
     val focusTypeId: Int,
     val repeatCycleCode: String,
@@ -18,11 +19,11 @@ data class SingleTimerModel(
             id = -1,
             title = "",
             focusTypeId = 1,
-            repeatCycleCode = "",
+            repeatCycleCode = RepeatCycleCodeModel.NONE.code,
             repeatDays = "",
             startTime = "",
             endTime = "",
-            status = TimerStatusModel.READY
+            status = TimerStatusModel.OFF
         )
     }
 }

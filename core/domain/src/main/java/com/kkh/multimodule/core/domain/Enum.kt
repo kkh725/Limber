@@ -5,16 +5,12 @@ enum class ScreenState{
 }
 
 enum class TimerStatusModel {
-    READY,
-    RUNNING,
-    PAUSED,
-    COMPLETED,
-    CANCELED
+    ON,OFF
 }
 
-enum class RepeatCycleCodeModel {
-    NONE,
-    EVERYDAY,
-    WEEKDAY,
-    WEEKEND
+enum class RepeatCycleCodeModel(val code: String) {
+    NONE("NONE"),
+    EVERYDAY("EVERYDAY"),
+    WEEKDAY("WEEKDAY"),
+    WEEKEND("WEEKEND")
 }

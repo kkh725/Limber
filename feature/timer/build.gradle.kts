@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
     implementation(project(":core:accessibility"))
+    implementation(project(":core:data"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

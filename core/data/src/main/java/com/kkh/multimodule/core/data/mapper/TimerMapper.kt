@@ -1,6 +1,8 @@
 package com.kkh.multimodule.core.data.mapper
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
@@ -11,13 +13,13 @@ import com.kkh.multimodule.core.network.model.TimerStatus
  */
 fun SingleTimerRequestDto.toDomain() = SingleTimerModel(
     id = -1,
-    title= title,
-    focusTypeId= focusTypeId,
-    repeatCycleCode= repeatCycleCode,
-    repeatDays= repeatDays,
-    startTime= startTime,
-    endTime= endTime,
-    status= TimerStatusModel.READY
+    title = title,
+    focusTypeId = focusTypeId,
+    repeatCycleCode = repeatCycleCode,
+    repeatDays = repeatDays,
+    startTime = startTime,
+    endTime = endTime,
+    status = TimerStatusModel.OFF
 )
 
 fun SingleTimerModel.toRequestDto() = SingleTimerRequestDto(
@@ -32,13 +34,13 @@ fun SingleTimerModel.toRequestDto() = SingleTimerRequestDto(
 
 fun SingleTimerStatusDto.toDomain() = SingleTimerModel(
     id = id,
-    title= title,
-    focusTypeId= focusTypeId,
-    repeatCycleCode= repeatCycleCode,
-    repeatDays= repeatDays,
-    startTime= startTime,
-    endTime= endTime,
-    status= status.toDomain()
+    title = title,
+    focusTypeId = focusTypeId,
+    repeatCycleCode = repeatCycleCode,
+    repeatDays = repeatDays,
+    startTime = startTime,
+    endTime = endTime,
+    status = status.toDomain()
 )
 
 fun SingleTimerModel.toDto() = SingleTimerStatusDto(
@@ -50,6 +52,17 @@ fun SingleTimerModel.toDto() = SingleTimerStatusDto(
     startTime = startTime,
     endTime = endTime,
     status = status.toDto()
+)
+
+fun SingleTimerModel.toReservationItemModel() = ReservationItemModel(
+    id = id,
+    reservationInfo = ReservationInfo(
+        title = title,
+        startTime = startTime,
+        endTime = endTime,
+        category = "",
+        repeatDays = repeatDays.split("").filter { it.isNotEmpty() }),
+    isToggleChecked = status == TimerStatusModel.ON
 )
 
 /**
@@ -73,3 +86,6 @@ fun List<SingleTimerStatusDto>.toDomainList(): List<SingleTimerModel> =
 
 fun List<SingleTimerModel>.toDtoList(): List<SingleTimerStatusDto> =
     map { it.toDto() }
+
+fun List<SingleTimerModel>.toReservationItemModelList(): List<ReservationItemModel> =
+    map { it.toReservationItemModel() }
