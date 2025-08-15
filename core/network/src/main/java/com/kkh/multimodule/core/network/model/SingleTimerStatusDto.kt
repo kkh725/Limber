@@ -3,12 +3,14 @@ package com.kkh.multimodule.core.network.model
 import com.google.gson.annotations.SerializedName
 
 data class SingleTimerRequestDto(
-    @SerializedName("userid")
-    val userid: String,
+    @SerializedName("userId")
+    val userId: String,
     @SerializedName("title")
     val title: String,
     @SerializedName("focusTypeId")
     val focusTypeId: Int,
+    @SerializedName("timerCode")
+    val timerCode: String,
     @SerializedName("repeatCycleCode")
     val repeatCycleCode: String,
     @SerializedName("repeatDays")

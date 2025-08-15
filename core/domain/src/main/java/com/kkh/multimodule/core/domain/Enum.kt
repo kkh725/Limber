@@ -8,6 +8,11 @@ enum class TimerStatusModel {
     ON,OFF
 }
 
+enum class TimerCode(val text : String){
+    IMMEDIATE("IMMEDIATE"),
+    SCHEDULED("SCHEDULED")
+}
+
 enum class RepeatCycleCodeModel(val code: String) {
     NONE("NONE"),
     EVERYDAY("EVERYDAY"),

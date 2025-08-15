@@ -94,7 +94,10 @@ class TimerViewModel @Inject constructor(
         //todo 이거 id 수정 필요
         val request = startReservationInfo.toSingleTimerModel()
         //api 전송
-        timerRepository.reserveTimer(request)
+        timerRepository.reserveImmediateTimer(request)
+            .onSuccess {
+
+            }
             .onFailure {
                 //todo fail 토스트 올리기
             }

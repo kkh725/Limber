@@ -22,9 +22,10 @@ fun SingleTimerRequestDto.toDomain() = SingleTimerModel(
     status = TimerStatusModel.OFF
 )
 
-fun SingleTimerModel.toRequestDto() = SingleTimerRequestDto(
-    userid = "UUID",
+fun SingleTimerModel.toRequestDto(userId : String, timerCode : String) = SingleTimerRequestDto(
+    userId = userId,
     title = title,
+    timerCode = timerCode,
     focusTypeId = focusTypeId,
     repeatCycleCode = repeatCycleCode,
     repeatDays = repeatDays,

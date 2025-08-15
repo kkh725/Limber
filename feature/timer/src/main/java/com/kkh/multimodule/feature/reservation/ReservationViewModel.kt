@@ -52,7 +52,7 @@ class ReservationViewModel @Inject constructor(
     // 예약하기 api 전송
     private suspend fun reserveTimer(title: String) {
         val reservationInfo = uiState.value.ReservationInfo.copy(title = title)
-        timerRepository.reserveTimer(reservationInfo.toSingleTimerModel())
+        timerRepository.reserveScheduledTimer(reservationInfo.toSingleTimerModel())
             .onSuccess {
                 reducer.setState(uiState.value.copy(ReservationInfo = ReservationInfo.init()))
                 reducer.sendEffect(SideEffect.NavigateToHome)
