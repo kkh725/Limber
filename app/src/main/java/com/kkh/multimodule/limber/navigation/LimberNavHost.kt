@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kkh.multimodule.limber.RootViewModel
@@ -22,6 +23,7 @@ import com.kkh.multimodule.feature.home.homeNavGraph
 import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
 import com.kkh.multimodule.feature.home.navigateToHomeScreen
 import com.kkh.multimodule.feature.home.navigateToRecallScreen
+import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
 import com.kkh.multimodule.feature.onboarding.OnBoardingRoute
 import com.kkh.multimodule.limber.intent.RootEvent
 import com.kkh.multimodule.feature.timer.timerNavGraph
@@ -32,6 +34,7 @@ import com.kkh.multimodule.feature.onboarding.navigateToManageAppScreen
 import com.kkh.multimodule.feature.onboarding.navigateToScreenTimePermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToSelectTypeScreen
 import com.kkh.multimodule.feature.onboarding.onBoardingNavGraph
+import com.kkh.multimodule.feature.timer.TimerRoute
 import com.kkh.multimodule.feature.timer.navigateToTimer
 
 @Composable
@@ -40,6 +43,17 @@ fun LimberNavHost(
     modifier: Modifier = Modifier,
     rootViewModel: RootViewModel
 ) {
+    val onPopBackStack: () -> Unit = {
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
+        navController.popBackStack()
+
+        when (currentRoute) {
+            HomeRoutes.HOME -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+            TimerRoute.ROUTE -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.TIMER_SCREEN))
+            LaboratoryRoutes.LABORATORY -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.LABORATORY_SCREEN))
+            else -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+        }
+    }
 
     val uiState by rootViewModel.uiState.collectAsState()
     val isOnboardingChecked = uiState.isOnboardingChecked
@@ -71,15 +85,19 @@ fun LimberNavHost(
                     navController.navigateToHomeScreen()
                     rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
                 },
-                onClickBack = navController::popBackStack
+                onClickBack = onPopBackStack
             )
 
             homeNavGraph(
                 onNavigateToActiveTimer = { leftTime ->
                     navController.navigateToActiveTimerScreen(leftTime)
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
                 },
-                onNavigateToHome = navController::navigateToHomeScreen,
-                onPopBackStack = navController::popBackStack,
+                onNavigateToHome = {
+                    navController.navigateToHomeScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+                },
+                onPopBackStack = onPopBackStack,
                 onNavigateToSetTimer = {
                     rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.TIMER_SCREEN))
                     navController.navigateToTimer()
@@ -96,4 +114,6 @@ fun LimberNavHost(
 
         }
     }
+
 }
+

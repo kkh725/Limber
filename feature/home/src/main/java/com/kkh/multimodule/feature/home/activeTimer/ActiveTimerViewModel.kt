@@ -59,6 +59,9 @@ class ActiveTimerViewModel @Inject constructor(
             .onSuccess {
                 val diff = getTimeDifference(startTimeStr = it.startTime, endTimeStr = it.endTime)
                 reducer.setState(uiState.value.copy(totalTime = diff))
+                reducer.setState(uiState.value.copy(totalTime = diff, isVisible = true))
+            }.onFailure {
+                // Handle failure here
             }
     }
 }

@@ -13,7 +13,8 @@ data class ActiveTimerState(
     val sheetState: Boolean,
     val timerPercent: Float,
     val focusType: String,
-    val totalTime : String
+    val totalTime : String,
+    val isVisible : Boolean = false
 ) : UiState {
     companion object {
         fun init() = ActiveTimerState(

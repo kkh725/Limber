@@ -163,14 +163,14 @@ fun timeStringToSeconds(timeStr: String): Int {
     } else 0
 }
 
-fun calculateTimerPercent(totalTime: String, leftTime: String): Float {
+fun calculateTimerPercentReversed(totalTime: String, leftTime: String): Float {
     val totalSeconds = timeStringToSeconds(totalTime)
     val leftSeconds = timeStringToSeconds(leftTime)
-    if (totalSeconds == 0) return 0f
+    if (totalSeconds == 0) return 1f  // 총 시간 0이면 바로 100%
 
-    // 남은 시간 / 총 시간 × 100%
-    return (leftSeconds.toFloat() / totalSeconds.toFloat())
+    return 1f - (leftSeconds.toFloat() / totalSeconds.toFloat())
 }
+
 
 
 

@@ -33,21 +33,25 @@ fun LimberApp() {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    Box(Modifier.fillMaxSize().background(Gray50)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(Gray50)
+    ) {
         Scaffold(
-            containerColor = Gray50,
-            bottomBar = {
-                if (screenState != ScreenState.ONBOARDING_SCREEN){
+            containerColor = Gray50, bottomBar = {
+                if (screenState == ScreenState.HOME_SCREEN ||
+                    screenState == ScreenState.TIMER_SCREEN ||
+                    screenState == ScreenState.LABORATORY_SCREEN ||
+                    screenState == ScreenState.MORE_SCREEN) {
                     LimberBottomBar(
                         modifier = Modifier.navigationBarsPadding(),
                         navController = navHostController,
                         onScreenSelected = { bottomNavRoute ->
                             rootViewModel.sendEvent(RootEvent.OnClickedBottomNaviItem(bottomNavRoute))
-                        }
-                    )
+                        })
                 }
-            }
-        ) { paddingValues ->
+            }) { paddingValues ->
             LimberNavHost(
                 navController = navHostController,
                 modifier = Modifier

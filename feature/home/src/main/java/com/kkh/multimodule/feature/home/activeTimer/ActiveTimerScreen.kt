@@ -73,10 +73,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
-import com.kkh.multimodule.core.ui.util.calculateTimerPercent
+import com.kkh.multimodule.core.ui.util.calculateTimerPercentReversed
 import com.kkh.multimodule.core.ui.util.decrementOneSecond
 import com.kkh.multimodule.feature.home.HomeEvent
 import kotlinx.coroutines.delay
@@ -118,10 +119,10 @@ fun ActiveTimerScreen(
             if (tempLeftTime != "00:00:00") {
                 tempLeftTime = decrementOneSecond(tempLeftTime)
 
-                val percent = calculateTimerPercent(totalTime, tempLeftTime)
+                val percent = calculateTimerPercentReversed(totalTime, tempLeftTime)
                 activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(percent))
             } else {
-                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(0f))
+                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(1f))
             }
         }
     }
@@ -137,16 +138,19 @@ fun ActiveTimerScreen(
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
-        Image(painter = painterResource(R.drawable.bg_all_blocking), contentDescription = null)
-    }
-
     Box(
         Modifier
             .fillMaxSize()
     ) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(R.drawable.bg_all_blocking),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
+
         Scaffold(
-            containerColor = Gray50,
+            containerColor = Color.Transparent,
             bottomBar = {
                 Box(
                     Modifier
@@ -165,6 +169,7 @@ fun ActiveTimerScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
+                Spacer(Modifier.height(80.dp))
                 CircularProgressBarWithHandleImage(
                     leftTime = tempLeftTime,
                     percentage = uiState.timerPercent,
@@ -201,6 +206,7 @@ fun ActiveTimerScreen(
                             Text(
                                 "차단중인 앱 보기  >",
                                 style = LimberTextStyle.Body2,
+                                color = Color.White
                             )
                         }
                     }
@@ -219,6 +225,11 @@ fun ActiveTimerScreen(
         // BottomSheet
         if (isSheetOpen) {
             ModalBottomSheet(
+                dragHandle = {
+                    Box(
+                        modifier = Modifier.height(33.dp)
+                    )
+                },
                 containerColor = Color.White,
                 onDismissRequest = {
                     activeTimerViewModel.sendEvent(
@@ -253,7 +264,7 @@ fun CircularProgressBarWithHandleImage(
     percentage: Float,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
-    backgroundColor: Color = Color.LightGray,
+    backgroundColor: Color = LimberColorStyle.Primary_Dark,
     handleImage: ImageBitmap
 ) {
     val configuration = LocalConfiguration.current
@@ -288,7 +299,6 @@ fun CircularProgressBarWithHandleImage(
                 center = Offset(size.width / 2f, size.height / 2f)
             )
         }
-
 
         Canvas(
             modifier = Modifier
@@ -374,6 +384,31 @@ fun TypeFocusText(
     modifier: Modifier = Modifier
 ) {
     val alphaValue = if (isTimerEnd) 0.5f else 1f
+    val iconRes = when (typeText) {
+        "학습" -> {
+            R.drawable.ic_stud
+        }
+
+        "업무" -> {
+            R.drawable.ic_working
+        }
+
+        "회의" -> {
+            R.drawable.ic_business
+        }
+
+        "작업" -> {
+            R.drawable.ic_working
+        }
+
+        "독서" -> {
+            R.drawable.ic_stud
+        }
+
+        else -> {
+            R.drawable.ic_working
+        }
+    }
 
     Box(
         modifier
@@ -381,16 +416,21 @@ fun TypeFocusText(
             .background(color = Primary_Dark, shape = RoundedCornerShape(size = 100.dp))
             .padding(vertical = 12.dp, horizontal = 20.dp)
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painterResource(iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
             Text(
                 typeText,
-                style = LimberTextStyle.Body3,
+                style = LimberTextStyle.Heading4,
                 color = LimberColorStyle.Primary_Main,
                 textAlign = TextAlign.Center
             )
             Text(
                 "에 집중하는 실험",
-                style = LimberTextStyle.Body3,
+                style = LimberTextStyle.Heading4,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
