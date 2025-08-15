@@ -63,7 +63,7 @@ import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen(onNavigateToActiveHome: () -> Unit) {
+fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Unit) {
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
 
@@ -80,7 +80,7 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit) {
     val isModalVisible = uiState.isModalVisible
 
     // todo 1-> 2로 수정필요
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 1 })
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
 
     val appList = uiState.appDataList
@@ -152,7 +152,8 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit) {
                 )
 
                 1 -> ReservationPage(
-                    modifier = Modifier
+                    modifier = Modifier,
+                    onNavigateToHome = onNavigateToHome
                 )
             }
         }
@@ -218,13 +219,12 @@ fun TimerScreenTopBar(
             isSelected = selectedTimerType == TimerScreenType.Now,
             onClick = onClickStartNowBtn
         )
-        //todo 해제필요
-//        TimerSelectorButton(
-//            modifier = Modifier.weight(1f),
-//            text = "예약 설정",
-//            isSelected = selectedTimerType == TimerScreenType.Reserved,
-//            onClick = onClickReservationBtn
-//        )
+        TimerSelectorButton(
+            modifier = Modifier.weight(1f),
+            text = "예약 설정",
+            isSelected = selectedTimerType == TimerScreenType.Reserved,
+            onClick = onClickReservationBtn
+        )
     }
 }
 

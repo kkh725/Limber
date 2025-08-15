@@ -3,9 +3,12 @@ package com.kkh.multimodule.core.network.api.timer
 import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -43,5 +46,22 @@ interface TimerApi {
     suspend fun getTimerList(
         @Path("userId") userId : String
     ): TimerListResponse
+
+    /**
+     * 타이머 상태 변경 toggle on off
+     */
+    @PATCH("/api/timers/{timerId}/status")
+    suspend fun patchTimerStatus(
+        @Path("timerId") timerId : Int,
+        @Body patchTimerStatusRequest: PatchTimerStatusRequest
+    ): BaseResponse
+
+    /**
+     * 타이머 삭제
+     */
+    @DELETE("/api/timers/{timerId}")
+    suspend fun deleteTimerStatus(
+        @Path("timerId") timerId : Int
+    ): BaseResponse
 
 }

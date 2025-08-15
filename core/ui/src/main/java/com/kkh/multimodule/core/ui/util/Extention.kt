@@ -33,6 +33,12 @@ fun getCurrentTimeInKoreanFormat(): String {
     return now.format(formatter)
 }
 
+fun getCurrentTime(): String {
+    val now = LocalTime.now()  // 현재 시각
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    return now.format(formatter)
+}
+
 fun decrementOneSecond(timeStr: String): String {
     val timeParts = timeStr.split(":").map { it.toIntOrNull() ?: 0 }
     if (timeParts.size != 3) return timeStr

@@ -7,6 +7,7 @@ import com.kkh.multimodule.core.data.mapper.toDto
 import com.kkh.multimodule.core.data.mapper.toRequestDto
 import com.kkh.multimodule.core.domain.TimerCode
 import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.domain.model.TimerListModel
 import com.kkh.multimodule.core.domain.repository.TimerRepository
@@ -82,6 +83,26 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             val response = timerDataSource.getTimerList(userId)
             if (response.success) {
                 response.data?.toDomainList() ?: emptyList()
+            } else {
+                throw Exception(response.error?.message ?: "Unknown error")
+            }
+        }
+
+    override suspend fun patchTimerStatus(timerId: Int, status: PatchTimerModel) :Result<Unit> =
+        runCatching {
+            val response = timerDataSource.patchTimerStatus(timerId,status.toDto())
+            if (response.success) {
+                response.data
+            } else {
+                throw Exception(response.error?.message ?: "Unknown error")
+            }
+        }
+
+    override suspend fun deleteTimer(timerId: Int):Result<Unit> =
+        runCatching {
+            val response = timerDataSource.deleteTimer(timerId)
+            if (response.success) {
+                response.data
             } else {
                 throw Exception(response.error?.message ?: "Unknown error")
             }

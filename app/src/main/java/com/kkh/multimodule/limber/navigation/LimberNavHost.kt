@@ -88,7 +88,7 @@ fun LimberNavHost(
             timerNavGraph(onNavigateToActiveHome = {
                 navController.navigateToHomeScreen()
                 rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
-            })
+            }, onNavigateToHome = navController::navigateToHomeScreen)
 
             laboratoryGraph()
 

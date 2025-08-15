@@ -30,21 +30,31 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kkh.multimodule.core.domain.RepeatCycleCodeModel
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.ui.R
@@ -60,12 +70,17 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.designsystem.gradientModifier
+import com.kkh.multimodule.core.ui.designsystem.snackbar.showImmediately
+import com.kkh.multimodule.core.ui.ui.CommonEffect
+import com.kkh.multimodule.core.ui.ui.component.LimberAnimation
 import com.kkh.multimodule.feature.reservation.bottomsheet.ReservationBottomSheet
 import com.kkh.multimodule.feature.timer.ReservationScreenState
 import com.kkh.multimodule.core.ui.ui.component.LimberCheckButton
 import com.kkh.multimodule.core.ui.ui.component.LimberFilterChip
 import com.kkh.multimodule.core.ui.ui.component.LimberRoundButton
+import com.kkh.multimodule.core.ui.ui.component.LimberSnackBar
 import com.kkh.multimodule.core.ui.ui.component.LimberToggle
+import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
 @Composable
@@ -75,89 +90,132 @@ fun ReservationListScreenPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReservationPage(modifier: Modifier = Modifier) {
+fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit = {}){
     val reservationViewModel: ReservationViewModel = hiltViewModel()
     val uiState by reservationViewModel.uiState.collectAsState()
 
     val bottomSheetVisible = uiState.isSheetVisible
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isClickedAllSelect = uiState.isClickedAllSelected
+    var isLoading by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         reservationViewModel.sendEvent(ReservationEvent.OnEnteredScreen)
-//        reservationViewModel.sideEffect.collect { effect ->
-//            when (effect) {
-//                is SideEffect.NavigateToHome ->
-//
-//            }
-//        }
-    }
-
-    Scaffold(
-        containerColor = Gray50,
-        contentWindowInsets = WindowInsets(0.dp),
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButton = {
-            ReservationFloatingBtn(onClick = {
-                reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Show(true))
-            })
-        },
-        topBar = {
-            AnimatedContent(
-                targetState = uiState.reservationScreenState,
-                transitionSpec = {
-                    fadeIn(tween(50, easing = FastOutSlowInEasing)) togetherWith
-                            fadeOut(tween(50, easing = FastOutSlowInEasing))
+        reservationViewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is CommonEffect.IsLoading -> {
+                    isLoading = effect.isVisible
                 }
-            ) { state ->
-                when (state) {
-                    ReservationScreenState.Idle -> {
-                        ReservationTopBar(
-                            onClickModify = {
-                                reservationViewModel.sendEvent(ReservationEvent.OnClickModifyButton)
-                            }
-                        )
-                    }
 
-                    else -> {
-                        ReservationModifyTopBar(
-                            isAllCheckButtonChecked = isClickedAllSelect,
-                            onClickSelectAll = {
-                                reservationViewModel.sendEvent(ReservationEvent.OnClickAllSelected)
-                            },
-                            onClickRemove = {},
-                            onClickComplete = {
-                                reservationViewModel.sendEvent(ReservationEvent.OnClickModifyCompleteButton)
-                            }
-                        )
+                is CommonEffect.ShowSnackBar -> {
+                    scope.launch {
+                        snackbarHostState.showImmediately(effect.message)
                     }
+                }
+                is SideEffect.NavigateToHome -> {
+                    onNavigateToHome()
                 }
             }
         }
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            ReservationList(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                reservationList = uiState.ReservationItemModelList,
-                reservationScreenState = uiState.reservationScreenState,
-                onToggleChanged = { id, checked ->
-                    reservationViewModel.sendEvent(ReservationEvent.OnToggleChanged(id, checked))
-                },
-                onCheckButtonClicked = { id, checked ->
-                    reservationViewModel.sendEvent(
-                        ReservationEvent.OnRemoveCheckChanged(
-                            id,
-                            checked
-                        )
-                    )
-                }
+    }
+
+    if (isLoading) {
+        Dialog(onDismissRequest = { /* no-op, 또는 로딩중에는 막기 */ }) {
+            LimberAnimation(
+                modifier = Modifier
+                    .size(50.dp),
+                resId = R.raw.loading_dark
             )
         }
     }
+
+    Box(Modifier.fillMaxSize()) {
+
+        Scaffold(
+            containerColor = Gray50,
+            contentWindowInsets = WindowInsets(0.dp),
+            modifier = Modifier.fillMaxSize(),
+            floatingActionButton = {
+                ReservationFloatingBtn(onClick = {
+                    reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Show(true))
+                })
+            },
+            topBar = {
+                AnimatedContent(
+                    targetState = uiState.reservationScreenState,
+                    transitionSpec = {
+                        fadeIn(tween(50, easing = FastOutSlowInEasing)) togetherWith
+                                fadeOut(tween(50, easing = FastOutSlowInEasing))
+                    }
+                ) { state ->
+                    when (state) {
+                        ReservationScreenState.Idle -> {
+                            ReservationTopBar(
+                                count = uiState.ReservationItemModelList.size,
+                                onClickModify = {
+                                    reservationViewModel.sendEvent(ReservationEvent.OnClickModifyButton)
+                                }
+                            )
+                        }
+
+                        else -> {
+                            ReservationModifyTopBar(
+                                isAllCheckButtonChecked = isClickedAllSelect,
+                                onClickSelectAll = {
+                                    reservationViewModel.sendEvent(ReservationEvent.OnClickAllSelected)
+                                },
+                                onClickRemove = {
+
+                                },
+                                onClickComplete = {
+                                    reservationViewModel.sendEvent(ReservationEvent.OnClickModifyCompleteButton)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                ReservationList(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    reservationList = uiState.ReservationItemModelList,
+                    reservationScreenState = uiState.reservationScreenState,
+                    onToggleChanged = { id, checked ->
+                        reservationViewModel.sendEvent(
+                            ReservationEvent.OnToggleChanged(
+                                id,
+                                checked
+                            )
+                        )
+                    },
+                    onCheckButtonClicked = { id, checked ->
+                        reservationViewModel.sendEvent(
+                            ReservationEvent.OnRemoveCheckChanged(
+                                id,
+                                checked
+                            )
+                        )
+                    }
+                )
+            }
+        }
+        SnackbarHost(
+            snackbarHostState,
+            modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 15.5.dp, vertical = 10.dp)
+        ) {
+            LimberSnackBar(snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
+        }
+    }
+
 
     if (bottomSheetVisible) {
         ReservationBottomSheet(
@@ -167,12 +225,12 @@ fun ReservationPage(modifier: Modifier = Modifier) {
                 reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)
             })
     }
-
 }
 
 @Composable
 fun ReservationTopBar(
     modifier: Modifier = Modifier,
+    count: Int,
     onClickModify: () -> Unit = {}
 ) {
     Row(
@@ -190,7 +248,7 @@ fun ReservationTopBar(
             )
             Spacer(Modifier.width(4.dp))
             Text(
-                text = "3",
+                text = count.toString(),
                 style = LimberTextStyle.Heading4,
                 color = Primary_Main
             )
@@ -321,6 +379,14 @@ fun ReservationItemModelComposable(
     }
     val descriptionColor = if (info.isToggleChecked) Gray600 else Gray400
 
+    val dayText = if (info.reservationInfo.repeatOption != "없음") {
+        info.reservationInfo.repeatOption
+    } else {
+        if (info.reservationInfo.repeatDays.isNotEmpty()) {
+            "${info.reservationInfo.repeatDays.joinToString(",")}, "
+        } else ""
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -362,11 +428,18 @@ fun ReservationItemModelComposable(
             color = if (info.isToggleChecked) Gray800 else Gray600
         )
         Spacer(Modifier.height(6.dp))
-        Text(
-            text = info.reservationInfo.category,
-            style = LimberTextStyle.Body2,
-            color = descriptionColor
-        )
+        Row {
+            Text(
+                text = dayText,
+                style = LimberTextStyle.Body2,
+                color = descriptionColor
+            )
+            Text(
+                text = "${info.reservationInfo.startTime} ~ ${info.reservationInfo.endTime}",
+                style = LimberTextStyle.Body2,
+                color = descriptionColor
+            )
+        }
     }
 }
 

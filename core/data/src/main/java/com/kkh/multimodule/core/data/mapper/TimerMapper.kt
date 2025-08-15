@@ -1,12 +1,14 @@
 package com.kkh.multimodule.core.data.mapper
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.TimerStatus
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
 
 /**
  * singleTimer
@@ -22,7 +24,7 @@ fun SingleTimerRequestDto.toDomain() = SingleTimerModel(
     status = TimerStatusModel.OFF
 )
 
-fun SingleTimerModel.toRequestDto(userId : String, timerCode : String) = SingleTimerRequestDto(
+fun SingleTimerModel.toRequestDto(userId: String, timerCode: String) = SingleTimerRequestDto(
     userId = userId,
     title = title,
     timerCode = timerCode,
@@ -61,8 +63,10 @@ fun SingleTimerModel.toReservationItemModel() = ReservationItemModel(
         title = title,
         startTime = startTime,
         endTime = endTime,
-        category = "",
-        repeatDays = repeatDays.split("").filter { it.isNotEmpty() }),
+        category = focusTypeIdToCategory(focusTypeId),
+        repeatDays = repeatDaysToString(repeatDays),
+        repeatOption = repeatCycleCodeToString(repeatCycleCode)
+    ),
     isToggleChecked = status == TimerStatusModel.ON
 )
 
@@ -90,3 +94,13 @@ fun List<SingleTimerModel>.toDtoList(): List<SingleTimerStatusDto> =
 
 fun List<SingleTimerModel>.toReservationItemModelList(): List<ReservationItemModel> =
     map { it.toReservationItemModel() }
+
+/**
+ * timerstatus 토글변경
+ */
+
+fun PatchTimerStatusRequest.toDomain(): PatchTimerModel =
+    PatchTimerModel(status = this.status)
+
+fun PatchTimerModel.toDto(): PatchTimerStatusRequest =
+    PatchTimerStatusRequest(status = this.status)

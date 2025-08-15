@@ -42,4 +42,5 @@ sealed class CommonEffect() : UiEffect {
     data class ShowToast(val message: String) : CommonEffect()
     data class ShowSnackBar(val message: String) : CommonEffect()
     data class ShowDialog(val message: String, val visible : Boolean) : CommonEffect()
+    data class IsLoading(val isVisible: Boolean) : CommonEffect()
 }

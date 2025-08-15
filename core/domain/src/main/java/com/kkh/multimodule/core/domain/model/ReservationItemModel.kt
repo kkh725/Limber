@@ -2,6 +2,8 @@ package com.kkh.multimodule.core.domain.model
 
 import com.kkh.multimodule.core.domain.RepeatCycleCodeModel
 import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.getCurrentTime
+import com.kkh.multimodule.core.domain.getTimePlus30Minutes
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -54,12 +56,13 @@ data class ReservationInfo(
     val category: String,
     val startTime: String,
     val endTime: String,
-    val repeatDays: List<String> = emptyList()
+    val repeatDays: List<String> = emptyList(),
+    val repeatOption: String = RepeatCycleCodeModel.NONE.code
 ) {
     companion object {
         fun init() = ReservationInfo(
-            startTime = "08 : 00",
-            endTime = "08 : 00",
+            startTime = getCurrentTime(),
+            endTime = getTimePlus30Minutes(),
             title = "포트폴리오 작업",
             category = "공부",
             repeatDays = emptyList()

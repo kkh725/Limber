@@ -23,3 +23,5 @@ data class ApiError(
 typealias SingleTimerResponse = ApiResponse<SingleTimerStatusDto>
 // 리스트 조회
 typealias TimerListResponse = ApiResponse<List<SingleTimerStatusDto>>
+// 기본
+typealias BaseResponse = ApiResponse<Unit>

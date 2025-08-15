@@ -19,3 +19,4 @@ enum class RepeatCycleCodeModel(val code: String) {
     WEEKDAY("WEEKDAY"),
     WEEKEND("WEEKEND")
 }
+
