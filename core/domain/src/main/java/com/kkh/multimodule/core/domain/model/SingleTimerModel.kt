@@ -54,6 +54,23 @@ data class SingleTimerModel(
             .split(",")// "1,2,3" → ["1","2","3"]       // 다시 ","로 연결
             .mapNotNull { dayMap[it] }
     }
+
+    fun repeatDaysToNumber(repeatDays: String): String {
+        val dayMapReversed = mapOf(
+            "일" to "0",
+            "월" to "1",
+            "화" to "2",
+            "수" to "3",
+            "목" to "4",
+            "금" to "5",
+            "토" to "6"
+        )
+
+        return repeatDays
+            .split(",")              // "월,화,수" → ["월", "화", "수"]
+            .map { it.trim() }.joinToString(",") { dayMapReversed[it] ?: it }        // 다시 문자열로 합치기
+    }
+
     fun repeatCycleCodeToString(repeatCycleCode: String): String {
         return when (repeatCycleCode) {
             RepeatCycleCodeModel.NONE.code -> "없음"

@@ -317,17 +317,6 @@ class ReservationReducer(state: ReservationState) :
                     )
                 )
             }
-            // 바텀시트 최종 예약하기 버튼
-            is ReservationEvent.BottomSheet.OnClickReservationButton -> {
-                val newReservationInfo = oldState.ReservationInfo.copy(title = event.title)
-
-                setState(
-                    oldState.copy(
-                        ReservationInfo = newReservationInfo,
-                        isSheetVisible = false
-                    )
-                )
-            }
             else -> {}
         }
     }

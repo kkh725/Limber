@@ -1,14 +1,19 @@
 package com.kkh.multimodule.core.data.mapper
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.model.DeleteTimerListRequestModel
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import com.kkh.multimodule.core.domain.model.RetrospectsRequestModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.TimerStatus
+import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
 import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
+import kotlin.Int
 
 /**
  * singleTimer
@@ -30,7 +35,7 @@ fun SingleTimerModel.toRequestDto(userId: String, timerCode: String) = SingleTim
     timerCode = timerCode,
     focusTypeId = focusTypeId,
     repeatCycleCode = repeatCycleCode,
-    repeatDays = repeatDays,
+    repeatDays = repeatDaysToNumber(repeatDays),
     startTime = startTime,
     endTime = endTime
 )
@@ -104,3 +109,21 @@ fun PatchTimerStatusRequest.toDomain(): PatchTimerModel =
 
 fun PatchTimerModel.toDto(): PatchTimerStatusRequest =
     PatchTimerStatusRequest(status = this.status)
+
+/**
+ * timer 삭제
+ */
+fun DeleteTimerListRequestModel.toDto() : DeleteTimerRequestDto =
+    DeleteTimerRequestDto(timerIds = this.timerIdList)
+
+/**
+ * timer회고
+ */
+fun RetrospectsRequestModel.toDto() : RetrospectsRequestDto =
+    RetrospectsRequestDto(
+        userId = userId,
+        timerHistoryId = timerHistoryId,
+        timerId = timerId,
+        immersion = immersion,
+        comment = comment
+    )

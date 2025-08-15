@@ -167,7 +167,7 @@ fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit 
                                     reservationViewModel.sendEvent(ReservationEvent.OnClickAllSelected)
                                 },
                                 onClickRemove = {
-
+                                    reservationViewModel.sendEvent(ReservationEvent.OnClickRemoveButton)
                                 },
                                 onClickComplete = {
                                     reservationViewModel.sendEvent(ReservationEvent.OnClickModifyCompleteButton)
@@ -220,6 +220,7 @@ fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit 
     if (bottomSheetVisible) {
         ReservationBottomSheet(
             modifier = Modifier,
+            snackbarHostState = snackbarHostState,
             sheetState = sheetState,
             onDismissRequest = {
                 reservationViewModel.sendEvent(ReservationEvent.BottomSheet.Close)

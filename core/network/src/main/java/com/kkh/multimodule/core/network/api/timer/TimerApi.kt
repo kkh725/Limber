@@ -3,6 +3,7 @@ package com.kkh.multimodule.core.network.api.timer
 import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
+import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
 import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
 import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
@@ -10,6 +11,7 @@ import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -59,9 +61,9 @@ interface TimerApi {
     /**
      * 타이머 삭제
      */
-    @DELETE("/api/timers/{timerId}")
-    suspend fun deleteTimerStatus(
-        @Path("timerId") timerId : Int
+    @HTTP(method = "DELETE", path = "/api/timers", hasBody = true)
+    suspend fun deleteTimerList(
+        @Body timerIdList: DeleteTimerRequestDto
     ): BaseResponse
 
 }

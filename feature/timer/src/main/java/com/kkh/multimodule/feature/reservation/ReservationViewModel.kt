@@ -1,5 +1,7 @@
 package com.kkh.multimodule.feature.reservation
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.data.mapper.toReservationItemModelList
@@ -32,7 +34,11 @@ class ReservationViewModel @Inject constructor(
                 }
 
                 is ReservationEvent.BottomSheet.OnClickReservationButton -> {
-                    reserveScheduledTimer(e.title)
+                    if (e.title.isEmpty()) {
+                        reducer.sendEffect(CommonEffect.ShowSnackBar("실험의 제목을 설정해주세요."))
+                    } else {
+                        reserveScheduledTimer(e.title)
+                    }
                 }
 
                 is ReservationEvent.OnToggleChanged -> {
@@ -40,7 +46,7 @@ class ReservationViewModel @Inject constructor(
                 }
 
                 is ReservationEvent.OnClickRemoveButton -> {
-
+                    deleteTimer()
                 }
 
                 else -> {}
@@ -65,9 +71,15 @@ class ReservationViewModel @Inject constructor(
     // 예약하기 api 전송
     private suspend fun reserveScheduledTimer(title: String) {
         val reservationInfo = uiState.value.ReservationInfo.copy(title = title)
+
         timerRepository.reserveScheduledTimer(reservationInfo.toSingleTimerModel())
             .onSuccess {
-                reducer.setState(uiState.value.copy(ReservationInfo = ReservationInfo.init()))
+                reducer.setState(
+                    uiState.value.copy(
+                        ReservationInfo = ReservationInfo.init(),
+                        isSheetVisible = false
+                    ),
+                )
                 reducer.sendEffect(SideEffect.NavigateToHome)
             }.onFailure { throwable ->
                 val message = throwable.message ?: "error"
@@ -98,8 +110,13 @@ class ReservationViewModel @Inject constructor(
         reducer.sendEffect(CommonEffect.IsLoading(false))
     }
 
-    private suspend fun deleteTimer(){
-        val checkedList = uiState.value.ReservationItemModelList.filter { it.isRemoveChecked }
-        timerRepository.deleteTimer(checkedList)
+    private suspend fun deleteTimer() {
+        val checkedList = uiState.value.ReservationItemModelList.filter { it.isRemoveChecked }.map { it.id }
+        timerRepository.deleteTimerList(checkedList)
+            .onSuccess {
+                Log.d(TAG, "deleteTimer: success")
+            }.onFailure { e ->
+                Log.d(TAG, "deleteTimer: fail $e")
+            }
     }
 }

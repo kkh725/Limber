@@ -1,5 +1,6 @@
 package com.kkh.multimodule.core.network.di
 
+import com.kkh.multimodule.core.network.api.timer.RetrospectsApi
 import com.kkh.multimodule.core.network.api.timer.TimerApi
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSourceImpl
@@ -22,8 +23,14 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTimerDataSource(timerApi: TimerApi): TimerDataSource {
-        return TimerDataSourceImpl(timerApi)
+    internal fun provideRetrospectsApi(retrofit: Retrofit): RetrospectsApi {
+        return retrofit.create(RetrospectsApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTimerDataSource(timerApi: TimerApi, retrospectsApi: RetrospectsApi): TimerDataSource {
+        return TimerDataSourceImpl(timerApi,retrospectsApi)
     }
 
 }

@@ -28,6 +28,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -58,6 +60,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.core.ui.ui.component.LimberOutlinedTextField
+import com.kkh.multimodule.core.ui.ui.component.LimberSnackBar
 import com.kkh.multimodule.feature.reservation.BottomSheetState
 import com.kkh.multimodule.feature.reservation.ReservationEvent
 import com.kkh.multimodule.feature.reservation.ReservationViewModel
@@ -69,6 +72,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ReservationBottomSheet(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
 ) {
@@ -257,6 +261,14 @@ fun ReservationBottomSheet(
                         )
                     }
                 }
+            }
+            SnackbarHost(
+                snackbarHostState,
+                modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 15.5.dp, vertical = 10.dp)
+            ) {
+                LimberSnackBar(snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
             }
         }
     }
