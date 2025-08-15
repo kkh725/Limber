@@ -17,7 +17,7 @@ import com.kkh.multimodule.core.ui.R
 @Composable
 fun LimberAnimation(
     modifier: Modifier = Modifier.size(200.dp),
-    resId: Int = R.raw.flowup_2_6
+    resId: Int = R.raw.flowup
 ) {
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))

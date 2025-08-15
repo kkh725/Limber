@@ -22,9 +22,11 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 
 @Preview
 @Composable
-fun LimberSnackBar(text: String) {
+fun LimberSnackBar(
+    modifier : Modifier = Modifier,
+    text: String) {
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .background(color = Gray700, shape = RoundedCornerShape(10.dp))
             .padding(12.dp)

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -36,7 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -71,18 +71,23 @@ import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
+import com.kkh.multimodule.core.ui.util.calculateTimerPercent
+import com.kkh.multimodule.core.ui.util.decrementOneSecond
+import com.kkh.multimodule.feature.home.HomeEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.math.cos
 import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
 fun ActiveTimerScreen(
+    leftTime: String,
     onPopBackStack: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onNavigateToRecall: () -> Unit = {}
@@ -93,16 +98,33 @@ fun ActiveTimerScreen(
 
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_star)
     val coroutineScope = rememberCoroutineScope()
+    var tempLeftTime by remember { mutableStateOf(leftTime) }
 
     val sheetState = rememberModalBottomSheetState()
     val isSheetOpen = uiState.sheetState
     val blockedAppList = uiState.blockedAppList
-    val timerPercent = uiState.timerPercent
     val focusType = uiState.focusType
+    val totalTime = uiState.totalTime
 
-    val isTimerEnd = timerPercent == 0f
+    val isTimerEnd = uiState.timerPercent == 0f
 
     var countdownSeconds by remember(isTimerEnd) { mutableIntStateOf(10) }
+
+    LaunchedEffect(uiState.totalTime) {
+        activeTimerViewModel.sendEvent(ActiveTimerEvent.OnEnterScreen)
+
+        while (isActive) {
+            delay(1000)
+            if (tempLeftTime != "00:00:00") {
+                tempLeftTime = decrementOneSecond(tempLeftTime)
+
+                val percent = calculateTimerPercent(totalTime, tempLeftTime)
+                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(percent))
+            } else {
+                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(0f))
+            }
+        }
+    }
 
     LaunchedEffect(isTimerEnd) {
         if (isTimerEnd) {
@@ -116,7 +138,7 @@ fun ActiveTimerScreen(
     }
 
     Box(Modifier.fillMaxSize()) {
-        Image(painter = painterResource(R.drawable.logo_limber), contentDescription = null)
+        Image(painter = painterResource(R.drawable.bg_all_blocking), contentDescription = null)
     }
 
     Box(
@@ -126,25 +148,26 @@ fun ActiveTimerScreen(
         Scaffold(
             containerColor = Gray50,
             bottomBar = {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                BottomBar(
-                    isTimerEnd = isTimerEnd,
-                    onNavigateToHome = onNavigateToHome,
-                    onNavigateToRecall = onNavigateToRecall
-                )
-            }
-        }) { paddingValues ->
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                ) {
+                    BottomBar(
+                        isTimerEnd = isTimerEnd,
+                        onNavigateToHome = onNavigateToHome,
+                        onNavigateToRecall = onNavigateToRecall
+                    )
+                }
+            }) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
                 CircularProgressBarWithHandleImage(
-                    percentage = timerPercent,
+                    leftTime = tempLeftTime,
+                    percentage = uiState.timerPercent,
                     handleImage = imageBitmap
                 )
 
@@ -226,6 +249,7 @@ fun ActiveTimerScreen(
 
 @Composable
 fun CircularProgressBarWithHandleImage(
+    leftTime: String,
     percentage: Float,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
@@ -318,12 +342,28 @@ fun CircularProgressBarWithHandleImage(
             )
         }
 
-        // 중앙 텍스트
-        Text(
-            text = "${(percentage * 100).toInt()}%",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painterResource(R.drawable.char_sad),
+                contentDescription = null,
+                modifier = Modifier.size(140.dp)
+            )
+            Image(
+                painterResource(R.drawable.text_focus),
+                contentDescription = null
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "${leftTime}",
+                color = LimberColorStyle.Primary_BG_Light,
+                style = LimberTextStyle.DisPlay1
+            )
+        }
+
     }
 }
 

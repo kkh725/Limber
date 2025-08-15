@@ -6,12 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
+import com.kkh.multimodule.core.domain.repository.TimerRepository
+import com.kkh.multimodule.core.ui.util.getStartAndEndTime
+import com.kkh.multimodule.core.ui.util.getTimeDifference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ActiveTimerViewModel @Inject constructor(private val appDataRepository: AppDataRepository) :
+class ActiveTimerViewModel @Inject constructor(
+    private val appDataRepository: AppDataRepository,
+    private val timerRepository: TimerRepository
+) :
     ViewModel() {
 
     private val reducer = HomeReducer(ActiveTimerState.init())
@@ -21,12 +27,16 @@ class ActiveTimerViewModel @Inject constructor(private val appDataRepository: Ap
         viewModelScope.launch {
             reducer.sendEvent(e)
 
-            when(e){
+            when (e) {
+                is ActiveTimerEvent.OnEnterScreen->{
+                    getTotalTime()
+                }
                 is ActiveTimerEvent.SheetExpanded -> {
-                    if (e.isExpanded){
+                    if (e.isExpanded) {
                         setBlockedAppInfoList(e.context)
                     }
                 }
+
                 else -> {}
             }
         }
@@ -42,5 +52,13 @@ class ActiveTimerViewModel @Inject constructor(private val appDataRepository: Ap
             )
         }
         sendEvent(ActiveTimerEvent.SetBlockedAppList(newAppInfoList))
+    }
+
+    private suspend fun getTotalTime(){
+        timerRepository.getSingleTimer(timerRepository.getActiveTimerId())
+            .onSuccess {
+                val diff = getTimeDifference(startTimeStr = it.startTime, endTimeStr = it.endTime)
+                reducer.setState(uiState.value.copy(totalTime = diff))
+            }
     }
 }

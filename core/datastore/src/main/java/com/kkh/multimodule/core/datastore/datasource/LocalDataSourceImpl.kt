@@ -11,6 +11,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
+import kotlin.concurrent.timer
 
 internal class LocalDataSourceImpl @Inject constructor() :
     LocalDataSource {
@@ -21,6 +22,7 @@ internal class LocalDataSourceImpl @Inject constructor() :
     private val packageListKey = stringSetPreferencesKey("CUSTOM_STRING_LIST")
     private val reservationListKey = stringSetPreferencesKey("RESERVATION_LIST")
     private val isBlockMode = booleanPreferencesKey("IS_BLOCK_MODE")
+    private val activeTimerIdKey = intPreferencesKey("ACTIVE_TIMER_ID")
     private val isOnBoardingChecked = booleanPreferencesKey("IS_ONBOARDING_CHECKED")
 
 
@@ -69,6 +71,17 @@ internal class LocalDataSourceImpl @Inject constructor() :
 
     override fun observeReservationList(): Flow<List<ReservationItemModel>> {
         return DataStoreManager.readReservationInfoList(reservationListKey)
+    }
+
+    /**
+     * 현재 진행 되고 있는 타이머 id
+     */
+    override suspend fun setActiveTimerId(timerId: Int) {
+        DataStoreManager.saveInt(activeTimerIdKey, timerId)
+    }
+
+    override suspend fun getActiveTimerId(): Int {
+        return DataStoreManager.readInt(activeTimerIdKey).first()
     }
 
     /**

@@ -212,7 +212,7 @@ fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit 
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 15.5.dp, vertical = 10.dp)
         ) {
-            LimberSnackBar(snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
+            LimberSnackBar(text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
         }
     }
 

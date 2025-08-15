@@ -15,4 +15,8 @@ interface TimerRepository {
     suspend fun patchTimerStatus(timerId: Int, status: PatchTimerModel) : Result<Unit>
     suspend fun deleteTimerList(timerIdList: List<Int>) : Result<Unit>
     suspend fun writeRetrospects(requestModel: RetrospectsRequestModel) : Result<Unit>
+
+    //local
+    suspend fun setActiveTimerId(timerId: Int)
+    suspend fun getActiveTimerId() : Int
 }

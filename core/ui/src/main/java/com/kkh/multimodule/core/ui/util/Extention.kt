@@ -137,4 +137,40 @@ fun convertTimeStringToMinutes(time: String): Int {
     return hours * 60 + minutes
 }
 
+fun getTimeDifference(startTimeStr: String, endTimeStr: String): String {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val startTime = LocalTime.parse(startTimeStr, formatter)
+    val endTime = LocalTime.parse(endTimeStr, formatter)
+
+    // 자정을 넘어가는 경우 처리
+    val duration = if (endTime.isAfter(startTime) || endTime == startTime) {
+        Duration.between(startTime, endTime)
+    } else {
+        Duration.between(startTime, endTime.plusHours(24))
+    }
+
+    val hours = duration.toHours()
+    val minutes = duration.toMinutesPart()
+    val seconds = duration.toSecondsPart()
+
+    return "%02d:%02d:%02d".format(hours, minutes, seconds)
+}
+
+fun timeStringToSeconds(timeStr: String): Int {
+    val parts = timeStr.split(":").map { it.toIntOrNull() ?: 0 }
+    return if (parts.size == 3) {
+        parts[0] * 3600 + parts[1] * 60 + parts[2]
+    } else 0
+}
+
+fun calculateTimerPercent(totalTime: String, leftTime: String): Float {
+    val totalSeconds = timeStringToSeconds(totalTime)
+    val leftSeconds = timeStringToSeconds(leftTime)
+    if (totalSeconds == 0) return 0f
+
+    // 남은 시간 / 총 시간 × 100%
+    return (leftSeconds.toFloat() / totalSeconds.toFloat())
+}
+
+
 

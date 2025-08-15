@@ -48,26 +48,31 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.core.ui.designsystem.snackbar.showImmediately
+import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.feature.reservation.ReservationPage
 import com.kkh.multimodule.core.ui.ui.WarnDialog
 import com.kkh.multimodule.core.ui.ui.component.LimberChip
 import com.kkh.multimodule.core.ui.ui.component.LimberChipWithPlus
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
+import com.kkh.multimodule.core.ui.ui.component.LimberSnackBar
 import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.LimberTimePicker24
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
 import com.kkh.multimodule.core.ui.util.getStartAndEndTime
+import com.kkh.multimodule.feature.reservation.SideEffect
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Unit) {
+fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome: () -> Unit) {
     val timerViewModel: TimerViewModel = hiltViewModel()
     val uiState by timerViewModel.uiState.collectAsState()
 
     var isVisible by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val timerScreenState = uiState.timerScreenState
     val chipList = uiState.chipList
@@ -79,7 +84,6 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Uni
     val isSheetVisible = uiState.isSheetVisible
     val isModalVisible = uiState.isModalVisible
 
-    // todo 1-> 2로 수정필요
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
 
@@ -90,6 +94,20 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Uni
 
     LaunchedEffect(Unit) {
         timerViewModel.sendEvent(TimerEvent.OnEnterTimerScreen)
+
+        timerViewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is SideEffect.NavigateToHome -> {
+                    onNavigateToHome()
+                }
+
+                is CommonEffect.ShowSnackBar -> {
+                    coroutineScope.launch {
+                        snackbarHostState.showImmediately(effect.message)
+                    }
+                }
+            }
+        }
     }
 
     LaunchedEffect(pagerState.currentPage) {
@@ -144,7 +162,7 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Uni
                         }
                     },
                     isActive = isTimerActive,
-                    modifier = Modifier.fillMaxSize(),
+                    snackbarHostState = snackbarHostState,
                     selectedTime = selectedTime,
                     onValueChanged = { newTime ->
                         selectedTime = newTime
@@ -168,7 +186,6 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Uni
                 },
                 onClickStartButton = {
                     val (startTime, endTime) = getStartAndEndTime(selectedTime.toString())
-                    Log.d("TAG", "TimerScreen: startTime = $startTime, endTime = $endTime")
                     timerViewModel.sendEvent(
                         TimerEvent.OnClickStartTimerNow(
                             startBlockReservationInfo = ReservationItemModel.currentActive.copy(
@@ -179,8 +196,6 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome : () -> Uni
                             ), context = context
                         )
                     )
-
-                    onNavigateToActiveHome()
                 },
                 onDismissRequest = {
                     timerViewModel.sendEvent(TimerEvent.ShowModal(false, context))
@@ -311,68 +326,79 @@ fun TimerScreenContent(
     onSelectedChanged: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     isActive: Boolean = true,
+    snackbarHostState: SnackbarHostState = SnackbarHostState(),
     selectedTime: LocalTime = LocalTime.fromSecondOfDay(1200),
     onValueChanged: (LocalTime) -> Unit = {}
 ) {
-    if (isActive) {
-        Column(
-            modifier = modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier.size(280.dp),
-                painter = painterResource(R.drawable.bg_isactive_timer),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            LimberText("현재 진행중인 실험이 있어요", style = LimberTextStyle.Heading1, Gray800)
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                "실험이 종료된 후에\n" +
-                        "새로운 실험을 시작할 수 있어요",
-                style = LimberTextStyle.Body2,
-                color = Gray600,
-                textAlign = TextAlign.Center
-            )
+    Box(modifier.fillMaxSize()){
+        if (isActive) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(280.dp),
+                    painter = painterResource(R.drawable.bg_isactive_timer),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                LimberText("현재 진행중인 실험이 있어요", style = LimberTextStyle.Heading1, Gray800)
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    "실험이 종료된 후에\n" +
+                            "새로운 실험을 시작할 수 있어요",
+                    style = LimberTextStyle.Body2,
+                    color = Gray600,
+                    textAlign = TextAlign.Center
+                )
+            }
+        } else {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Spacer(modifier = Modifier.height(48.dp))
+                Text(
+                    "어떤 상황에 집중하고 싶은가요?",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = LimberTextStyle.Heading3,
+                    color = Gray800
+                )
+
+                FocusChipRow(
+                    chipList = chipList,
+                    onSelectedChanged = onSelectedChanged,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(52.dp))
+
+                Text(
+                    "얼마 동안 집중할까요?",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = LimberTextStyle.Heading3,
+                    color = Gray800
+                )
+                Spacer(modifier = Modifier.height(22.dp))
+
+                LimberTimePicker24(
+                    selectedTime = selectedTime,
+                    onValueChanged = onValueChanged
+                )
+            }
         }
-    } else {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
+        SnackbarHost(
+            snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 15.5.dp)
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
-            Text(
-                "어떤 상황에 집중하고 싶은가요?",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = LimberTextStyle.Heading3,
-                color = Gray800
-            )
-
-            FocusChipRow(
-                chipList = chipList,
-                onSelectedChanged = onSelectedChanged,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(52.dp))
-
-            Text(
-                "얼마 동안 집중할까요?",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = LimberTextStyle.Heading3,
-                color = Gray800
-            )
-            Spacer(modifier = Modifier.height(22.dp))
-
-            LimberTimePicker24(
-                selectedTime = selectedTime,
-                onValueChanged = onValueChanged
-            )
+            LimberSnackBar(text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
         }
     }
 }

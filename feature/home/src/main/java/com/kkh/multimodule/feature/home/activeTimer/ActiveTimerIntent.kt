@@ -13,18 +13,21 @@ data class ActiveTimerState(
     val sheetState: Boolean,
     val timerPercent: Float,
     val focusType: String,
+    val totalTime : String
 ) : UiState {
     companion object {
         fun init() = ActiveTimerState(
             blockedAppList = listOf(),
             sheetState = false,
             timerPercent = 0f,
-            focusType = "학습"
+            focusType = "학습",
+            totalTime = "00:00"
         )
     }
 }
 
 sealed class ActiveTimerEvent : UiEvent {
+    data object OnEnterScreen : ActiveTimerEvent()
     data class SheetExpanded(val isExpanded: Boolean, val context: Context) : ActiveTimerEvent()
     data class SetBlockedAppList(val blockedAppList: List<AppInfo>) : ActiveTimerEvent()
     data class SetTimerPercent(val percent: Float) : ActiveTimerEvent()
@@ -67,6 +70,7 @@ class HomeReducer(state: ActiveTimerState) : Reducer<ActiveTimerState, ActiveTim
                     )
                 )
             }
+            else -> {}
         }
     }
 }

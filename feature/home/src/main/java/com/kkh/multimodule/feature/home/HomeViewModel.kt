@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
+import com.kkh.multimodule.core.domain.repository.TimerRepository
+import com.kkh.multimodule.core.ui.ui.CommonEffect
+import com.kkh.multimodule.core.ui.util.getRemainingTimeFormatted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -12,7 +15,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appDataRepository: AppDataRepository,
-    private val reservationRepository: BlockReservationRepository
+    private val reservationRepository: BlockReservationRepository,
+    private val timerRepository: TimerRepository
 ) :
     ViewModel() {
 
@@ -34,6 +38,7 @@ class HomeViewModel @Inject constructor(
                     setTimerState()
                     setBlockReservationList()
                     setPackageList()
+                    getActiveTimerId()
                 }
 
                 else -> {}
@@ -54,7 +59,7 @@ class HomeViewModel @Inject constructor(
         appDataRepository.setBlockMode(true)
     }
 
-    private suspend fun setTimerState(){
+    private suspend fun setTimerState() {
         val isTimerActive = appDataRepository.getBlockMode()
         reducer.setState(uiState.value.copy(isTimerActive = isTimerActive))
     }
@@ -64,4 +69,15 @@ class HomeViewModel @Inject constructor(
         reducer.setState(uiState.value.copy(blockReservationItemList = list))
     }
 
+    private suspend fun getActiveTimerId() {
+        val activeTimerId = timerRepository.getActiveTimerId()
+        if (activeTimerId != -1) {
+            timerRepository.getSingleTimer(activeTimerId)
+                .onSuccess {
+                    reducer.setState(uiState.value.copy(leftTime = getRemainingTimeFormatted(it.endTime)))
+                }.onFailure { throwable ->
+                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
+                }
+        }
+    }
 }

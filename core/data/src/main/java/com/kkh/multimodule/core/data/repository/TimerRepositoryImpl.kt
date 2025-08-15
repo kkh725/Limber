@@ -1,23 +1,26 @@
 package com.kkh.multimodule.core.data.repository
 
-import com.google.gson.annotations.SerializedName
 import com.kkh.multimodule.core.data.mapper.toDomain
 import com.kkh.multimodule.core.data.mapper.toDomainList
 import com.kkh.multimodule.core.data.mapper.toDto
 import com.kkh.multimodule.core.data.mapper.toRequestDto
+import com.kkh.multimodule.core.datastore.datasource.LocalDataSource
+import com.kkh.multimodule.core.domain.TimerApiException
 import com.kkh.multimodule.core.domain.TimerCode
+import com.kkh.multimodule.core.domain.TimerError
 import com.kkh.multimodule.core.domain.TimerStatusModel
-import com.kkh.multimodule.core.domain.model.DeleteTimerListRequestModel
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.RetrospectsRequestModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.domain.model.TimerListModel
 import com.kkh.multimodule.core.domain.repository.TimerRepository
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
-import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
 import jakarta.inject.Inject
 
-class TimerRepositoryImpl @Inject constructor(private val timerDataSource: TimerDataSource) :
+class TimerRepositoryImpl @Inject constructor(
+    private val timerDataSource: TimerDataSource,
+    private val localDataSource: LocalDataSource
+) :
     TimerRepository {
 
     /**
@@ -36,11 +39,22 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data?.toDomain() ?: SingleTimerModel.empty
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
     }
 
+    /**
+     * 현재 진행중인 타이머 id
+     */
+    override suspend fun setActiveTimerId(timerId: Int) {
+        localDataSource.setActiveTimerId(timerId)
+    }
+
+    override suspend fun getActiveTimerId(): Int {
+        return localDataSource.getActiveTimerId()
+    }
 
     /**
      * 타이머 예약하기
@@ -58,7 +72,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data?.toDomain() ?: SingleTimerModel.empty
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
     }
@@ -72,7 +87,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data?.toDomain() ?: TimerStatusModel.OFF
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
 
@@ -85,7 +101,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data?.toDomain() ?: SingleTimerModel.empty
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
 
@@ -98,7 +115,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data?.toDomainList() ?: emptyList()
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
 
@@ -111,7 +129,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
 
@@ -126,7 +145,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
 
@@ -139,7 +159,8 @@ class TimerRepositoryImpl @Inject constructor(private val timerDataSource: Timer
             if (response.success) {
                 response.data
             } else {
-                throw Exception(response.error?.message ?: "Unknown error")
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
             }
         }
 }

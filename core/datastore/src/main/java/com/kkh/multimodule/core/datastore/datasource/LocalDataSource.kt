@@ -15,6 +15,9 @@ interface LocalDataSource {
     suspend fun getBlockMode(): Boolean
     fun observeBlockMode(): Flow<Boolean>
 
+    suspend fun setActiveTimerId(timerId: Int)
+    suspend fun getActiveTimerId(): Int
+
     suspend fun setReservationList(reservationList: List<ReservationItemModel>)
     suspend fun getReservationList(): List<ReservationItemModel>
     fun observeReservationList(): Flow<List<ReservationItemModel>>

@@ -8,6 +8,7 @@ import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +80,10 @@ sealed class TimerEvent : UiEvent {
     data class ShowModal(val isModalVisible: Boolean, val context: Context) : TimerEvent()
     data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
     data class OnClickStartTimerNow(val startBlockReservationInfo : ReservationItemModel, val context: Context) : TimerEvent()
+}
+
+sealed class SideEffect : UiEffect {
+    data object NavigateToHome : SideEffect()
 }
 
 class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {

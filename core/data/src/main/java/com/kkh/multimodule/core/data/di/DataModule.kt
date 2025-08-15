@@ -47,9 +47,10 @@ object DataModule {
     @Provides
     @Singleton
     fun provideTimerRepository(
-        timerDataSource: TimerDataSource
+        timerDataSource: TimerDataSource,
+        localDataSource : LocalDataSource
     ): TimerRepository{
-        return TimerRepositoryImpl(timerDataSource)
+        return TimerRepositoryImpl(timerDataSource,localDataSource)
     }
 
 }

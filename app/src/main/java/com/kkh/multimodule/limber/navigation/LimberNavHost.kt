@@ -75,7 +75,9 @@ fun LimberNavHost(
             )
 
             homeNavGraph(
-                onNavigateToActiveTimer = navController::navigateToActiveTimerScreen,
+                onNavigateToActiveTimer = { leftTime ->
+                    navController.navigateToActiveTimerScreen(leftTime)
+                },
                 onNavigateToHome = navController::navigateToHomeScreen,
                 onPopBackStack = navController::popBackStack,
                 onNavigateToSetTimer = {

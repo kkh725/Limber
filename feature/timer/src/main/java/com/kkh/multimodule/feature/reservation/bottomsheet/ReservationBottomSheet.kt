@@ -268,7 +268,10 @@ fun ReservationBottomSheet(
                     .align(Alignment.BottomCenter)
                     .padding(horizontal = 15.5.dp, vertical = 10.dp)
             ) {
-                LimberSnackBar(snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
+                LimberSnackBar(
+                    modifier = Modifier,
+                    snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown"
+                )
             }
         }
     }

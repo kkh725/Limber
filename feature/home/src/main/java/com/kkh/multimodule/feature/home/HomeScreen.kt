@@ -34,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,7 +77,7 @@ import kotlinx.coroutines.isActive
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToActiveTimer: () -> Unit,
+    onNavigateToActiveTimer: (String) -> Unit,
     onNavigateToSetTimer : () -> Unit
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
@@ -86,12 +87,9 @@ fun HomeScreen(
     val blockingAppPackageList = uiState.blockingAppPackageList
     val localBlockReservationList = uiState.blockReservationItemList
     val isTimerActive = uiState.isTimerActive
-
+    var leftTime by rememberSaveable { mutableStateOf("00:00:00") }
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-
-    var timerText by remember { mutableStateOf(getCurrentTimeInKoreanFormat()) }
 
     val totalDopamineTime =
         sumTimeStringsToHourMinuteFormat(appInfoList.take(3).map { it.usageTime })
@@ -100,15 +98,19 @@ fun HomeScreen(
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
     }
 
+    LaunchedEffect(uiState.leftTime) {
+        leftTime = uiState.leftTime
+    }
+
     LaunchedEffect(isTimerActive) {
         // 현재 진행되고 있는 타이머가 존재하는지 확인.
         if (isTimerActive) {
-            // 현재 진행중인 타이머는 서버에서 내려줄것.
-//            timerText = getRemainingTimeFormatted(it.reservationInfo.endTime)
             while (isActive) {
                 delay(1000)
-                if (timerText != "00:00:00") {
-                    timerText = decrementOneSecond(timerText)
+                if (leftTime != "00:00:00") {
+                    leftTime = decrementOneSecond(leftTime)
+                }else{
+                    homeViewModel.sendEvent(HomeEvent.SetIsTimerActive(false))
                 }
             }
         }
@@ -140,9 +142,9 @@ fun HomeScreen(
                 .fillMaxSize(),
             appInfoList = appInfoList,
             //todo 주석해제필요
-//            navigateToActiveTimer = onNavigateToActiveTimer,
+            navigateToActiveTimer = onNavigateToActiveTimer,
             navigateToSetTimer = onNavigateToSetTimer,
-            timerText = timerText,
+            leftTime = leftTime,
             totalFocusTime = totalDopamineTime,
             totalDopamineTime = totalDopamineTime,
             isTimerActive = isTimerActive
@@ -166,9 +168,9 @@ fun HomeScreen(
 private fun HomeScreenMainBody(
     modifier: Modifier = Modifier,
     appInfoList: List<AppInfo>,
-    navigateToActiveTimer: () -> Unit = {},
+    navigateToActiveTimer: (String) -> Unit = {},
     navigateToSetTimer: () -> Unit = {},
-    timerText: String = "00:00:00",
+    leftTime: String = "00:00:00",
     totalFocusTime: String = "1시간 2분",
     totalDopamineTime: String = "1시간 0분",
     isTimerActive: Boolean = false
@@ -185,11 +187,10 @@ private fun HomeScreenMainBody(
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
-            //todo 주석해제필요
             TimerButton(
                 onClickActiveTimer = navigateToActiveTimer,
                 onClickStartTimer = navigateToSetTimer,
-                timerText = timerText,
+                leftTime = leftTime,
                 isTimerActive = isTimerActive
             )
             Spacer(Modifier.height(24.dp))
@@ -477,9 +478,9 @@ fun FocusActBox(modifier: Modifier = Modifier) {
 
 @Composable
 fun TimerButton(
-    onClickActiveTimer: () -> Unit,
+    onClickActiveTimer: (String) -> Unit,
     onClickStartTimer: () -> Unit,
-    timerText: String = "22:22:22",
+    leftTime: String = "22:22:22",
     isTimerActive: Boolean
 ) {
 
@@ -495,7 +496,9 @@ fun TimerButton(
             Modifier
                 .height(60.dp)
                 .clip(RoundedCornerShape(100.dp))
-                .clickable(onClick = onClickActiveTimer)
+                .clickable(onClick = {
+                    onClickActiveTimer(leftTime)
+                })
                 .background(Color.Red)
                 .then(backgroundModifier)
                 .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -507,7 +510,7 @@ fun TimerButton(
             )
             Spacer(Modifier.width(21.5.dp))
             Text(
-                text = timerText,
+                text = leftTime,
                 style = LimberTextStyle.Heading2,
                 color = Color.White,
             )

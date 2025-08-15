@@ -16,12 +16,14 @@ data class HomeState(
     val usageAppInfoList: List<AppInfo>,
     val blockingAppPackageList: List<String>,
     val blockReservationItemList: List<ReservationItemModel> = emptyList(),
-    val isTimerActive: Boolean = false
+    val isTimerActive: Boolean = false,
+    val leftTime : String
 ) : UiState {
     companion object {
         fun init() = HomeState(
             usageAppInfoList = emptyList() ,
-            blockingAppPackageList = emptyList()
+            blockingAppPackageList = emptyList(),
+            leftTime = "00:00:00"
         )
     }
 }
@@ -30,6 +32,7 @@ sealed class HomeEvent : UiEvent {
     data class EnterHomeScreen(val context: Context) : HomeEvent()
     data class OnCompleteRegisterButton (val appList : List<AppInfo>): HomeEvent()
     data class SetBlockingAppList(val appList: List<String>) : HomeEvent()
+    data class SetIsTimerActive(val isActive: Boolean) : HomeEvent()
 }
 
 class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
@@ -49,6 +52,9 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
             }
             is HomeEvent.SetBlockingAppList -> {
                 setState(oldState.copy(blockingAppPackageList = event.appList))
+            }
+            is HomeEvent.SetIsTimerActive -> {
+                setState(oldState.copy(isTimerActive = event.isActive))
             }
             else -> {}
         }

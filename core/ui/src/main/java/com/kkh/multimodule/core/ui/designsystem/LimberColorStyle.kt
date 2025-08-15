@@ -28,7 +28,7 @@ object LimberColorStyle {
     val Secondary_Main = Color(0xFFFF725E)
     val Primary_BG_Normal = Color(0xFFF7F0FF)
     val Primary_BG_Dark = Color(0xFFF6EAFF)
-
+    val Primary_BG_Light = Color(0xFFFAF5FF)
 }
 
 fun gradientModifier(): Modifier {
