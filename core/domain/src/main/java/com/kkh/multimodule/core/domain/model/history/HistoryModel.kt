@@ -18,7 +18,7 @@ data class HistoryModel(
 data class TotalImmersionModel(
     val totalActualMinutes: String,
     val totalScheduledMinutes: String,
-    val ratio: String
+    val ratio: Double
 )
 
 data class TotalActualModel(

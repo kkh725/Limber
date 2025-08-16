@@ -21,6 +21,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,153 +42,178 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
+import com.kkh.multimodule.core.ui.ui.CommonEvent
 import com.kkh.multimodule.core.ui.ui.component.LimberColumnChart
 import com.kkh.multimodule.core.ui.ui.component.LimberRoundButton
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.TextSwitch
+import com.kkh.multimodule.core.ui.util.getCurrentWeekRange
 
 @Preview(showBackground = true)
 @Composable
 fun ReportPagerContent() {
 
+    val reportViewModel: ReportViewModel = hiltViewModel()
+    val uiState by reportViewModel.uiState.collectAsState()
+
+    val totalTime = uiState.totalTime
+    val totalImmersion = uiState.totalImmersion
+    val startDate = uiState.startDate
+    val endDate = uiState.endDate
+
+    LaunchedEffect(Unit) {
+        reportViewModel.sendEvent(CommonEvent.ScreenEntered)
+    }
+
     Column {
-        ReportContent()
+        ReportContent(
+            totalTime = totalTime,
+            totalImmersion = totalImmersion,
+            startDate = startDate,
+            endDate = endDate
+        )
     }
 }
 
 @Composable
-fun ReportContent() {
+fun ReportContent(
+    totalTime: String,
+    totalImmersion: String,
+    startDate: String,
+    endDate: String
+) {
 
     var isChecked by remember { mutableStateOf(false) }
 
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp),
+    ) {
+        Spacer(Modifier.height(40.dp))
+        LimberText("총 실험 시간", style = LimberTextStyle.Heading4, color = Gray600)
+        Spacer(Modifier.height(2.dp))
+        LimberText(totalTime, style = LimberTextStyle.Heading1, color = Gray800)
+
+        Spacer(Modifier.height(10.dp))
+
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Spacer(Modifier.height(40.dp))
-            LimberText("총 실험 시간", style = LimberTextStyle.Heading4, color = Gray600)
-            Spacer(Modifier.height(2.dp))
-            LimberText("10시간 20분", style = LimberTextStyle.Heading1, color = Gray800)
-
-            Spacer(Modifier.height(10.dp))
-
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                LimberText("2025년 06월 23일-29일", style = LimberTextStyle.Heading4, color = Gray500)
-                //todo 해제
-            //                Row {
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_back_small),
-//                        contentDescription = null,
-//                        tint = Gray600
-//                    )
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_next),
-//                        contentDescription = null,
-//                        tint = Gray600
-//                    )
-//                }
-            }
-            Spacer(Modifier.height(18.dp))
-
-            LimberColumnChart()
-            Spacer(Modifier.height(16.dp))
-
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                TextSwitch(selected = isChecked, onSelectedChange = { isChecked = it })
-            }
-            Spacer(Modifier.height(20.dp))
-
-            Row(Modifier.fillMaxWidth()) {
-                WeeklyFocusCard(
-                    text = "평균 집중 시간",
-                    timerOrPercent = "10시간 20분",
-                    imageResId = R.drawable.ic_time,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(Modifier.width(12.dp))
-                WeeklyFocusCard(
-                    text = "평균 집중 몰입도",
-                    timerOrPercent = "49%",
-                    imageResId = R.drawable.ic_fire,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Spacer(Modifier.height(20.dp))
-
-            ThisWeekTopGoalCard(
-                highlight = "학습",
-                subText = "전체 집중 시간의 50%를 차지했어요.",
-                infos = listOf(
-                    GoalBarInfo(
-                        iconRes = R.drawable.ic_study,
-                        goal = "학습",
-                        duration = "4시간 12분",
-                        percent = 0.5f,
-                        barColor = LimberColorStyle.Primary_Main
-                    ),
-                    GoalBarInfo(
-                        iconRes = R.drawable.ic_business,
-                        goal = "업무",
-                        duration = "3시간 10분",
-                        percent = 0.3f,
-                        barColor = LimberColorStyle.Primary_Vivid
-                    ),
-                    GoalBarInfo(
-                        iconRes = R.drawable.ic_working,
-                        goal = "독서",
-                        duration = "2시간",
-                        percent = 0.2f,
-                        barColor = LimberColorStyle.Secondary_Main
-                    )
-                )
-            )
-            Spacer(Modifier.height(24.dp))
-
-            ThisWeekTopGoalCard(
-                title = "가장 많은 실험 중단 사유는",
-                highlight = "휴식이 필요해서",
-                afterHighlight = "였어요",
-                subText = "전체 집중 시간의 20%를 차지했어요.",
-                infos = listOf(
-                    GoalBarInfo(
-                        iconRes = R.drawable.ic_first,
-                        goal = "휴식이 필요해요",
-                        duration = "6회",
-                        percent = 0.5f,
-                        barColor = LimberColorStyle.Primary_Main
-                    ),
-                    GoalBarInfo(
-                        iconRes = R.drawable.ic_second,
-                        goal = "긴급한 상황이 발생했어요",
-                        duration = "3회",
-                        percent = 0.3f,
-                        barColor = LimberColorStyle.Primary_Vivid
-                    ),
-                    GoalBarInfo(
-                        iconRes = R.drawable.ic_third,
-                        goal = "집중 의지가 부족해요",
-                        duration = "1회",
-                        percent = 0.2f,
-                        barColor = LimberColorStyle.Secondary_Main
-                    )
-                )
-            )
-            Spacer(Modifier.height(20.dp))
+            LimberText("${startDate}~${endDate}", style = LimberTextStyle.Heading4, color = Gray500)
+            //todo 해제
+//            Row {
+//                Icon(
+//                    painter = painterResource(R.drawable.ic_back_small),
+//                    contentDescription = null,
+//                    tint = Gray600
+//                )
+//                Icon(
+//                    painter = painterResource(R.drawable.ic_next),
+//                    contentDescription = null,
+//                    tint = Gray600
+//                )
+//            }
         }
+        Spacer(Modifier.height(18.dp))
+
+        LimberColumnChart()
+        Spacer(Modifier.height(16.dp))
+
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            TextSwitch(selected = isChecked, onSelectedChange = { isChecked = it })
+        }
+        Spacer(Modifier.height(20.dp))
+
+        Row(Modifier.fillMaxWidth()) {
+            WeeklyFocusCard(
+                text = "평균 집중 시간",
+                timerOrPercent = totalTime,
+                imageResId = R.drawable.ic_time,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(Modifier.width(12.dp))
+            WeeklyFocusCard(
+                text = "평균 집중 몰입도",
+                timerOrPercent = totalImmersion,
+                imageResId = R.drawable.ic_fire,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(Modifier.height(20.dp))
+
+        ThisWeekTopGoalCard(
+            highlight = "학습",
+            subText = "전체 집중 시간의 50%를 차지했어요.",
+            infos = listOf(
+                GoalBarInfo(
+                    iconRes = R.drawable.ic_study,
+                    goal = "학습",
+                    duration = "4시간 12분",
+                    percent = 0.5f,
+                    barColor = LimberColorStyle.Primary_Main
+                ),
+                GoalBarInfo(
+                    iconRes = R.drawable.ic_business,
+                    goal = "업무",
+                    duration = "3시간 10분",
+                    percent = 0.3f,
+                    barColor = LimberColorStyle.Primary_Vivid
+                ),
+                GoalBarInfo(
+                    iconRes = R.drawable.ic_working,
+                    goal = "독서",
+                    duration = "2시간",
+                    percent = 0.2f,
+                    barColor = LimberColorStyle.Secondary_Main
+                )
+            )
+        )
+        Spacer(Modifier.height(24.dp))
+
+        ThisWeekTopGoalCard(
+            title = "가장 많은 실험 중단 사유는",
+            highlight = "휴식이 필요해서",
+            afterHighlight = "였어요",
+            subText = "전체 집중 시간의 20%를 차지했어요.",
+            infos = listOf(
+                GoalBarInfo(
+                    iconRes = R.drawable.ic_first,
+                    goal = "휴식이 필요해요",
+                    duration = "6회",
+                    percent = 0.5f,
+                    barColor = LimberColorStyle.Primary_Main
+                ),
+                GoalBarInfo(
+                    iconRes = R.drawable.ic_second,
+                    goal = "긴급한 상황이 발생했어요",
+                    duration = "3회",
+                    percent = 0.3f,
+                    barColor = LimberColorStyle.Primary_Vivid
+                ),
+                GoalBarInfo(
+                    iconRes = R.drawable.ic_third,
+                    goal = "집중 의지가 부족해요",
+                    duration = "1회",
+                    percent = 0.2f,
+                    barColor = LimberColorStyle.Secondary_Main
+                )
+            )
+        )
+        Spacer(Modifier.height(20.dp))
     }
+}
 
 
 @Composable

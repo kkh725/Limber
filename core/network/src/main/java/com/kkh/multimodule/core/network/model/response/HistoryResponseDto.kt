@@ -16,10 +16,7 @@ data class HistoryResponseDto(
     val failReason: String,
     val startTime: String,
     val endTime: String
-){
-    fun toDomain(): com.kkh.multimodule.core.domain.model.HistoryModel {
+)
 
-    }
-}
 
 typealias HistoryResponse = ApiResponse<List<HistoryResponseDto>>

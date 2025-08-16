@@ -202,6 +202,32 @@ fun calculateTimerPercentReversed(totalTime: String, leftTime: String): Float {
     return 1f - (leftSeconds.toFloat() / totalSeconds.toFloat())
 }
 
+fun getWeekDateRange(): Pair<String, String> {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val startDate = LocalDate.now()
+    val endDate = startDate.plusDays(7)
+    return startDate.format(formatter) to endDate.format(formatter)
+}
+
+fun getCurrentWeekRange(): String {
+    val today = LocalDate.now()
+    val sevenDaysLater = today.plusDays(6) // 오늘 포함하면 6일 뒤가 7일 범위
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일", Locale.KOREAN)
+
+    val startDateStr = today.format(formatter)
+    val endDateStr = sevenDaysLater.format(formatter)
+
+    return "$startDateStr-${endDateStr}"
+}
+
+fun getWeekDateString(): Pair<String, String> {
+    val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+    val currentDate = LocalDate.now()
+    val beforeDate = currentDate.minusDays(7)
+    return currentDate.format(formatter) to beforeDate.format(formatter)
+}
+
 
 
 
