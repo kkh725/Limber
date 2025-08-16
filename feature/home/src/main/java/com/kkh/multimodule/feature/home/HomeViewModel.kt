@@ -1,5 +1,6 @@
 package com.kkh.multimodule.feature.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
@@ -7,7 +8,7 @@ import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository
 import com.kkh.multimodule.core.ui.ui.CommonEffect
-import com.kkh.multimodule.core.ui.util.getRemainingTimeFormatted
+import com.kkh.multimodule.core.ui.util.getRemainingTimeFormattedSafe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -70,13 +71,17 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun getActiveTimerId() {
+
         val activeTimerId = timerRepository.getActiveTimerId()
+        Log.d("getActiveTimerId", "현재 진행중인 타이머 id : $activeTimerId")
         if (activeTimerId != -1) {
             timerRepository.getSingleTimer(activeTimerId)
                 .onSuccess {
-                    reducer.setState(uiState.value.copy(leftTime = getRemainingTimeFormatted(it.endTime)))
+                    Log.d("getActiveTimerId", "남은 시간 ${getRemainingTimeFormattedSafe(it.endTime)}")
+                    reducer.setState(uiState.value.copy(leftTime = getRemainingTimeFormattedSafe(it.endTime)))
                 }.onFailure { throwable ->
-                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
+                    //수시로 호출하기 때문에 부수효과 x
+//                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
                 }
         }
     }

@@ -7,6 +7,7 @@ import java.time.Duration
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.time.LocalTime
 
@@ -89,21 +90,34 @@ fun isNowWithinTimeRange(startTimeStr: String, endTimeStr: String): Boolean {
     }
 }
 
-@SuppressLint("DefaultLocale")
-fun getRemainingTimeFormatted(endTimeStr: String): String {
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    val now = LocalTime.now()
-    val endTime = LocalTime.parse(endTimeStr, formatter)
+fun getRemainingTimeFormattedSafe(endTimeStr: String): String {
+    // 허용하는 포맷들: "HH:mm:ss" 우선, 없으면 "HH:mm"
+    val formatterWithSec = DateTimeFormatter.ofPattern("HH:mm:ss")
+    val formatterNoSec = DateTimeFormatter.ofPattern("HH:mm")
 
-    val duration = if (endTime.isAfter(now)) {
-        Duration.between(now, endTime)
-    } else {
-        Duration.between(now, endTime.plusHours(24))
+    val nowDateTime = LocalDateTime.now()
+
+    // endTimeStr에 초 정보가 있으면 그 포맷으로 파싱, 없으면 분만 있는 포맷으로 파싱
+    val endLocalTime: LocalTime = try {
+        LocalTime.parse(endTimeStr, formatterWithSec)
+    } catch (e: Exception) {
+        LocalTime.parse(endTimeStr, formatterNoSec)
     }
 
-    val hours = duration.toHours()
-    val minutes = duration.toMinutesPart()
-    val seconds = duration.toSecondsPart()
+    // 오늘의 endDateTime
+    var endDateTime = LocalDateTime.of(LocalDate.now(), endLocalTime)
+
+    // end가 이미 지났다면 내일로 설정
+    if (endDateTime.isBefore(nowDateTime) || endDateTime.isEqual(nowDateTime)) {
+        endDateTime = endDateTime.plusDays(1)
+    }
+
+    val duration = Duration.between(nowDateTime, endDateTime)
+    val totalSeconds = duration.seconds.coerceAtLeast(0) // 안전 장치
+
+    val hours = (totalSeconds / 3600).toInt()
+    val minutes = ((totalSeconds % 3600) / 60).toInt()
+    val seconds = (totalSeconds % 60).toInt()
 
     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
@@ -138,20 +152,37 @@ fun convertTimeStringToMinutes(time: String): Int {
 }
 
 fun getTimeDifference(startTimeStr: String, endTimeStr: String): String {
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    val startTime = LocalTime.parse(startTimeStr, formatter)
-    val endTime = LocalTime.parse(endTimeStr, formatter)
+    // 허용되는 포맷 우선순위: 초 포함("HH:mm:ss") -> 초 미포함("HH:mm")
+    val fmtWithSec = DateTimeFormatter.ofPattern("HH:mm:ss")
+    val fmtNoSec = DateTimeFormatter.ofPattern("HH:mm")
 
-    // 자정을 넘어가는 경우 처리
-    val duration = if (endTime.isAfter(startTime) || endTime == startTime) {
-        Duration.between(startTime, endTime)
-    } else {
-        Duration.between(startTime, endTime.plusHours(24))
+    fun parseTime(s: String): LocalTime {
+        return try {
+            LocalTime.parse(s, fmtWithSec)
+        } catch (e: Exception) {
+            LocalTime.parse(s, fmtNoSec)
+        }
     }
 
-    val hours = duration.toHours()
-    val minutes = duration.toMinutesPart()
-    val seconds = duration.toSecondsPart()
+    val startLocalTime = parseTime(startTimeStr)
+    val endLocalTime = parseTime(endTimeStr)
+
+    // 오늘 날짜 기준 LocalDateTime 생성
+    val today = LocalDate.now()
+    var startDateTime = LocalDateTime.of(today, startLocalTime)
+    var endDateTime = LocalDateTime.of(today, endLocalTime)
+
+    // 만약 end가 start 이전이면 end는 다음날로 처리 (자정 넘김)
+    if (endDateTime.isBefore(startDateTime)) {
+        endDateTime = endDateTime.plusDays(1)
+    }
+
+    val duration = Duration.between(startDateTime, endDateTime)
+    val totalSeconds = duration.seconds.coerceAtLeast(0) // 안전하게 음수 방지
+
+    val hours = (totalSeconds / 3600).toInt()
+    val minutes = ((totalSeconds % 3600) / 60).toInt()
+    val seconds = (totalSeconds % 60).toInt()
 
     return "%02d:%02d:%02d".format(hours, minutes, seconds)
 }

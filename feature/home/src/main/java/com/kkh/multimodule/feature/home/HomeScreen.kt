@@ -68,7 +68,6 @@ import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.multimodule.core.ui.util.convertTimeStringToMinutes
 import com.kkh.multimodule.core.ui.util.decrementOneSecond
 import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
-import com.kkh.multimodule.core.ui.util.getRemainingTimeFormatted
 import com.kkh.multimodule.core.ui.util.isNowWithinTimeRange
 import com.kkh.multimodule.core.ui.util.sumTimeStringsToHourMinuteFormat
 import kotlinx.coroutines.delay

@@ -47,7 +47,8 @@ object BlockAlarmManager {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        Log.d("TAG", "isStart: ${isStart}, triggerTime: ${triggerMillis}")
+        Log.d("ScheduleBlockTrigger", "시작, 종료 여부: ${isStart}," +
+                " 알림 시간: $triggerMillis\n 예약 정보: $reservation")
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,

@@ -6,18 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfoProvider.getAppInfoListFromPackageNames
 import com.kkh.multimodule.core.accessibility.BlockAlarmManager
 import com.kkh.multimodule.core.data.mapper.toReservationItemModel
-import com.kkh.multimodule.core.domain.model.ReservationInfo
+import com.kkh.multimodule.core.data.error.onLimberFailure
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
-import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
-import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository
 import com.kkh.multimodule.core.ui.ui.CommonEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalTime
-import java.time.temporal.TemporalQueries.localTime
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
@@ -107,7 +103,7 @@ class TimerViewModel @Inject constructor(
                 timerRepository.setActiveTimerId(it.id)
                 reducer.sendEffect(SideEffect.NavigateToHome)
             }
-            .onFailure { throwable ->
+            .onLimberFailure { throwable ->
                 val message = throwable.message ?: "error"
                 reducer.sendEffect(CommonEffect.ShowSnackBar(message))
             }

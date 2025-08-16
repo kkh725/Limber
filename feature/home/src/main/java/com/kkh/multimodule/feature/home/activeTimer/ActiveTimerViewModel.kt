@@ -1,6 +1,8 @@
 package com.kkh.multimodule.feature.home.activeTimer
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
@@ -58,6 +60,7 @@ class ActiveTimerViewModel @Inject constructor(
         timerRepository.getSingleTimer(timerRepository.getActiveTimerId())
             .onSuccess {
                 val diff = getTimeDifference(startTimeStr = it.startTime, endTimeStr = it.endTime)
+                Log.d(TAG, "총 시간 : $diff")
                 reducer.setState(uiState.value.copy(totalTime = diff))
                 reducer.setState(uiState.value.copy(totalTime = diff, isVisible = true))
             }.onFailure {

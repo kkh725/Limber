@@ -1,5 +1,7 @@
 package com.kkh.multimodule.feature.home.activeTimer
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -120,6 +122,7 @@ fun ActiveTimerScreen(
                 tempLeftTime = decrementOneSecond(tempLeftTime)
 
                 val percent = calculateTimerPercentReversed(totalTime, tempLeftTime)
+                Log.d(TAG, "총시간/남은시간 의 퍼센티지 : $percent")
                 activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(percent))
             } else {
                 activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(1f))

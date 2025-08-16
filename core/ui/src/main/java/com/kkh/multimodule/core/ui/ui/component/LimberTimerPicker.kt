@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +48,7 @@ fun LimberTimePicker(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            initialTime = selectedTime,
+            initialTime = LocalTime(0, 15),
             style = PickerStyle(
                 textStyle = LimberTextStyle.Body2,
                 textColor = Gray800, itemSpacing = 5.dp
@@ -69,20 +70,15 @@ fun LimberTimePicker(
     }
 }
 
-@OptIn(ExperimentalTime::class)
-@Preview
-@Composable
-fun LimberTimePickerPreview() {
-    var selectedTime by remember { mutableStateOf(kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
-    LimberTimePicker24(selectedTime = selectedTime, timeFormat = TimeFormat.TWENTY_FOUR_HOUR, onValueChanged = { selectedTime = it })
-}
-
 @Composable
 fun LimberTimePicker24(
-    selectedTime: LocalTime,
+    initial: kotlinx.datetime.LocalTime = kotlinx.datetime.LocalTime(0, 15),
     timeFormat: TimeFormat = TimeFormat.TWENTY_FOUR_HOUR,
     onValueChanged: (LocalTime) -> Unit
 ) {
+
+    var selectedTime by rememberSaveable { mutableStateOf(initial) } // 외부 제어용 상태
+
 
     Box(Modifier
         .fillMaxWidth()
@@ -91,7 +87,7 @@ fun LimberTimePicker24(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            initialTime = selectedTime,
+            initialTime = selectedTime, // 00:15:00,
             timeFormat = timeFormat,
             style = PickerStyle(
                 textStyle = LimberTextStyle.Body2,

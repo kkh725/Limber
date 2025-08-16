@@ -83,6 +83,7 @@ class ReservationViewModel @Inject constructor(
                 reducer.sendEffect(SideEffect.NavigateToHome)
             }.onFailure { throwable ->
                 val message = throwable.message ?: "error"
+                Log.d(TAG, "error message: ${throwable.message}")
                 reducer.sendEffect(CommonEffect.ShowSnackBar(message))
             }
     }

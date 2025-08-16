@@ -28,8 +28,15 @@ class BlockTriggerReceiver : BroadcastReceiver() {
 
                 appDataRepository.setBlockMode(isStartTrigger)
                 // 시작으로 recieve 되었다면 현재 진행중인 타이머 아이디 저장, else -1(초기화)
-                if (isStartTrigger) timerRepository.setActiveTimerId(reservationId)
-                else timerRepository.setActiveTimerId(-1)
+                if (isStartTrigger) {
+                    timerRepository.setActiveTimerId(reservationId)
+                    Log.d("ScheduleBlockTrigger", "시작된 타이머 id : $reservationId")
+                }
+                else {
+                    timerRepository.setActiveTimerId(-1)
+                    Log.d("ScheduleBlockTrigger", " 타이머 id : $reservationId")
+
+                }
             }
         }
     }

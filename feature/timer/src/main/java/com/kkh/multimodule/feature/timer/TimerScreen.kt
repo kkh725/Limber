@@ -387,7 +387,6 @@ fun TimerScreenContent(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 LimberTimePicker24(
-                    selectedTime = selectedTime,
                     onValueChanged = onValueChanged
                 )
             }
