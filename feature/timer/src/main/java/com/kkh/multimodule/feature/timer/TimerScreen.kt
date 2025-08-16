@@ -97,7 +97,7 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome: () -> Unit
 
         timerViewModel.sideEffect.collect { effect ->
             when (effect) {
-                is SideEffect.NavigateToHome -> {
+                is CommonEffect.NavigateToHome -> {
                     onNavigateToHome()
                 }
 

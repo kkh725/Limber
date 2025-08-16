@@ -51,7 +51,12 @@ fun LimberNavHost(
         when (currentRoute) {
             HomeRoutes.HOME -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
             TimerRoute.ROUTE -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.TIMER_SCREEN))
-            LaboratoryRoutes.LABORATORY -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.LABORATORY_SCREEN))
+            LaboratoryRoutes.LABORATORY -> rootViewModel.sendEvent(
+                RootEvent.SetScreenState(
+                    ScreenState.LABORATORY_SCREEN
+                )
+            )
+
             else -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
         }
     }
@@ -64,15 +69,16 @@ fun LimberNavHost(
     }
 
     if (isOnboardingChecked == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(painterResource(R.drawable.ic_splash), contentDescription = null)
         }
     } else {
-        val startDestination = if (isOnboardingChecked) HomeRoutes.HOME else OnBoardingRoute.Onboarding
+        val startDestination =
+            if (isOnboardingChecked) HomeRoutes.HOME else OnBoardingRoute.Onboarding
 
         NavHost(
             navController = navController,
-            startDestination = HomeRoutes.RECALL, //startDestination,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
+            startDestination = startDestination, //HomeRoutes.RECALL, //startDestination,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
             modifier = modifier,
         ) {
             onBoardingNavGraph(
@@ -90,7 +96,10 @@ fun LimberNavHost(
 
             homeNavGraph(
                 onNavigateToActiveTimer = { leftTime, timerId ->
-                    navController.navigateToActiveTimerScreen(leftTime = leftTime, timerId = timerId)
+                    navController.navigateToActiveTimerScreen(
+                        leftTime = leftTime,
+                        timerId = timerId
+                    )
                     rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
                 },
                 onNavigateToHome = {
@@ -109,10 +118,13 @@ fun LimberNavHost(
                 onNavigateToRecall = navController::navigateToRecallScreen
             )
 
-            timerNavGraph(onNavigateToActiveHome = {
-                navController.navigateToHomeScreen()
-                rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
-            }, onNavigateToHome = navController::navigateToHomeScreen)
+            timerNavGraph(
+                onNavigateToActiveHome = {
+                    navController.navigateToHomeScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+                },
+                onNavigateToHome = navController::navigateToHomeScreen
+            )
 
             laboratoryGraph()
 

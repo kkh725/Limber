@@ -2,6 +2,7 @@ package com.kkh.multimodule.feature.home.activeTimer
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -128,7 +129,7 @@ fun ActiveTimerScreen(
                 activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(percent))
             } else {
                 activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(100f))
-                imageRes = R.drawable.bg_all_blocking
+                imageRes = R.drawable.bg_recall_dark
             }
             delay(1000)
         }
@@ -364,18 +365,32 @@ fun CircularProgressBarWithHandleImage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painterResource(R.drawable.char_sad),
-                contentDescription = null,
-                modifier = Modifier.size(140.dp)
-            )
-            Image(
-                painterResource(R.drawable.text_focus),
-                contentDescription = null
-            )
+            Crossfade(targetState = percentage == 100f, label = "") { isEnd ->
+                val imgResId = if (isEnd) {
+                    R.drawable.char_lv2
+                } else {
+                    R.drawable.char_sad
+                }
+                Image(
+                    painterResource(imgResId),
+                    contentDescription = null,
+                    modifier = Modifier.size(140.dp)
+                )
+            }
+            Crossfade(targetState = percentage == 100f, label = "") { isEnd ->
+                val imgResId = if (isEnd) {
+                    R.drawable.text_timer_end
+                } else {
+                    R.drawable.text_focus
+                }
+                Image(
+                    painter = painterResource(id = imgResId),
+                    contentDescription = null
+                )
+            }
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "${leftTime}",
+                text = "$leftTime",
                 color = LimberColorStyle.Primary_BG_Light,
                 style = LimberTextStyle.DisPlay1
             )

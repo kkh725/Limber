@@ -89,6 +89,7 @@ class TimerViewModel @Inject constructor(
         context: Context,
         timerItemModel: ReservationItemModel
     ) {
+
         val request = timerItemModel.toSingleTimerModel()
         //api 전송
         timerRepository.reserveImmediateTimer(request)
@@ -101,7 +102,7 @@ class TimerViewModel @Inject constructor(
                     isStart = false
                 )
                 timerRepository.setActiveTimerId(it.id)
-                reducer.sendEffect(SideEffect.NavigateToHome)
+                reducer.sendEffect(CommonEffect.NavigateToHome)
             }
             .onLimberFailure { throwable ->
                 val message = throwable.message ?: "error"
