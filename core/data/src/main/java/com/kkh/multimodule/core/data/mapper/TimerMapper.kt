@@ -2,7 +2,7 @@ package com.kkh.multimodule.core.data.mapper
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.model.DeleteTimerListRequestModel
-import com.kkh.multimodule.core.domain.model.HistoryModel
+import com.kkh.multimodule.core.domain.model.history.HistoryModel
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
