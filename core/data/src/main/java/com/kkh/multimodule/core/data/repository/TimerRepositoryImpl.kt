@@ -9,17 +9,21 @@ import com.kkh.multimodule.core.data.mapper.toRequestDto
 import com.kkh.multimodule.core.datastore.datasource.LocalDataSource
 import com.kkh.multimodule.core.domain.TimerCode
 import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.model.HistoryModel
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.RetrospectsRequestModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
 import com.kkh.multimodule.core.domain.model.TimerListModel
 import com.kkh.multimodule.core.domain.repository.TimerRepository
+import com.kkh.multimodule.core.network.datasource.history.HistoryDataSource
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
+import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
 import jakarta.inject.Inject
 
 class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
-    private val localDataSource: LocalDataSource
+    private val localDataSource: LocalDataSource,
+    private val historyDataSource: HistoryDataSource
 ) :
     TimerRepository {
 
@@ -158,6 +162,21 @@ class TimerRepositoryImpl @Inject constructor(
             val response = timerDataSource.writeRetrospects(requestModel.toDto())
             if (response.success) {
                 response.data
+            } else {
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
+            }
+        }
+
+    /**
+     * 타이머 이력 조회
+     */
+    override suspend fun getHistoryList(userId: String): Result<List<HistoryModel>> =
+        runCatching {
+            val requestModel = HistoryRequestDto(userId = userId)
+            val response = historyDataSource.getHistoryList(requestModel)
+            if (response.success) {
+                response.data?.toDomain() ?: emptyList()
             } else {
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)

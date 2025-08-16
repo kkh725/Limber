@@ -2,6 +2,7 @@ package com.kkh.multimodule.core.domain.repository
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.model.DeleteTimerListRequestModel
+import com.kkh.multimodule.core.domain.model.HistoryModel
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.RetrospectsRequestModel
 import com.kkh.multimodule.core.domain.model.SingleTimerModel
@@ -19,4 +20,7 @@ interface TimerRepository {
     //local
     suspend fun setActiveTimerId(timerId: Int)
     suspend fun getActiveTimerId() : Int
+
+    //history
+    suspend fun getHistoryList(userId: String) : Result<List<HistoryModel>>
 }

@@ -2,6 +2,7 @@ package com.kkh.multimodule.core.data.mapper
 
 import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.model.DeleteTimerListRequestModel
+import com.kkh.multimodule.core.domain.model.HistoryModel
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
@@ -11,8 +12,11 @@ import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.TimerStatus
 import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
+import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
 import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
 import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
+import com.kkh.multimodule.core.network.model.response.HistoryResponse
+import com.kkh.multimodule.core.network.model.response.HistoryResponseDto
 import kotlin.Int
 
 /**
@@ -101,7 +105,7 @@ fun List<SingleTimerModel>.toReservationItemModelList(): List<ReservationItemMod
     map { it.toReservationItemModel() }
 
 /**
- * timerstatus 토글변경
+ * timer status 토글변경
  */
 
 fun PatchTimerStatusRequest.toDomain(): PatchTimerModel =
@@ -117,7 +121,7 @@ fun DeleteTimerListRequestModel.toDto() : DeleteTimerRequestDto =
     DeleteTimerRequestDto(timerIds = this.timerIdList)
 
 /**
- * timer회고
+ * timer 회고
  */
 fun RetrospectsRequestModel.toDto() : RetrospectsRequestDto =
     RetrospectsRequestDto(
@@ -127,3 +131,26 @@ fun RetrospectsRequestModel.toDto() : RetrospectsRequestDto =
         immersion = immersion,
         comment = comment
     )
+
+/**
+ * timer 이력
+ */
+// DTO -> Domain 변환 (확인)
+fun HistoryResponseDto.toDomain(): HistoryModel =
+    HistoryModel(
+        id = this.id,
+        timerId = this.timerId,
+        userId = this.userId,
+        title = this.title,
+        focusTypeId = this.focusTypeId,
+        repeatCycleCode = this.repeatCycleCode,
+        repeatDays = this.repeatDays,
+        historyDt = this.historyDt,
+        historyStatus = this.historyStatus,
+        failReason = this.failReason,
+        startTime = this.startTime,
+        endTime = this.endTime
+    )
+
+fun List<HistoryResponseDto>.toDomain(): List<HistoryModel> =
+    this.map { it.toDomain() }
