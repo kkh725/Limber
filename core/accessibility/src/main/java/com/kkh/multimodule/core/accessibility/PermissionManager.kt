@@ -1,16 +1,20 @@
 package com.kkh.multimodule.core.accessibility
 
+import android.Manifest
 import android.accessibilityservice.AccessibilityService
 import android.app.AppOpsManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 
 object PermissionManager {
 
@@ -69,5 +73,28 @@ object PermissionManager {
         )
         return mode == AppOpsManager.MODE_ALLOWED
     }
+
+    fun requestNotificationPermission(
+        context: Context,
+        requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+        onRequestFinished: (granted: Boolean) -> Unit
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasPermission) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                onRequestFinished(true)
+            }
+        } else {
+            // Android 12 이하에서는 권한 필요 없음
+            onRequestFinished(true)
+        }
+    }
+
 
 }

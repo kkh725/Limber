@@ -1,8 +1,12 @@
 package com.kkh.multimodule.feature.onboarding.contents.permission
 
+import android.Manifest
 import android.app.AlarmManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,8 +28,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import com.kkh.multimodule.core.accessibility.PermissionManager
 import com.kkh.multimodule.core.accessibility.PermissionManager.openExactAlarmSettings
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
@@ -46,6 +53,27 @@ fun AlarmPermissionScreen(navigateToManageApp: () -> Unit) {
                 alarmManager.canScheduleExactAlarms()
             } else {
                 true // Android 11 이하에서는 권한 필요 없음
+            }
+        )
+    }
+
+    // 권한 요청 launcher
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            if (granted) {
+                isRequestingPermission = false // 권한 허용 시 실행
+            } else {
+                // 거부 시 처리 (SnackBar 등)
+            }
+        }
+    )
+    LaunchedEffect(Unit) {
+        PermissionManager.requestNotificationPermission(
+            context = context,
+            requestPermissionLauncher = requestPermissionLauncher,
+            onRequestFinished = {
+                isRequestingPermission = it
             }
         )
     }
