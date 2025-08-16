@@ -90,6 +90,7 @@ import kotlin.math.sin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActiveTimerScreen(
+    timerId : Int,
     leftTime: String,
     onPopBackStack: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},

@@ -5,13 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.domain.model.RetrospectsRequestModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
+import com.kkh.multimodule.core.domain.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class RecallViewModel @Inject constructor(private val appDataRepository: AppDataRepository) :
+class RecallViewModel @Inject constructor(
+    private val appDataRepository: AppDataRepository,
+    private val timerRepository: TimerRepository
+) :
     ViewModel() {
 
     private val reducer = RecallReducer(RecallState.init())
@@ -35,4 +40,9 @@ class RecallViewModel @Inject constructor(private val appDataRepository: AppData
             )
         }
     }
+
+//    private suspend fun writeRetrospects() {
+//        val reqest = RetrospectsRequestModel("UUID1",)
+//        timerRepository.writeRetrospects()
+//    }
 }

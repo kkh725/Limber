@@ -44,8 +44,8 @@ fun LimberNavHost(
     rootViewModel: RootViewModel
 ) {
     val onPopBackStack: () -> Unit = {
-        val currentRoute = navController.currentBackStackEntry?.destination?.route
         navController.popBackStack()
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
 
         when (currentRoute) {
             HomeRoutes.HOME -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
@@ -89,8 +89,8 @@ fun LimberNavHost(
             )
 
             homeNavGraph(
-                onNavigateToActiveTimer = { leftTime ->
-                    navController.navigateToActiveTimerScreen(leftTime)
+                onNavigateToActiveTimer = { leftTime, timerId ->
+                    navController.navigateToActiveTimerScreen(leftTime = leftTime, timerId = timerId)
                     rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
                 },
                 onNavigateToHome = {

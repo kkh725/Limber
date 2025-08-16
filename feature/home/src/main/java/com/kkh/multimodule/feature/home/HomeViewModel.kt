@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
             when (e) {
                 is HomeEvent.OnCompleteRegisterButton -> {
                     setBlockedPackageList(e.appList)
-                    setBlockModeOn()
+                    setBlockMode(true)
                     setPackageList()
                 }
 
@@ -40,6 +40,10 @@ class HomeViewModel @Inject constructor(
                     setBlockReservationList()
                     setPackageList()
                     getActiveTimerId()
+                }
+
+                is HomeEvent.EndTimer -> {
+                    setBlockMode(false)
                 }
 
                 else -> {}
@@ -56,8 +60,8 @@ class HomeViewModel @Inject constructor(
         sendEvent(HomeEvent.SetBlockingAppList(appDataRepository.getBlockedPackageList()))
     }
 
-    private suspend fun setBlockModeOn() {
-        appDataRepository.setBlockMode(true)
+    private suspend fun setBlockMode(isBlockModeOn: Boolean = true) {
+        appDataRepository.setBlockMode(isBlockModeOn)
     }
 
     private suspend fun setTimerState() {
@@ -78,7 +82,13 @@ class HomeViewModel @Inject constructor(
             timerRepository.getSingleTimer(activeTimerId)
                 .onSuccess {
                     Log.d("getActiveTimerId", "남은 시간 ${getRemainingTimeFormattedSafe(it.endTime)}")
-                    reducer.setState(uiState.value.copy(leftTime = getRemainingTimeFormattedSafe(it.endTime)))
+
+                    reducer.setState(
+                        uiState.value.copy(
+                            leftTime = getRemainingTimeFormattedSafe(it.endTime),
+                            currentTimerId =it.id
+                        )
+                    )
                 }.onFailure { throwable ->
                     //수시로 호출하기 때문에 부수효과 x
 //                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))

@@ -21,7 +21,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
-        NotificationHelper(this).showTimerNotification(1,true)
 
         enableEdgeToEdge()
 

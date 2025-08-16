@@ -1,5 +1,7 @@
 package com.kkh.multimodule.core.data.repository
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.kkh.multimodule.core.datastore.datasource.LocalDataSource
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
@@ -13,6 +15,7 @@ internal class BlockReservationRepositoryImpl @Inject constructor(private val lo
     BlockReservationRepository {
     override suspend fun setReservationList(reservationList: List<ReservationItemModel>) {
         localDataSource.setReservationList(reservationList)
+        Log.d(TAG, "setReservationList: 로컬 예약 완료 리스트중 첫번째 : ${reservationList.first()}")
     }
 
     override suspend fun getReservationList(): List<ReservationItemModel> {

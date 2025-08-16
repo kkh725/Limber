@@ -8,6 +8,7 @@ import com.kkh.multimodule.core.data.mapper.toReservationItemModelList
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository
 import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
+    private val blockReservationRepository: BlockReservationRepository
 ) : ViewModel() {
 
     private val reducer = ReservationReducer(ReservationState.Companion.init())
@@ -57,9 +59,10 @@ class ReservationViewModel @Inject constructor(
     // 사용자 예약 목록 조회
     private suspend fun getTimerList() {
         reducer.sendEffect(CommonEffect.IsLoading(true))
-        timerRepository.getTimerList("UUID!@")
+        timerRepository.getTimerList("UUID1")
             .onSuccess {
                 reducer.setState(uiState.value.copy(ReservationItemModelList = it.toReservationItemModelList()))
+                blockReservationRepository.setReservationList(it.toReservationItemModelList())
             }.onFailure { throwable ->
                 val message = throwable.message ?: "error"
                 reducer.sendEffect(CommonEffect.ShowSnackBar(message))

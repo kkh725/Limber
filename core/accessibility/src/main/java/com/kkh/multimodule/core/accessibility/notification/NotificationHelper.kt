@@ -29,18 +29,17 @@ class NotificationHelper(private val context: Context) {
         manager.createNotificationChannel(channel)
     }
 
-    fun showTimerNotification(reservationId: Int, isStart: Boolean) {
+    fun showTimerNotification(isStart: Boolean) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_app)
             .setContentTitle(if (isStart) "타이머가 곧 시작됩니다!" else "타이머가 종료되었어요!")
-            .setContentText("예약된 타이머 #$reservationId ${if (isStart) "시작" else "종료"}")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(reservationId, notification)
+        notificationManager.notify(1,notification)
     }
 }

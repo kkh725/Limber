@@ -2,6 +2,7 @@ package com.kkh.multimodule.feature.home
 
 import android.R.attr.defaultValue
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,8 +16,6 @@ object HomeRoutes {
     const val HOME = "home"
     const val ACTIVE_TIMER = "active_timer"
     const val RECALL = "recall"
-    // 파라미터 포함 경로 템플릿
-    const val ACTIVE_TIMER_WITH_PARAM = "$ACTIVE_TIMER?leftTime={leftTime}"
 
 }
 
@@ -27,10 +26,10 @@ fun NavController.navigateToHomeScreen() {
     }
 }
 
-// ✅ leftTime 전달 가능
-fun NavController.navigateToActiveTimerScreen(leftTime: String) {
+// ✅ leftTime + timerId 전달 가능
+fun NavController.navigateToActiveTimerScreen(leftTime: String, timerId: Int) {
     val encodedTime = Uri.encode(leftTime) // 공백/특수문자 안전하게 인코딩
-    navigate("${HomeRoutes.ACTIVE_TIMER}?leftTime=$encodedTime") {
+    navigate("${HomeRoutes.ACTIVE_TIMER}?leftTime=$encodedTime&timerId=$timerId") {
         launchSingleTop = true
     }
 }
@@ -39,7 +38,7 @@ fun NavController.navigateToRecallScreen() =
     navigate(HomeRoutes.RECALL)
 
 fun NavGraphBuilder.homeNavGraph(
-    onNavigateToActiveTimer: (String) -> Unit,
+    onNavigateToActiveTimer: (String, Int) -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToRecall: () -> Unit,
     onNavigateToSetTimer: () -> Unit,
@@ -48,28 +47,47 @@ fun NavGraphBuilder.homeNavGraph(
     composable(HomeRoutes.HOME) {
         HomeScreen(onNavigateToActiveTimer = onNavigateToActiveTimer,
             onNavigateToSetTimer = onNavigateToSetTimer)
+        BackHandler(enabled = true) {
+            onPopBackStack()
+        }
     }
     composable(
-        route = "${HomeRoutes.ACTIVE_TIMER}?leftTime={leftTime}",
-        arguments = listOf(navArgument("leftTime") {
-            type = NavType.StringType
-            defaultValue = "00:00:00" // leftTime 없을 때 기본값
-        })
+        route = "${HomeRoutes.ACTIVE_TIMER}?leftTime={leftTime}&timerId={timerId}",
+        arguments = listOf(
+            navArgument("leftTime") {
+                type = NavType.StringType
+                defaultValue = "00:00:00"
+            },
+            navArgument("timerId") {
+                type = NavType.IntType
+                defaultValue = -1
+            }
+        )
     ) { backStackEntry ->
         val leftTime = backStackEntry.arguments?.getString("leftTime") ?: "00:00:00"
+        val timerId = backStackEntry.arguments?.getInt("timerId") ?: -1
 
         ActiveTimerScreen(
             leftTime = leftTime,
+            timerId = timerId,
             onPopBackStack = onPopBackStack,
             onNavigateToHome = onNavigateToHome,
             onNavigateToRecall = onNavigateToRecall
         )
+
+        BackHandler(enabled = true) {
+            onPopBackStack()
+        }
     }
+
 
     composable(HomeRoutes.RECALL) {
         RecallScreen(
             onPopBackStack = onPopBackStack,
             onNavigateToHome = onNavigateToHome
         )
+        BackHandler(enabled = true) {
+            onPopBackStack()
+        }
     }
 }

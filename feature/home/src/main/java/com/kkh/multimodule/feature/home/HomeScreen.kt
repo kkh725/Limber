@@ -76,7 +76,7 @@ import kotlinx.coroutines.isActive
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToActiveTimer: (String) -> Unit,
+    onNavigateToActiveTimer: (String, Int) -> Unit,
     onNavigateToSetTimer : () -> Unit
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
@@ -109,7 +109,7 @@ fun HomeScreen(
                 if (leftTime != "00:00:00") {
                     leftTime = decrementOneSecond(leftTime)
                 }else{
-                    homeViewModel.sendEvent(HomeEvent.SetIsTimerActive(false))
+                    homeViewModel.sendEvent(HomeEvent.EndTimer)
                 }
             }
         }
@@ -140,8 +140,9 @@ fun HomeScreen(
                 .weight(1f)
                 .fillMaxSize(),
             appInfoList = appInfoList,
-            //todo 주석해제필요
-            navigateToActiveTimer = onNavigateToActiveTimer,
+            navigateToActiveTimer = {
+                onNavigateToActiveTimer(it, uiState.currentTimerId)
+            },
             navigateToSetTimer = onNavigateToSetTimer,
             leftTime = leftTime,
             totalFocusTime = totalDopamineTime,
