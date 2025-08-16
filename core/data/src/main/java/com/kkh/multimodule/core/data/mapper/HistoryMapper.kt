@@ -11,6 +11,9 @@ import com.kkh.multimodule.core.domain.model.history.TotalActualModel
 import com.kkh.multimodule.core.domain.model.history.ImmersionByWeekdayModel
 import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.domain.model.history.ActualByWeekendModel
+import com.kkh.multimodule.core.domain.model.history.LatestTimerHistoryModel
+import com.kkh.multimodule.core.network.model.response.history.LatestTimerHistoryDto
+import kotlin.Boolean
 
 fun TotalImmersionResponseDto.toDomain(): TotalImmersionModel =
     TotalImmersionModel(
@@ -46,3 +49,26 @@ fun ActualByWeekendResponseDto.toDomain(): ActualByWeekendModel =
         dayOfWeek = this.dayOfWeek,
         totalActualMinutes = this.totalActualMinutes
     )
+
+fun LatestTimerHistoryDto.toDomain(): LatestTimerHistoryModel =
+    LatestTimerHistoryModel(
+        id = this.id,
+        timerId = this.timerId,
+        userId = this.userId,
+        title = this.title,
+        focusTypeId = this.focusTypeId,
+        repeatCycleCode = this.repeatCycleCode,
+        repeatDays = this.repeatDays,
+        historyDt = this.historyDt,
+        historyStatus = this.historyStatus,
+        failReason = this.failReason,
+        startTime = this.startTime,
+        endTime = this.endTime,
+        hasRetrospect = this.hasRetrospect,
+        retrospectId = this.retrospectId,
+        retrospectImmersion = this.retrospectImmersion,
+        retrospectComment = this.retrospectComment,
+        focusTypeTitle = this.focusTypeTitle,
+        retrospectSummary = this.retrospectSummary
+    )
+

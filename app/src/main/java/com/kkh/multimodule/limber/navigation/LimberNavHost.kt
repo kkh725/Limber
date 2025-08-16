@@ -24,6 +24,7 @@ import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
 import com.kkh.multimodule.feature.home.navigateToHomeScreen
 import com.kkh.multimodule.feature.home.navigateToRecallScreen
 import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
+import com.kkh.multimodule.feature.laboratory.navigateToLaboratoryScreen
 import com.kkh.multimodule.feature.onboarding.OnBoardingRoute
 import com.kkh.multimodule.limber.intent.RootEvent
 import com.kkh.multimodule.feature.timer.timerNavGraph
@@ -58,7 +59,6 @@ fun LimberNavHost(
     val uiState by rootViewModel.uiState.collectAsState()
     val isOnboardingChecked = uiState.isOnboardingChecked
 
-
     LaunchedEffect(Unit) {
         rootViewModel.sendEvent(RootEvent.Init)
     }
@@ -72,7 +72,7 @@ fun LimberNavHost(
 
         NavHost(
             navController = navController,
-            startDestination = startDestination,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
+            startDestination = HomeRoutes.RECALL, //startDestination,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
             modifier = modifier,
         ) {
             onBoardingNavGraph(
@@ -101,6 +101,10 @@ fun LimberNavHost(
                 onNavigateToSetTimer = {
                     rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.TIMER_SCREEN))
                     navController.navigateToTimer()
+                },
+                onNavigateToReport = {
+                    navController.navigateToLaboratoryScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.LABORATORY_SCREEN))
                 },
                 onNavigateToRecall = navController::navigateToRecallScreen
             )

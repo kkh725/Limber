@@ -42,6 +42,7 @@ fun NavGraphBuilder.homeNavGraph(
     onNavigateToHome: () -> Unit,
     onNavigateToRecall: () -> Unit,
     onNavigateToSetTimer: () -> Unit,
+    onNavigateToReport: () -> Unit,
     onPopBackStack: () -> Unit
 ) {
     composable(HomeRoutes.HOME) {
@@ -84,7 +85,8 @@ fun NavGraphBuilder.homeNavGraph(
     composable(HomeRoutes.RECALL) {
         RecallScreen(
             onPopBackStack = onPopBackStack,
-            onNavigateToHome = onNavigateToHome
+            onNavigateToHome = onNavigateToHome,
+            onNavigateToReport = onNavigateToReport
         )
         BackHandler(enabled = true) {
             onPopBackStack()

@@ -18,6 +18,7 @@ import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponse
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponse
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
+import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
 import com.kkh.multimodule.core.network.model.response.history.TotalActualResponseDto
 import com.kkh.multimodule.core.network.model.response.history.TotalImmersionResponseDto
 import jakarta.inject.Inject
@@ -30,6 +31,13 @@ internal class HistoryDataSourceImpl @Inject constructor(
      */
     override suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): HistoryResponse {
         return historyApi.getTimerHistories(historyRequestDto)
+    }
+
+    /**
+     * 특정 이력 조회
+     */
+    override suspend fun getLatestHistoryId(userId : String, timerId : Int): LatestTimerResponse {
+        return historyApi.getTimerLatestId(userId, timerId)
     }
 
     /**

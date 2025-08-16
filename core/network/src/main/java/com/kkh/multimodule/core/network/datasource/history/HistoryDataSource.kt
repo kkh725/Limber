@@ -14,11 +14,13 @@ import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponse
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponse
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
+import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
 import com.kkh.multimodule.core.network.model.response.history.TotalActualResponseDto
 import com.kkh.multimodule.core.network.model.response.history.TotalImmersionResponseDto
 
 interface HistoryDataSource {
     suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): HistoryResponse
+    suspend fun getLatestHistoryId(userId : String, timerId : Int) : LatestTimerResponse
     suspend fun getTotalImmersion(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalImmersionResponseDto>
     suspend fun getTotalActual(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalActualResponseDto>
     suspend fun getImmersionByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): ImmersionByWeekdayResponse

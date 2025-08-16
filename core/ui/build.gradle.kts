@@ -34,7 +34,7 @@ dependencies {
 
     api(libs.kotlinx.datetime)
     api(libs.time.picker)
-    implementation(libs.lottie.compose)
+    api(libs.lottie.compose)
     api ("io.github.ehsannarmani:compose-charts:0.1.7")
 }
 

@@ -1,18 +1,22 @@
 package com.kkh.multimodule.core.network.api.timer
 
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
+import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
 import com.kkh.multimodule.core.network.model.response.history.TotalActualResponseDto
 import com.kkh.multimodule.core.network.model.request.history.TotalImmersionRequestDto
 import com.kkh.multimodule.core.network.model.response.history.TotalImmersionResponseDto
 import com.kkh.multimodule.core.network.model.response.ApiResponse
+import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.HistoryResponse
 import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponse
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponseDto
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponse
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
+import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface HistoryApi {
 
@@ -31,6 +35,15 @@ interface HistoryApi {
     suspend fun getTimerHistories(
         @Body historyRequestDto: HistoryRequestDto
     ): HistoryResponse
+
+    /**
+     * 가장 최근 이력 조회
+     */
+    @GET("/api/timer-histories/latest-id")
+    suspend fun getTimerLatestId(
+        @Query("userId") userId: String,
+        @Query("timerId") timerId: Int
+    ): LatestTimerResponse
 
     /**
      * 총 몰입도 조회

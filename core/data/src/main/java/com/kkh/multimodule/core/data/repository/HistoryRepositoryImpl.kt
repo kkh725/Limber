@@ -7,6 +7,7 @@ import com.kkh.multimodule.core.domain.model.history.ActualByWeekendModel
 import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.domain.model.history.HistoryModel
 import com.kkh.multimodule.core.domain.model.history.ImmersionByWeekdayModel
+import com.kkh.multimodule.core.domain.model.history.LatestTimerHistoryModel
 import com.kkh.multimodule.core.domain.model.history.TotalActualModel
 import com.kkh.multimodule.core.domain.model.history.TotalImmersionModel
 import com.kkh.multimodule.core.domain.repository.HistoryRepository
@@ -26,6 +27,23 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
             val response = historyDataSource.getHistoryList(requestModel)
             if (response.success) {
                 response.data?.toDomain() ?: emptyList()
+            } else {
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
+            }
+        }
+
+    /**
+     * 가장 최근 이력 조회
+     */
+    override suspend fun getLatestHistoryId(
+        userId: String,
+        timerId: Int
+    ): Result<LatestTimerHistoryModel> =
+        runCatching {
+            val response = historyDataSource.getLatestHistoryId(userId, timerId)
+            if (response.success) {
+                response.data?.toDomain() ?: throw Exception("Unknown")
             } else {
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)

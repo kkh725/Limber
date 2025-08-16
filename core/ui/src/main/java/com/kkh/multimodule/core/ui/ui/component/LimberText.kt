@@ -5,10 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 
 @Composable
 fun LimberText(text: String, style: TextStyle, color: Color, modifier: Modifier = Modifier) {
-    Text(modifier = modifier, text = text, style = style, color = color)
+    Text(modifier = modifier, text = text, style = style, color = color, textAlign = TextAlign.Center)
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
 
@@ -11,7 +12,9 @@ data class RecallState(
     val appInfo: AppInfo? = null,
     val sheetState : Boolean = false,
     val modalState : Boolean = false,
-    val focusText : String = "구체적으로 어떤 일에 집중했나요?"
+    val focusText : String = "",
+    val category : String = "기타",
+    val isRecallCompleted : Boolean = false
 ) : UiState {
     companion object {
         fun init() = RecallState(
@@ -25,12 +28,18 @@ sealed class RecallEvent : UiEvent {
     data class SetModalState(val state : Boolean) : RecallEvent()
     data class OnValueChange(val text : String) : RecallEvent()
     data object OnClickSheetComplete : RecallEvent()
+    data class OnCompleteRecall(val immersion : Int, val comment : String) : RecallEvent()
 }
 
-class RecallReducer(state: RecallState) : Reducer<RecallState, RecallEvent>(state) {
+sealed class RecallSideEffect : UiEffect{
+    data object OnNavigateToHome : RecallSideEffect()
+    data object OnNavigateToReport : RecallSideEffect()
+}
+
+class RecallReducer(state: RecallState) : Reducer<RecallState, UiEvent>(state) {
     @SuppressLint("UseCompatLoadingForDrawables")
 
-    override suspend fun reduce(oldState: RecallState, event: RecallEvent) {
+    override suspend fun reduce(oldState: RecallState, event: UiEvent) {
         when(event){
             is RecallEvent.OnValueChange -> {
                 setState(oldState.copy(focusText = event.text))
@@ -47,4 +56,5 @@ class RecallReducer(state: RecallState) : Reducer<RecallState, RecallEvent>(stat
             else -> {}
         }
     }
+
 }

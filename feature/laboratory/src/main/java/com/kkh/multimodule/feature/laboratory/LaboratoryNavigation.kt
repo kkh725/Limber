@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 object LaboratoryRoutes {
     const val LABORATORY = "laboratory"
 }
-
 fun NavController.navigateToLaboratoryScreen() =
     navigate(LaboratoryRoutes.LABORATORY)
 
