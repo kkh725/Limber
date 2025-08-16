@@ -118,7 +118,7 @@ fun HomeScreen(
     Image(
         painterResource(R.drawable.bg_home),
         contentDescription = null,
-        contentScale = ContentScale.None,
+        contentScale = ContentScale.FillWidth,
     )
 
     Column(

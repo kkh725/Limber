@@ -1,11 +1,15 @@
 package com.kkh.multimodule.feature.home.recall
 
 import android.annotation.SuppressLint
-import android.graphics.Color.alpha
-import android.widget.Space
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,6 +51,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -94,6 +99,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
@@ -137,137 +143,168 @@ fun RecallScreen(
 
     var selectedIndex by remember { mutableIntStateOf(-1) }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(Modifier.height(20.dp))
-
-        RecallTopBar(
-            modifier = Modifier.fillMaxWidth(),
-            type = "학습",
-            onClickClose = {
-                if (text.isEmpty()) {
-                    onPopBackStack()
-                } else {
-                    recallViewModel.sendEvent(RecallEvent.SetModalState(true))
-                }
-            }
-        )
-        Spacer(Modifier.height(20.dp))
-        Box(
-            Modifier
-                .background(Primary_Dark, shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-        ) {
-            Text(
-                "작은 회고가 쌓여 나만의 집중 루틴을 만들어줄거에요",
-                style = LimberTextStyle.Body3,
-                color = LimberColorStyle.Primary_Main
-            )
-        }
-
-        Spacer(Modifier.height(32.dp))
-
-        LimberText("이번 실험, 얼마나 집중했나요?", LimberTextStyle.Heading3, Gray800)
-
-        Spacer(Modifier.height(28.dp))
-
-        Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = null)
-
-        Spacer(Modifier.height(4.dp))
-        SelectFocusDegree(selectedIndex, onSelectedIndexChange = {
-            selectedIndex = it
-        })
-        Spacer(Modifier.height(32.dp))
-        RecallTextFieldBox(text, onClick = {
-            recallViewModel.sendEvent(
-                RecallEvent.SetSheetState(
-                    true
-                )
-            )
-        })
-
-        Spacer(Modifier.weight(1f))
-        LimberGradientButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { isRecallComplete = true },
-            text = "저장하기",
-            textColor = Color.White
-        )
-
+    val imageRes = when (selectedIndex) {
+        0 -> R.drawable.ic_beaker_20
+        1 -> R.drawable.ic_beaker_60
+        2 -> R.drawable.ic_beaker_100
+        else -> R.drawable.ic_beaker_20
     }
-    // BottomSheet
-    if (isSheetOpen) {
-        ModalBottomSheet(
-            containerColor = Color.White,
-            onDismissRequest = {
+    Box(Modifier.fillMaxSize()){
+        Image(
+            painterResource(R.drawable.bg_all_blocking),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(20.dp))
+
+            RecallTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                type = "학습",
+                onClickClose = {
+                    if (text.isEmpty()) {
+                        onPopBackStack()
+                    } else {
+                        recallViewModel.sendEvent(RecallEvent.SetModalState(true))
+                    }
+                }
+            )
+//            Spacer(Modifier.height(20.dp))
+//            Box(
+//                Modifier
+//                    .background(Primary_Dark, shape = RoundedCornerShape(8.dp))
+//                    .padding(horizontal = 16.dp, vertical = 10.dp)
+//            ) {
+//                Text(
+//                    "작은 회고가 쌓여 나만의 집중 루틴을 만들어줄거에요",
+//                    style = LimberTextStyle.Body3,
+//                    color = LimberColorStyle.Primary_Main
+//                )
+//            }
+
+            Spacer(Modifier.height(40.dp))
+
+            LimberText("이번 실험, 얼마나 집중했나요?", LimberTextStyle.Heading3, Color.White)
+
+            Spacer(Modifier.height(28.dp))
+
+            AnimatedContent(
+                targetState = imageRes,
+                modifier = Modifier.size(200.dp),
+                transitionSpec = {
+                    (fadeIn(tween(220)) + scaleIn(
+                        initialScale = 0.9f,
+                        animationSpec = tween(220)
+                    )) togetherWith
+                            (fadeOut(tween(120)) + scaleOut(
+                                targetScale = 1.05f,
+                                animationSpec = tween(120)
+                            ))
+                },
+                label = "percentAnimated"
+            ) { res ->
+                Image(painterResource(res), contentDescription = null, modifier = Modifier)
+            }
+
+            Spacer(Modifier.height(4.dp))
+            SelectFocusDegree(selectedIndex, onSelectedIndexChange = {
+                selectedIndex = it
+            })
+            Spacer(Modifier.height(32.dp))
+            RecallTextFieldBox(text, onClick = {
                 recallViewModel.sendEvent(
                     RecallEvent.SetSheetState(
-                        false
+                        true
                     )
                 )
-            },
-            sheetState = sheetState
-        ) {
-            BottomSheetContent(
-                value = text,
-                onValueChange = {
-                    recallViewModel.sendEvent(RecallEvent.OnValueChange(it))
-                },
-                onClose = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        recallViewModel.sendEvent(
-                            RecallEvent.SetSheetState(
-                                false
-                            )
+            })
+
+            Spacer(Modifier.height(20.dp))
+            LimberGradientButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { isRecallComplete = true },
+                text = "저장하기",
+                textColor = Color.White
+            )
+
+        }
+        // BottomSheet
+        if (isSheetOpen) {
+            ModalBottomSheet(
+                containerColor = Color.White,
+                onDismissRequest = {
+                    recallViewModel.sendEvent(
+                        RecallEvent.SetSheetState(
+                            false
                         )
+                    )
+                },
+                sheetState = sheetState
+            ) {
+                BottomSheetContent(
+                    value = text,
+                    onValueChange = {
+                        recallViewModel.sendEvent(RecallEvent.OnValueChange(it))
+                    },
+                    onClose = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            recallViewModel.sendEvent(
+                                RecallEvent.SetSheetState(
+                                    false
+                                )
+                            )
+                        }
+                    },
+                    onClickSheetComplete = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            recallViewModel.sendEvent(RecallEvent.OnClickSheetComplete)
+                        }
                     }
-                },
-                onClickSheetComplete = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        recallViewModel.sendEvent(RecallEvent.OnClickSheetComplete)
+                )
+            }
+        }
+        if (isModalVisible) {
+            Dialog({ recallViewModel.sendEvent(RecallEvent.SetModalState(false)) }) {
+                RecallCloseWarnModal(
+                    onClickClose = {
+                        recallViewModel.sendEvent(RecallEvent.SetModalState(false))
+                        onPopBackStack()
+                    },
+                    onClickCancel = {
+                        recallViewModel.sendEvent(RecallEvent.SetModalState(false))
+                        onNavigateToHome()
                     }
-                }
-            )
+                )
+            }
+        }
+        if (isRecallComplete) {
+            Dialog({ isRecallComplete = false }) {
+                RecallCompleteWarnModal(
+                    onClickNavigateHome = {
+                        isRecallComplete = false
+                        onNavigateToHome()
+                    },
+                    onClickWatchReport = {
+                        isRecallComplete = false
+                        onNavigateToHome()
+                    }
+                )
+            }
         }
     }
-    if (isModalVisible) {
-        Dialog({ recallViewModel.sendEvent(RecallEvent.SetModalState(false)) }) {
-            RecallCloseWarnModal(
-                onClickClose = {
-                    recallViewModel.sendEvent(RecallEvent.SetModalState(false))
-                    onPopBackStack()
-                },
-                onClickCancel = {
-                    recallViewModel.sendEvent(RecallEvent.SetModalState(false))
-                    onNavigateToHome()
-                }
-            )
-        }
-    }
-    if (isRecallComplete){
-        Dialog({ isRecallComplete = false }) {
-            RecallCompleteWarnModal(
-                onClickNavigateHome = {
-                    isRecallComplete = false
-                    onNavigateToHome()
-                },
-                onClickWatchReport = {
-                    isRecallComplete = false
-                    onNavigateToHome()
-                }
-            )
-        }
-    }
+
 }
 
 @Composable
@@ -571,7 +608,9 @@ fun BottomSheetContent(
             Spacer(Modifier.weight(1f))
 
             LimberGradientButton(
-                modifier = Modifier.fillMaxWidth().imePadding(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding(),
                 onClick = {
                     keyboardController?.hide()
                     onClickSheetComplete()
@@ -603,6 +642,7 @@ fun FocusTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
+            textStyle = LimberTextStyle.Body2,
             onValueChange = onValueChange,
             placeholder = {
                 Text(
@@ -680,7 +720,8 @@ fun RecallCompleteWarnModal(
     Column(
         Modifier
             .background(Color.White, RoundedCornerShape(16.dp))
-            .fillMaxWidth().padding(12.dp),
+            .fillMaxWidth()
+            .padding(12.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

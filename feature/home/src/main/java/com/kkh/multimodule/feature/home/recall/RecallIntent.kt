@@ -11,7 +11,7 @@ data class RecallState(
     val appInfo: AppInfo? = null,
     val sheetState : Boolean = false,
     val modalState : Boolean = false,
-    val focusText : String = "123"
+    val focusText : String = "구체적으로 어떤 일에 집중했나요?"
 ) : UiState {
     companion object {
         fun init() = RecallState(

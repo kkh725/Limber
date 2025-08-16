@@ -47,6 +47,7 @@ fun LimberOutlinedTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = MaterialTheme.shapes.small,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = Color.Black,
         unfocusedBorderColor = Gray300,
         focusedBorderColor = Gray300
     )

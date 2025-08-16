@@ -11,6 +11,7 @@ import com.kkh.multimodule.core.ui.util.getWeekDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class ReportViewModel @Inject constructor(
@@ -27,9 +28,10 @@ class ReportViewModel @Inject constructor(
 
             when (e) {
                 CommonEvent.ScreenEntered -> {
-                    getTotalImmersion(getWeekDateRange().first,getWeekDateRange().second)
-                    getTotalHistoryTime(getWeekDateRange().first,getWeekDateRange().second)
+                    getTotalImmersion(getWeekDateRange().first, getWeekDateRange().second)
+                    getTotalHistoryTime(getWeekDateRange().first, getWeekDateRange().second)
                 }
+
                 else -> {}
             }
         }
@@ -47,13 +49,15 @@ class ReportViewModel @Inject constructor(
     }
 
     // 총 몰입도
-    private suspend fun getTotalImmersion(startTime: String, endTime: String){
+    private suspend fun getTotalImmersion(startTime: String, endTime: String) {
         val res = historyRepository.getTotalImmersion("UUID1", startTime, endTime)
 
         res.onSuccess {
-            reducer.setState(uiState.value.copy(totalImmersion = (it.ratio * 100.0).toString()))
+            reducer.setState(
+                uiState.value.copy(
+                    totalImmersion = "${(it.ratio * 100).roundToInt()}%"
+                )
+            )
         }
     }
-
-
 }

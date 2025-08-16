@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,31 +57,40 @@ fun LaboratoryScreen() {
         }
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-    ) {
-        LaboratoryScreenTopBar(
-            modifier = Modifier,
-            selectedTimerType = currentPageType,
-            onClickStartNowBtn = {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(0)
-                }
-            },
-            onClickReservationBtn = {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(1)
-                }
-            })
+    Box(Modifier.fillMaxSize()) {
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            painter = painterResource(com.kkh.multimodule.core.ui.R.drawable.bg_report_top),
+            contentDescription = "Background",
+            contentScale = ContentScale.FillWidth
+        )
+        Column(
+            Modifier
+                .fillMaxSize()
+        ) {
+            LaboratoryScreenTopBar(
+                modifier = Modifier,
+                selectedTimerType = currentPageType,
+                onClickStartNowBtn = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+                },
+                onClickReservationBtn = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
+                })
 
-        HorizontalPager(state = pagerState) {
-            when (it) {
-                0 -> ReportPagerContent()
-                1 -> RecallPagerContent()
+            HorizontalPager(state = pagerState) {
+                when (it) {
+                    0 -> ReportPagerContent()
+                    1 -> RecallPagerContent()
+                }
             }
         }
     }
+
 }
 
 

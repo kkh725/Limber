@@ -32,11 +32,6 @@ class BlockTriggerReceiver : BroadcastReceiver() {
                     timerRepository.setActiveTimerId(reservationId)
                     Log.d("ScheduleBlockTrigger", "시작된 타이머 id : $reservationId")
                 }
-                else {
-                    timerRepository.setActiveTimerId(-1)
-                    Log.d("ScheduleBlockTrigger", " 타이머 id : $reservationId")
-
-                }
             }
         }
     }

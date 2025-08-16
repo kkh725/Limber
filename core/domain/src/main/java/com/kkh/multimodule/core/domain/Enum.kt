@@ -4,8 +4,8 @@ enum class ScreenState{
     ONBOARDING_SCREEN,HOME_SCREEN, TIMER_SCREEN, LABORATORY_SCREEN, MORE_SCREEN, NONE_SCREEN
 }
 
-enum class TimerStatusModel {
-    ON,OFF
+enum class TimerStatusModel(val text : String) {
+    ON("ON"),OFF("OFF")
 }
 
 enum class TimerCode(val text : String){

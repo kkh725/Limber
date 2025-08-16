@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository
@@ -78,21 +79,25 @@ class HomeViewModel @Inject constructor(
 
         val activeTimerId = timerRepository.getActiveTimerId()
         Log.d("getActiveTimerId", "현재 진행중인 타이머 id : $activeTimerId")
-        if (activeTimerId != -1) {
-            timerRepository.getSingleTimer(activeTimerId)
-                .onSuccess {
-                    Log.d("getActiveTimerId", "남은 시간 ${getRemainingTimeFormattedSafe(it.endTime)}")
+        timerRepository.getSingleTimer(activeTimerId)
+            .onSuccess {
+                if (it.status != TimerStatusModel.OFF) {
+                    Log.d(
+                        "getActiveTimerId",
+                        "남은 시간 ${getRemainingTimeFormattedSafe(it.endTime)}"
+                    )
 
                     reducer.setState(
                         uiState.value.copy(
                             leftTime = getRemainingTimeFormattedSafe(it.endTime),
-                            currentTimerId =it.id
+                            currentTimerId = it.id
                         )
                     )
-                }.onFailure { throwable ->
-                    //수시로 호출하기 때문에 부수효과 x
-//                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
                 }
-        }
+
+            }.onFailure { throwable ->
+                //수시로 호출하기 때문에 부수효과 x
+//                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
+            }
     }
 }

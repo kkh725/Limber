@@ -104,13 +104,15 @@ fun ActiveTimerScreen(
     val coroutineScope = rememberCoroutineScope()
     var tempLeftTime by remember { mutableStateOf(leftTime) }
 
+    var imageRes by remember { mutableStateOf(R.drawable.bg_active_timer_light) }
+
     val sheetState = rememberModalBottomSheetState()
     val isSheetOpen = uiState.sheetState
     val blockedAppList = uiState.blockedAppList
     val focusType = uiState.focusType
     val totalTime = uiState.totalTime
 
-    val isTimerEnd = uiState.timerPercent == 0f
+    val isTimerEnd = uiState.timerPercent == 100f
 
     var countdownSeconds by remember(isTimerEnd) { mutableIntStateOf(10) }
 
@@ -118,7 +120,6 @@ fun ActiveTimerScreen(
         activeTimerViewModel.sendEvent(ActiveTimerEvent.OnEnterScreen)
 
         while (isActive) {
-            delay(1000)
             if (tempLeftTime != "00:00:00") {
                 tempLeftTime = decrementOneSecond(tempLeftTime)
 
@@ -126,8 +127,10 @@ fun ActiveTimerScreen(
                 Log.d(TAG, "총시간/남은시간 의 퍼센티지 : $percent")
                 activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(percent))
             } else {
-                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(1f))
+                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(100f))
+                imageRes = R.drawable.bg_all_blocking
             }
+            delay(1000)
         }
     }
 
@@ -138,7 +141,7 @@ fun ActiveTimerScreen(
                 countdownSeconds = i
                 delay(1000)
             }
-//            onNavigateToRecall()
+            onNavigateToRecall()
         }
     }
 
@@ -148,7 +151,7 @@ fun ActiveTimerScreen(
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            painter = painterResource(R.drawable.bg_all_blocking),
+            painter = painterResource(imageRes),
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
