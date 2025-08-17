@@ -35,8 +35,9 @@ data class ImmersionByWeekdayModel(
 )
 
 data class FocusDistributionModel(
-    val repeatCycleCode: String,
-    val totalActualMinutes: Int
+    val focusTypeId: Int,   // 예: "DAILY"
+    val focusTypeName: String, // 예: "일간"
+    val totalActualMinutes : Int// 예: 560
 )
 
 data class ActualByWeekendModel(

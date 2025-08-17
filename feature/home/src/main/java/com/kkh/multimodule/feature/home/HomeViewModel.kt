@@ -7,9 +7,11 @@ import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
+import com.kkh.multimodule.core.domain.repository.HistoryRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository
 import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.core.ui.util.getRemainingTimeFormattedSafe
+import com.kkh.multimodule.core.ui.util.getTodayDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel @Inject constructor(
     private val appDataRepository: AppDataRepository,
     private val reservationRepository: BlockReservationRepository,
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
+    private val historyRepository: HistoryRepository
 ) :
     ViewModel() {
 
@@ -41,6 +44,7 @@ class HomeViewModel @Inject constructor(
                     setBlockReservationList()
                     setPackageList()
                     getActiveTimerId()
+                    getFocusDistributionList()
                 }
 
                 is HomeEvent.EndTimer -> {
@@ -99,5 +103,18 @@ class HomeViewModel @Inject constructor(
                 //수시로 호출하기 때문에 부수효과 x
 //                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
             }
+    }
+
+    private suspend fun getFocusDistributionList() {
+        val res = historyRepository.getFocusDistribution(
+            "UUID1",
+            startTime = getTodayDate(),
+            endTime = getTodayDate()
+        )
+        res.onSuccess {
+            reducer.setState(uiState.value.copy(focusDistributionList = it))
+        }.onFailure { throwable ->
+            reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
+        }
     }
 }

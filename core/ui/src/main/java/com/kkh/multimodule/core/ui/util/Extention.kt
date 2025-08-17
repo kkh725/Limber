@@ -151,6 +151,12 @@ fun convertTimeStringToMinutes(time: String): Int {
     return hours * 60 + minutes
 }
 
+fun getTodayDate(): String {
+    val today = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return today.format(formatter)
+}
+
 fun getTimeDifference(startTimeStr: String, endTimeStr: String): String {
     // 허용되는 포맷 우선순위: 초 포함("HH:mm:ss") -> 초 미포함("HH:mm")
     val fmtWithSec = DateTimeFormatter.ofPattern("HH:mm:ss")
@@ -226,6 +232,16 @@ fun getWeekDateString(): Pair<String, String> {
     val currentDate = LocalDate.now()
     val beforeDate = currentDate.minusDays(7)
     return currentDate.format(formatter) to beforeDate.format(formatter)
+}
+
+fun formatMinutesToHoursMinutes(totalMinutes: Int): String {
+    val hours = totalMinutes / 60
+    val minutes = totalMinutes % 60
+    return if (hours > 0) {
+        "%d시간 %02d분".format(hours, minutes)
+    } else {
+        "%d분".format(minutes)
+    }
 }
 
 

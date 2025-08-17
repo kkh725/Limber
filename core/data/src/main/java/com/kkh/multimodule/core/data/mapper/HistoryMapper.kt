@@ -42,8 +42,9 @@ fun ImmersionByWeekdayResponseDto.toDomain(): ImmersionByWeekdayModel =
 
 fun FocusDistributionResponseDto.toDomain(): FocusDistributionModel =
     FocusDistributionModel(
-        repeatCycleCode = this.repeatCycleCode,
-        totalActualMinutes = this.totalActualMinutes
+        focusTypeId = this.focusTypeId,
+        focusTypeName = this.focusTypeName,
+        totalActualMinutes = this.totalActualMinutes,
     )
 
 fun ActualByWeekendResponseDto.toDomain(): ActualByWeekendModel =

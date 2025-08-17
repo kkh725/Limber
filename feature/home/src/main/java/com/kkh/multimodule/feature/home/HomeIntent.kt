@@ -6,6 +6,7 @@ import android.content.Context
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
+import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
@@ -18,14 +19,16 @@ data class HomeState(
     val blockReservationItemList: List<ReservationItemModel> = emptyList(),
     val isTimerActive: Boolean = false,
     val leftTime : String,
-    val currentTimerId : Int
+    val currentTimerId : Int,
+    val focusDistributionList : List<FocusDistributionModel>
 ) : UiState {
     companion object {
         fun init() = HomeState(
             usageAppInfoList = emptyList() ,
             blockingAppPackageList = emptyList(),
             leftTime = "00:00:00",
-            currentTimerId = 0
+            currentTimerId = 0,
+            focusDistributionList = emptyList()
         )
     }
 }
