@@ -20,10 +20,10 @@ data class ReportState(
 ) : UiState {
     companion object {
         fun init() = ReportState(
-            totalTime = "00시간 00분",
-            totalImmersion = "49%",
-            startDate = "2023-01-01",
-            endDate = "2023-01-01"
+            totalTime = "0분",
+            totalImmersion = "0%",
+            startDate = "2025-01-01",
+            endDate = "2025-01-01"
         )
     }
 }
@@ -40,6 +40,7 @@ class ReportReducer(state: ReportState) : Reducer<ReportState, UiEvent>(state) {
     override suspend fun reduce(oldState: ReportState, event: UiEvent) {
         when (event) {
             CommonEvent.ScreenEntered -> {
+
                 val weekDate = getWeekDateString()
                 setState(oldState.copy(startDate = weekDate.second, endDate = weekDate.first))
             }

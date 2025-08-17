@@ -300,11 +300,11 @@ fun HomeMainContent(
 
     // 애니메이션 적용
     val focusRatio by animateFloatAsState(
-        targetValue = targetFocusRatio.takeIf { it != 0f } ?: 0.1f,
+        targetValue = targetFocusRatio.takeIf { it != 0f } ?: 0.01f,
         animationSpec = tween(durationMillis = 500)
     )
     val dopamineRatio by animateFloatAsState(
-        targetValue = targetDopamineRatio.takeIf { it != 0f } ?: 0.1f,
+        targetValue = targetDopamineRatio.takeIf { it != 0f } ?: 0.01f,
         animationSpec = tween(durationMillis = 500)
     )
 

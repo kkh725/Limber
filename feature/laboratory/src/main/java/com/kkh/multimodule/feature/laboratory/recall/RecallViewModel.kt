@@ -52,7 +52,7 @@ class RecallViewModel @Inject constructor(
             if (!uiState.value.selectedUnRetrospect) {
                 reducer.setState(uiState.value.copy(visibleHistoryItemList = newList))
             } else {
-                reducer.setState(uiState.value.copy(visibleHistoryItemList = newList.filter { item -> !item.hasRetrospect }))
+                reducer.setState(uiState.value.copy(visibleHistoryItemList = newList.filter { it -> !it.hasRetrospect }))
             }
         }.onFailure {
             Log.e(TAG, "getHistoryList: ${it.message}")

@@ -60,7 +60,7 @@ class ReservationViewModel @Inject constructor(
     // 사용자 예약 목록 조회
     private suspend fun getTimerList() {
         reducer.sendEffect(CommonEffect.IsLoading(true))
-        timerRepository.getTimerList("UUID1")
+        timerRepository.getTimerList("com.kkh.multimodule.core.domain.USERID")
             .onSuccess {
                 reducer.setState(uiState.value.copy(ReservationItemModelList = it.toReservationItemModelList()))
                 //empty가 아닐때에만 로컬 저장
