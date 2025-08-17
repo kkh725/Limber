@@ -13,6 +13,7 @@ import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponse
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponse
+import com.kkh.multimodule.core.network.model.response.history.HistoryWithRetrospectsResponse
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
 import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
 import com.kkh.multimodule.core.network.model.response.history.TotalActualResponseDto
@@ -20,6 +21,7 @@ import com.kkh.multimodule.core.network.model.response.history.TotalImmersionRes
 
 interface HistoryDataSource {
     suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): HistoryResponse
+    suspend fun getHistoryListWithRetrospects(historyRequestDto: HistoryRequestDto): HistoryWithRetrospectsResponse
     suspend fun getLatestHistoryId(userId : String, timerId : Int) : LatestTimerResponse
     suspend fun getTotalImmersion(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalImmersionResponseDto>
     suspend fun getTotalActual(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalActualResponseDto>

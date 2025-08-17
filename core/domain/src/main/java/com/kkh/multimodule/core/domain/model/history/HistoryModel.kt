@@ -65,3 +65,9 @@ data class LatestTimerHistoryModel(
     val focusTypeTitle: String,
     val retrospectSummary: String
 )
+
+data class HistoryWithRetrospectsModel(
+    val weekStart: String,
+    val weekEnd: String,
+    val retrospects: List<LatestTimerHistoryModel>
+)

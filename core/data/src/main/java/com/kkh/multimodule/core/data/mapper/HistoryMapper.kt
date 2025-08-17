@@ -5,6 +5,8 @@ import com.kkh.multimodule.core.network.model.response.history.TotalActualRespon
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponseDto
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponseDto
 import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponseDto
+import com.kkh.multimodule.core.network.model.response.history.HistoryWithRetrospectsResponseDto
+import com.kkh.multimodule.core.network.model.response.ApiResponse
 
 import com.kkh.multimodule.core.domain.model.history.TotalImmersionModel
 import com.kkh.multimodule.core.domain.model.history.TotalActualModel
@@ -12,6 +14,7 @@ import com.kkh.multimodule.core.domain.model.history.ImmersionByWeekdayModel
 import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.domain.model.history.ActualByWeekendModel
 import com.kkh.multimodule.core.domain.model.history.LatestTimerHistoryModel
+import com.kkh.multimodule.core.domain.model.history.HistoryWithRetrospectsModel
 import com.kkh.multimodule.core.network.model.response.history.LatestTimerHistoryDto
 import kotlin.Boolean
 
@@ -72,3 +75,15 @@ fun LatestTimerHistoryDto.toDomain(): LatestTimerHistoryModel =
         retrospectSummary = this.retrospectSummary
     )
 
+fun HistoryWithRetrospectsResponseDto.toDomain(): HistoryWithRetrospectsModel =
+    HistoryWithRetrospectsModel(
+        weekStart = this.weekStart,
+        weekEnd = this.weekEnd,
+        retrospects = this.retrospects.map { it.toDomain() }
+    )
+
+fun List<HistoryWithRetrospectsResponseDto>.toDomain(): List<HistoryWithRetrospectsModel> =
+    this.map { it.toDomain() }
+
+fun ApiResponse<List<HistoryWithRetrospectsResponseDto>>.toDomain(): List<HistoryWithRetrospectsModel> =
+    this.data?.map { it.toDomain() } ?: emptyList()

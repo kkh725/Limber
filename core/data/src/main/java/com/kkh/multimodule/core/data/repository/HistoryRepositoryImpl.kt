@@ -6,6 +6,7 @@ import com.kkh.multimodule.core.data.mapper.toDomain
 import com.kkh.multimodule.core.domain.model.history.ActualByWeekendModel
 import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.domain.model.history.HistoryModel
+import com.kkh.multimodule.core.domain.model.history.HistoryWithRetrospectsModel
 import com.kkh.multimodule.core.domain.model.history.ImmersionByWeekdayModel
 import com.kkh.multimodule.core.domain.model.history.LatestTimerHistoryModel
 import com.kkh.multimodule.core.domain.model.history.TotalActualModel
@@ -32,6 +33,13 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
                 throw TimerApiException(error)
             }
         }
+
+    /**
+     * 회고 여부가 포함된 타이머 이력 조회
+     */
+    override suspend fun getHistoryListWithRetrospects(userId: String): Result<List<HistoryWithRetrospectsModel>>{
+        TODO("Not yet implemented")
+    }
 
     /**
      * 가장 최근 이력 조회

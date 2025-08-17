@@ -11,6 +11,7 @@ import com.kkh.multimodule.core.network.model.response.HistoryResponse
 import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponse
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponseDto
 import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponse
+import com.kkh.multimodule.core.network.model.response.history.HistoryWithRetrospectsResponse
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
 import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
 import retrofit2.http.Body
@@ -29,12 +30,20 @@ interface HistoryApi {
 //    ): BaseResponse
 
     /**
-     * 타이머 이력 조회
+     * 타이머 이력 조회 회고 여부를 볼 수 없이 all로 나옴
      */
     @GET("/api/timer-histories/me")
     suspend fun getTimerHistories(
         @Body historyRequestDto: HistoryRequestDto
     ): HistoryResponse
+
+    /**
+     * 타이머 이력조회 회고 여부 true,false로 구별가능함.
+     */
+    @GET("/api/timer-histories/search")
+    suspend fun getTimerHistoriesWithRetrospect(
+        @Body historyRequestDto: HistoryRequestDto
+    ): HistoryWithRetrospectsResponse
 
     /**
      * 가장 최근 이력 조회
