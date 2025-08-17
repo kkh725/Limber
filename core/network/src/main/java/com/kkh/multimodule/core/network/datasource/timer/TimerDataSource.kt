@@ -17,6 +17,6 @@ interface TimerDataSource {
     suspend fun getSingleTimer(timerId: Int): SingleTimerResponse
     suspend fun getTimerList(userId: String): TimerListResponse
     suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequest) : BaseResponse
-    suspend fun deleteTimer(timerIdList: List<Int>): BaseResponse
+    suspend fun deleteTimer(timerIdList: List<Int>): Response<Unit>
     suspend fun writeRetrospects(request : RetrospectsRequestDto): BaseResponse
 }

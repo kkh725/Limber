@@ -19,10 +19,12 @@ import com.kkh.multimodule.core.network.datasource.history.HistoryDataSource
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
 import jakarta.inject.Inject
+import jakarta.inject.Named
 
 class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
     private val localDataSource: LocalDataSource,
+    @param:Named("AppUuid") private val appUuid: String
 ) :
     TimerRepository {
 
@@ -35,7 +37,7 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        userId = "UUID1",
+                        userId = appUuid,
                         TimerCode.IMMEDIATE.text
                     )
                 )
@@ -140,16 +142,14 @@ class TimerRepositoryImpl @Inject constructor(
     /**
      * 타이머 삭제
      */
-
     override suspend fun deleteTimerList(timerIdList: List<Int>): Result<Unit> =
         runCatching {
-            val response =
-                timerDataSource.deleteTimer(timerIdList)
-            if (response.success) {
-                response.data
+            val response = timerDataSource.deleteTimer(timerIdList)
+            if (response.isSuccessful) {
+                // 삭제 성공
             } else {
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
+                // 에러 처리
+                throw (Exception("error"))
             }
         }
 
@@ -166,7 +166,5 @@ class TimerRepositoryImpl @Inject constructor(
                 throw TimerApiException(error)
             }
         }
-
-
 }
 

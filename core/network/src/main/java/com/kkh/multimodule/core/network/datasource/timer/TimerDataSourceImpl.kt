@@ -40,7 +40,7 @@ internal class TimerDataSourceImpl @Inject constructor(
         return timerApi.patchTimerStatus(timerId, patchTimerStatusRequest = status)
     }
 
-    override suspend fun deleteTimer(timerIdList: List<Int>): BaseResponse {
+    override suspend fun deleteTimer(timerIdList: List<Int>): Response<Unit> {
         return timerApi.deleteTimerList(DeleteTimerRequestDto(timerIdList))
     }
 

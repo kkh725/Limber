@@ -293,18 +293,18 @@ fun HomeMainContent(
 
     // 비율 계산
     val targetFocusRatio = when (focusMinutes) {
-        0 -> 0.5f
+        0 -> 0.1f
         else -> if (total > 0) focusMinutes.toFloat() / total else 0.5f
     }
     val targetDopamineRatio = 1f - targetFocusRatio
 
     // 애니메이션 적용
     val focusRatio by animateFloatAsState(
-        targetValue = targetFocusRatio,
+        targetValue = targetFocusRatio.takeIf { it != 0f } ?: 0.1f,
         animationSpec = tween(durationMillis = 500)
     )
     val dopamineRatio by animateFloatAsState(
-        targetValue = targetDopamineRatio,
+        targetValue = targetDopamineRatio.takeIf { it != 0f } ?: 0.1f,
         animationSpec = tween(durationMillis = 500)
     )
 

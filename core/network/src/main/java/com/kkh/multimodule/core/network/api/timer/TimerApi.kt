@@ -8,6 +8,7 @@ import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
 import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -59,11 +60,11 @@ interface TimerApi {
     ): BaseResponse
 
     /**
-     * 타이머 삭제
+     * 타이머 삭제 204 no content 이기때문에 Unit으로
      */
     @HTTP(method = "DELETE", path = "/api/timers", hasBody = true)
     suspend fun deleteTimerList(
         @Body timerIdList: DeleteTimerRequestDto
-    ): BaseResponse
+    ): Response<Unit>
 
 }

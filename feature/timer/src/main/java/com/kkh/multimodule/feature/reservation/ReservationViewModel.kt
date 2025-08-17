@@ -14,6 +14,7 @@ import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import jakarta.inject.Named
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -62,7 +63,11 @@ class ReservationViewModel @Inject constructor(
         timerRepository.getTimerList("UUID1")
             .onSuccess {
                 reducer.setState(uiState.value.copy(ReservationItemModelList = it.toReservationItemModelList()))
-                blockReservationRepository.setReservationList(it.toReservationItemModelList())
+                //empty가 아닐때에만 로컬 저장
+                it.toReservationItemModelList()
+                    .takeIf { list -> list.isNotEmpty() }
+                    ?.let { list -> blockReservationRepository.setReservationList(list) }
+
             }.onFailure { throwable ->
                 val message = throwable.message ?: "error"
                 reducer.sendEffect(CommonEffect.ShowSnackBar(message))
@@ -119,8 +124,21 @@ class ReservationViewModel @Inject constructor(
         timerRepository.deleteTimerList(checkedList)
             .onSuccess {
                 Log.d(TAG, "deleteTimer: success")
+                //삭제하면 다시 서버로 요청
+                timerRepository.getTimerList("UUID1")
+                    .onSuccess {
+                        reducer.setState(uiState.value.copy(ReservationItemModelList = it.toReservationItemModelList()))
+                        //empty가 아닐때에만 로컬 저장
+                        it.toReservationItemModelList()
+                            .takeIf { list -> list.isNotEmpty() }
+                            ?.let { list -> blockReservationRepository.setReservationList(list) }
+
+                    }.onFailure { throwable ->
+                        val message = throwable.message ?: "error"
+                        reducer.sendEffect(CommonEffect.ShowSnackBar(message))
+                    }
             }.onFailure { e ->
-                Log.d(TAG, "deleteTimer: fail $e")
+                Log.e(TAG, "deleteTimer: fail $e")
             }
     }
 }
