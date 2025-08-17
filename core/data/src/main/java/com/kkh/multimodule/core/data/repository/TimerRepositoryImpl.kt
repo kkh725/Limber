@@ -36,7 +36,7 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        userId = "UUID1",
+                        userId = com.kkh.multimodule.core.domain.UUID,
                         TimerCode.IMMEDIATE.text
                     )
                 )
@@ -69,7 +69,7 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        userId = "UUID1",
+                        userId = com.kkh.multimodule.core.domain.UUID,
                         TimerCode.SCHEDULED.text
                     )
                 )

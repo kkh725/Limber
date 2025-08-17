@@ -298,7 +298,7 @@ fun RecallScreen(
                 )
             })
 
-//            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
             Spacer(Modifier.weight(1f))
             if (text.isEmpty()) {
                 LimberText(

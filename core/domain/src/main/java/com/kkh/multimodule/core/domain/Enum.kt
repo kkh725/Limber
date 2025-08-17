@@ -20,5 +20,4 @@ enum class RepeatCycleCodeModel(val code: String) {
     WEEKEND("WEEKEND")
 }
 
-const val USERID = "UUID11"
-
+const val UUID = "UUID22"

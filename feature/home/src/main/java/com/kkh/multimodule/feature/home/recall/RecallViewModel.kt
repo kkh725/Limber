@@ -89,14 +89,14 @@ class RecallViewModel @Inject constructor(
         comment: String
     ) {
         val currentTimerId = timerId.takeIf { it != -1 } ?: timerRepository.getActiveTimerId()
-        val res = historyRepository.getLatestHistoryId("UUID1", currentTimerId)
+        val res = historyRepository.getLatestHistoryId(com.kkh.multimodule.core.domain.UUID, currentTimerId)
         reducer.setState(uiState.value.copy(isRecallCompleted = true))
 
         res.onSuccess {
             val timerHistoryId = timerHistoryId.takeIf { it != -1 } ?: it.id
             val request =
                 RetrospectsRequestModel(
-                    "UUID1",
+                    com.kkh.multimodule.core.domain.UUID,
                     timerHistoryId = timerHistoryId,
                     timerId = currentTimerId,
                     immersion = immersion,
