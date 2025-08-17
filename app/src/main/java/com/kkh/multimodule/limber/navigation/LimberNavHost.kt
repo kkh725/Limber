@@ -32,6 +32,8 @@ import com.kkh.multimodule.feature.onboarding.navigateToAccessPermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToAlertPermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToStartScreenScreen
 import com.kkh.multimodule.feature.onboarding.navigateToManageAppScreen
+import com.kkh.multimodule.feature.onboarding.navigateToOnboardingScreen
+import com.kkh.multimodule.feature.onboarding.navigateToPreOnboarding2Screen
 import com.kkh.multimodule.feature.onboarding.navigateToScreenTimePermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToSelectTypeScreen
 import com.kkh.multimodule.feature.onboarding.onBoardingNavGraph
@@ -74,7 +76,7 @@ fun LimberNavHost(
         }
     } else {
         val startDestination =
-            if (isOnboardingChecked) HomeRoutes.HOME else OnBoardingRoute.Onboarding
+            if (isOnboardingChecked) HomeRoutes.HOME else OnBoardingRoute.PreOnboarding1
 
         NavHost(
             navController = navController,
@@ -82,6 +84,8 @@ fun LimberNavHost(
             modifier = modifier,
         ) {
             onBoardingNavGraph(
+                navigateToPreOnboarding2Screen = navController::navigateToPreOnboarding2Screen,
+                navigateToOnboardingScreen = navController::navigateToOnboardingScreen,
                 navigateToScreenTimePermissionScreen = navController::navigateToScreenTimePermissionScreen,
                 navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
                 navigateToAlertPermission = navController::navigateToAlertPermissionScreen,

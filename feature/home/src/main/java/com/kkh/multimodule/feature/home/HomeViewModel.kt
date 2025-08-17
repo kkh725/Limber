@@ -35,7 +35,6 @@ class HomeViewModel @Inject constructor(
             when (e) {
                 is HomeEvent.OnCompleteRegisterButton -> {
                     setBlockedPackageList(e.appList)
-                    setBlockMode(true)
                     setPackageList()
                 }
 
