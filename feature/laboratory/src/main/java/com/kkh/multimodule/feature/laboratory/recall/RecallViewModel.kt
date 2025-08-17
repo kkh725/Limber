@@ -46,11 +46,13 @@ class RecallViewModel @Inject constructor(
         val res = historyRepository.getHistoryListWithRetrospects("UUID1")
 
         res.onSuccess {
-            reducer.setState(uiState.value.copy(fullHistoryItemList = it.first().items))
+            
+            val newList = it.firstOrNull()?.items ?: emptyList()
+            reducer.setState(uiState.value.copy(fullHistoryItemList = newList))
             if (!uiState.value.selectedUnRetrospect) {
-                reducer.setState(uiState.value.copy(visibleHistoryItemList = it.first().items))
+                reducer.setState(uiState.value.copy(visibleHistoryItemList = newList))
             } else {
-                reducer.setState(uiState.value.copy(visibleHistoryItemList = it.first().items.filter { !it.hasRetrospect }))
+                reducer.setState(uiState.value.copy(visibleHistoryItemList = newList.filter { item -> !item.hasRetrospect }))
             }
         }.onFailure {
             Log.e(TAG, "getHistoryList: ${it.message}")

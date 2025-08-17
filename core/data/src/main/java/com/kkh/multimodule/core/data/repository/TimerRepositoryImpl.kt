@@ -23,8 +23,7 @@ import jakarta.inject.Named
 
 class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
-    private val localDataSource: LocalDataSource,
-    @param:Named("AppUuid") private val appUuid: String
+    private val localDataSource: LocalDataSource
 ) :
     TimerRepository {
 
@@ -37,7 +36,7 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        userId = appUuid,
+                        userId = "UUID1",
                         TimerCode.IMMEDIATE.text
                     )
                 )
