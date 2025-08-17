@@ -21,8 +21,8 @@ import com.kkh.multimodule.core.network.model.response.history.TotalImmersionRes
 
 interface HistoryDataSource {
     suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): HistoryResponse
-    suspend fun getHistoryListWithRetrospects(historyRequestDto: HistoryRequestDto): HistoryWithRetrospectsResponse
-    suspend fun getLatestHistoryId(userId : String, timerId : Int) : LatestTimerResponse
+    suspend fun getHistoryListWithRetrospects(userId: String): HistoryWithRetrospectsResponse
+    suspend fun getLatestHistoryId(userId: String, timerId: Int): LatestTimerResponse
     suspend fun getTotalImmersion(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalImmersionResponseDto>
     suspend fun getTotalActual(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalActualResponseDto>
     suspend fun getImmersionByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): ImmersionByWeekdayResponse

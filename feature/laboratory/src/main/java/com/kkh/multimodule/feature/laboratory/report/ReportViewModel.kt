@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.laboratory.recall
+package com.kkh.multimodule.feature.laboratory.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,6 @@ import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.core.ui.ui.CommonEvent
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.util.getWeekDateRange
-import com.kkh.multimodule.core.ui.util.getWeekDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch

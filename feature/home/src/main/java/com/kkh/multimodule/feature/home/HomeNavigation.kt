@@ -37,6 +37,12 @@ fun NavController.navigateToActiveTimerScreen(leftTime: String, timerId: Int) {
 fun NavController.navigateToRecallScreen() =
     navigate(HomeRoutes.RECALL)
 
+fun NavController.navigateToRecallScreen(timerId: Int,timerHistoryId: Int,) {
+    navigate("${HomeRoutes.ACTIVE_TIMER}?timerId=$timerId&timerHistoryId=$timerHistoryId") {
+        launchSingleTop = true
+    }
+}
+
 fun NavGraphBuilder.homeNavGraph(
     onNavigateToActiveTimer: (String, Int) -> Unit,
     onNavigateToHome: () -> Unit,
@@ -81,7 +87,6 @@ fun NavGraphBuilder.homeNavGraph(
         }
     }
 
-
     composable(HomeRoutes.RECALL) {
         RecallScreen(
             onPopBackStack = onPopBackStack,
@@ -92,4 +97,33 @@ fun NavGraphBuilder.homeNavGraph(
             onPopBackStack()
         }
     }
+
+    composable(
+        route = "${HomeRoutes.ACTIVE_TIMER}?timerId={timerId}&timerHistoryId={timerHistoryId}",
+        arguments = listOf(
+            navArgument("timerId") {
+                type = NavType.IntType
+                defaultValue = -1
+            },
+            navArgument("timerHistoryId") {
+                type = NavType.IntType
+                defaultValue = -1
+            }
+        )
+    ) { backStackEntry ->
+        val timerId = backStackEntry.arguments?.getInt("timerId") ?: -1
+        val timerHistoryId = backStackEntry.arguments?.getInt("timerHistoryId") ?: -1
+
+        RecallScreen(
+            timerId = timerId,
+            timerHistoryId = timerHistoryId,
+            onPopBackStack = onPopBackStack,
+            onNavigateToHome = onNavigateToHome,
+            onNavigateToReport = onNavigateToReport
+        )
+        BackHandler(enabled = true) {
+            onPopBackStack()
+        }
+    }
+
 }

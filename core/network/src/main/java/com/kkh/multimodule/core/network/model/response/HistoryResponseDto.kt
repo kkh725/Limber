@@ -13,7 +13,7 @@ data class HistoryResponseDto(
     val repeatDays: String,
     val historyDt: String,
     val historyStatus: String,
-    val failReason: String,
+    val failReason: String?,
     val startTime: String,
     val endTime: String
 )

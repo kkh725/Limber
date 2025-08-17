@@ -44,4 +44,5 @@ sealed class CommonEffect() : UiEffect {
     data class ShowDialog(val message: String, val visible : Boolean) : CommonEffect()
     data class IsLoading(val isVisible: Boolean) : CommonEffect()
     data object NavigateToHome : CommonEffect()
+    data object NavigateToRecall : CommonEffect()
 }

@@ -79,7 +79,7 @@ fun HistoryWithRetrospectsResponseDto.toDomain(): HistoryWithRetrospectsModel =
     HistoryWithRetrospectsModel(
         weekStart = this.weekStart,
         weekEnd = this.weekEnd,
-        retrospects = this.retrospects.map { it.toDomain() }
+        items = this.items.map { it.toDomain() }
     )
 
 fun List<HistoryWithRetrospectsResponseDto>.toDomain(): List<HistoryWithRetrospectsModel> =

@@ -34,13 +34,20 @@ class RecallViewModel @Inject constructor(
         viewModelScope.launch {
             reducer.sendEvent(e)
 
-            when(e){
+            when (e) {
                 is CommonEvent.ScreenEntered -> {
                     getTimerInfo()
                 }
+
                 is RecallEvent.OnCompleteRecall -> {
-                    writeRetrospects(e.immersion, e.comment)
+                    writeRetrospects(
+                        timerId = e.timerId,
+                        timerHistoryId = e.timerHistoryId,
+                        immersion =e.immersion,
+                        comment = e.comment
+                    )
                 }
+
                 else -> {}
             }
         }
@@ -63,7 +70,7 @@ class RecallViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getTimerInfo(){
+    private suspend fun getTimerInfo() {
         val currentTimerId = timerRepository.getActiveTimerId()
         val res = timerRepository.getSingleTimer(currentTimerId)
 
@@ -75,16 +82,22 @@ class RecallViewModel @Inject constructor(
         }
     }
 
-    private suspend fun writeRetrospects(immersion : Int, comment : String) {
-        val currentTimerId = timerRepository.getActiveTimerId()
+    private suspend fun writeRetrospects(
+        timerId: Int,
+        timerHistoryId: Int,
+        immersion: Int,
+        comment: String
+    ) {
+        val currentTimerId = timerId.takeIf { it != -1 } ?: timerRepository.getActiveTimerId()
         val res = historyRepository.getLatestHistoryId("UUID1", currentTimerId)
         reducer.setState(uiState.value.copy(isRecallCompleted = true))
 
         res.onSuccess {
+            val timerHistoryId = timerHistoryId.takeIf { it != -1 } ?: it.id
             val request =
                 RetrospectsRequestModel(
                     "UUID1",
-                    timerHistoryId = it.id,
+                    timerHistoryId = timerHistoryId,
                     timerId = currentTimerId,
                     immersion = immersion,
                     comment = comment

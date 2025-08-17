@@ -12,13 +12,13 @@ data class LatestTimerHistoryDto(
     val repeatDays: String,
     val historyDt: String,             // ISO 8601 문자열, 필요하면 Instant로 변환 가능
     val historyStatus: String,
-    val failReason: String,
+    val failReason: String?,
     val startTime: String,
     val endTime: String,
     val hasRetrospect: Boolean,
-    val retrospectId: Int,
-    val retrospectImmersion: Int,
-    val retrospectComment: String,
+    val retrospectId: Int?,
+    val retrospectImmersion: Int?,
+    val retrospectComment: String?,
     val focusTypeTitle: String,
     val retrospectSummary: String
 )

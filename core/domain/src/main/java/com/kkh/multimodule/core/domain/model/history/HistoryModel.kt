@@ -10,7 +10,7 @@ data class HistoryModel(
     val repeatDays: String,
     val historyDt: String,
     val historyStatus: String,
-    val failReason: String,
+    val failReason: String?,
     val startTime: String,
     val endTime: String
 )
@@ -55,19 +55,30 @@ data class LatestTimerHistoryModel(
     val repeatDays: String,
     val historyDt: String,             // ISO 8601 문자열, 필요하면 Instant로 변환 가능
     val historyStatus: String,
-    val failReason: String,
+    val failReason: String?,
     val startTime: String,
     val endTime: String,
     val hasRetrospect: Boolean,
-    val retrospectId: Int,
-    val retrospectImmersion: Int,
-    val retrospectComment: String,
+    val retrospectId: Int?,
+    val retrospectImmersion: Int?,
+    val retrospectComment: String?,
     val focusTypeTitle: String,
     val retrospectSummary: String
-)
+){
+    fun focusTypeIdToCategory(focusTypeId: Int): String {
+        return when (focusTypeId) {
+            1 -> "학습"
+            2 -> "업무"
+            3 -> "회의"
+            4 -> "작업"
+            5 -> "독서"
+            else -> "기타"
+        }
+    }
+}
 
 data class HistoryWithRetrospectsModel(
     val weekStart: String,
     val weekEnd: String,
-    val retrospects: List<LatestTimerHistoryModel>
+    val items: List<LatestTimerHistoryModel>
 )

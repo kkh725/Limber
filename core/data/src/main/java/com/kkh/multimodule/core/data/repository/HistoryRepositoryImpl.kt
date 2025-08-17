@@ -38,7 +38,15 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 회고 여부가 포함된 타이머 이력 조회
      */
     override suspend fun getHistoryListWithRetrospects(userId: String): Result<List<HistoryWithRetrospectsModel>>{
-        TODO("Not yet implemented")
+        return runCatching {
+            val response = historyDataSource.getHistoryListWithRetrospects(userId)
+            if (response.success) {
+                response.data?.toDomain() ?: emptyList()
+            } else {
+                val error = TimerError.from(response.error?.code, response.error?.message)
+                throw TimerApiException(error)
+            }
+        }
     }
 
     /**

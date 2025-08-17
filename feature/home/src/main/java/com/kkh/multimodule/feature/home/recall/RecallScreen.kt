@@ -138,6 +138,8 @@ import kotlin.math.sin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecallScreen(
+    timerId : Int = -1,
+    timerHistoryId : Int = -1,
     onPopBackStack: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onNavigateToReport: () -> Unit = {},
@@ -313,6 +315,8 @@ fun RecallScreen(
                 onClick = {
                     recallViewModel.sendEvent(
                         RecallEvent.OnCompleteRecall(
+                            timerId = timerId,
+                            timerHistoryId = timerHistoryId,
                             immersion = selectedIndex,
                             comment = text
                         )

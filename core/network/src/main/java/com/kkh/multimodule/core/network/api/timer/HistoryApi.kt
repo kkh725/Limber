@@ -42,7 +42,9 @@ interface HistoryApi {
      */
     @GET("/api/timer-histories/search")
     suspend fun getTimerHistoriesWithRetrospect(
-        @Body historyRequestDto: HistoryRequestDto
+        @Query("userId") userId: String,
+        @Query("searchRange") searchRange: String = "WEEKLY",
+        @Query("onlyIncompleteRetrospect") onlyIncompleteRetrospect: Boolean = false
     ): HistoryWithRetrospectsResponse
 
     /**

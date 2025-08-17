@@ -37,14 +37,16 @@ internal class HistoryDataSourceImpl @Inject constructor(
     /**
      * 이력 조회 회고 여부 포함
      */
-    override suspend fun getHistoryListWithRetrospects(historyRequestDto: HistoryRequestDto): HistoryWithRetrospectsResponse {
-        return historyApi.getTimerHistoriesWithRetrospect(historyRequestDto)
+    override suspend fun getHistoryListWithRetrospects(
+        userId: String
+    ): HistoryWithRetrospectsResponse {
+        return historyApi.getTimerHistoriesWithRetrospect(userId)
     }
 
     /**
      * 특정 이력 조회
      */
-    override suspend fun getLatestHistoryId(userId : String, timerId : Int): LatestTimerResponse {
+    override suspend fun getLatestHistoryId(userId: String, timerId: Int): LatestTimerResponse {
         return historyApi.getTimerLatestId(userId, timerId)
     }
 

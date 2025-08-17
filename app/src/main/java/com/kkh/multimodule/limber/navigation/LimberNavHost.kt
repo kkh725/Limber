@@ -126,10 +126,16 @@ fun LimberNavHost(
                 onNavigateToHome = navController::navigateToHomeScreen
             )
 
-            laboratoryGraph()
-
+            laboratoryGraph(
+                onNavigateToRecall = { item ->
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+                    navController.navigateToRecallScreen(
+                        timerId = item.timerId,
+                        timerHistoryId = item.id
+                    )
+                }
+            )
         }
     }
-
 }
 
