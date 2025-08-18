@@ -20,10 +20,15 @@ import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
 import jakarta.inject.Inject
 import jakarta.inject.Named
+import android.content.Context
+import android.content.SharedPreferences
+import java.util.UUID
+import dagger.hilt.android.qualifiers.ApplicationContext
 
-class TimerRepositoryImpl @Inject constructor(
+public class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
-    private val localDataSource: LocalDataSource
+    private val localDataSource: LocalDataSource,
+    @ApplicationContext private val context: Context
 ) :
     TimerRepository {
 
@@ -36,7 +41,8 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        TimerCode.IMMEDIATE.text
+                        TimerCode.IMMEDIATE.text,
+                        getOrCreateUUID()
                     )
                 )
             if (response.success) {
@@ -68,7 +74,8 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        TimerCode.SCHEDULED.text
+                        TimerCode.SCHEDULED.text,
+                        getOrCreateUUID()
                     )
                 )
             if (response.success) {
@@ -113,7 +120,7 @@ class TimerRepositoryImpl @Inject constructor(
      */
     override suspend fun getTimerList(): Result<TimerListModel> =
         runCatching {
-            val response = timerDataSource.getTimerList(com.kkh.multimodule.core.domain.UUID)
+            val response = timerDataSource.getTimerList(getOrCreateUUID())
             if (response.success) {
                 response.data?.toDomainList() ?: emptyList()
             } else {
@@ -155,7 +162,7 @@ class TimerRepositoryImpl @Inject constructor(
      */
     override suspend fun writeRetrospects(requestModel: RetrospectsRequestModel): Result<Unit> =
         runCatching {
-            val response = timerDataSource.writeRetrospects(requestModel.toDto())
+            val response = timerDataSource.writeRetrospects(requestModel.toDto(getOrCreateUUID()))
             if (response.success) {
                 response.data
             } else {
@@ -163,5 +170,15 @@ class TimerRepositoryImpl @Inject constructor(
                 throw TimerApiException(error)
             }
         }
-}
 
+    private fun getOrCreateUUID(): String {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val key = "limber_user_uuid"
+        var uuid = prefs.getString(key, null)
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString()
+            prefs.edit().putString(key, uuid).apply()
+        }
+        return uuid
+    }
+}

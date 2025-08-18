@@ -14,15 +14,19 @@ import com.kkh.multimodule.core.ui.ui.CommonEvent
 import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.concurrent.timer
+import androidx.core.content.edit
 
 @HiltViewModel
 class RecallViewModel @Inject constructor(
     private val appDataRepository: AppDataRepository,
     private val timerRepository: TimerRepository,
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    @ApplicationContext private val context: Context
 ) :
     ViewModel() {
 
@@ -96,7 +100,7 @@ class RecallViewModel @Inject constructor(
             val timerHistoryId = timerHistoryId.takeIf { it-> it != -1 } ?: it.id
             val request =
                 RetrospectsRequestModel(
-                    com.kkh.multimodule.core.domain.UUID,
+                    getOrCreateUUID(),
                     timerHistoryId = timerHistoryId,
                     timerId = currentTimerId,
                     immersion = immersion,
@@ -111,5 +115,16 @@ class RecallViewModel @Inject constructor(
         }.onFailure { throwable ->
             reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
         }
+    }
+
+    private fun getOrCreateUUID(): String {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val key = "limber_user_uuid"
+        var uuid = prefs.getString(key, null)
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString()
+            prefs.edit { putString(key, uuid) }
+        }
+        return uuid
     }
 }

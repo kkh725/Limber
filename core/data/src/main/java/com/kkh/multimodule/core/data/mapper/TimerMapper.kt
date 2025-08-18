@@ -33,8 +33,8 @@ fun SingleTimerRequestDto.toDomain() = SingleTimerModel(
     status = TimerStatusModel.OFF
 )
 
-fun SingleTimerModel.toRequestDto(timerCode: String) = SingleTimerRequestDto(
-    userId = com.kkh.multimodule.core.domain.UUID,
+fun SingleTimerModel.toRequestDto(timerCode: String, uuid: String) = SingleTimerRequestDto(
+    userId = uuid,
     title = title,
     timerCode = timerCode,
     focusTypeId = focusTypeId,
@@ -123,9 +123,9 @@ fun DeleteTimerListRequestModel.toDto() : DeleteTimerRequestDto =
 /**
  * timer 회고
  */
-fun RetrospectsRequestModel.toDto() : RetrospectsRequestDto =
+fun RetrospectsRequestModel.toDto(uuid: String) : RetrospectsRequestDto =
     RetrospectsRequestDto(
-        userId = com.kkh.multimodule.core.domain.UUID,
+        userId = uuid,
         timerHistoryId = timerHistoryId,
         timerId = timerId,
         immersion = immersion,
@@ -136,11 +136,11 @@ fun RetrospectsRequestModel.toDto() : RetrospectsRequestDto =
  * timer 이력
  */
 // DTO -> Domain 변환 (확인)
-fun HistoryResponseDto.toDomain(): HistoryModel =
+fun HistoryResponseDto.toDomain(uuid: String): HistoryModel =
     HistoryModel(
         id = this.id,
         timerId = this.timerId,
-        userId = com.kkh.multimodule.core.domain.UUID,
+        userId = uuid,
         title = this.title,
         focusTypeId = this.focusTypeId,
         repeatCycleCode = this.repeatCycleCode,
@@ -152,5 +152,5 @@ fun HistoryResponseDto.toDomain(): HistoryModel =
         endTime = this.endTime
     )
 
-fun List<HistoryResponseDto>.toDomain(): List<HistoryModel> =
-    this.map { it.toDomain() }
+fun List<HistoryResponseDto>.toDomain(uuid : String): List<HistoryModel> =
+    this.map { it.toDomain(uuid)}

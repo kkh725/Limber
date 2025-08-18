@@ -1,5 +1,6 @@
 package com.kkh.multimodule.core.data.di
 
+import android.content.Context
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.data.repository.AppDataRepositoryImpl
 import com.kkh.multimodule.core.data.repository.BlockReservationRepositoryImpl
@@ -17,52 +18,40 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
-
-    @Provides
+abstract class RepositoryModule {
+    @Binds
     @Singleton
-    fun provideAppDataRepository(
-        localDataSource: LocalDataSource
-    ): AppDataRepository {
-        return AppDataRepositoryImpl(localDataSource)
-    }
+    abstract fun bindAppDataRepository(
+        impl: AppDataRepositoryImpl
+    ): AppDataRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideBlockReservationRepository(
-        localDataSource: LocalDataSource
-    ): BlockReservationRepository{
-        return BlockReservationRepositoryImpl(localDataSource)
-    }
+    abstract fun bindBlockReservationRepository(
+        impl: BlockReservationRepositoryImpl
+    ): BlockReservationRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideOnBoardingRepository(
-        localDataSource: LocalDataSource
-    ): OnBoardingRepository{
-        return OnBoardingRepositoryImpl(localDataSource)
-    }
+    abstract fun bindOnBoardingRepository(
+        impl: OnBoardingRepositoryImpl
+    ): OnBoardingRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideTimerRepository(
-        timerDataSource: TimerDataSource,
-        localDataSource : LocalDataSource
-    ): TimerRepository{
-        return TimerRepositoryImpl(timerDataSource,localDataSource)
-    }
+    abstract fun bindTimerRepository(
+        impl: TimerRepositoryImpl
+    ): TimerRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideHistoryRepository(
-        historyDataSource: HistoryDataSource,
-    ): HistoryRepository {
-        return HistoryRepositoryImpl(historyDataSource)
-    }
-
+    abstract fun bindHistoryRepository(
+        impl: HistoryRepositoryImpl
+    ): HistoryRepository
 }

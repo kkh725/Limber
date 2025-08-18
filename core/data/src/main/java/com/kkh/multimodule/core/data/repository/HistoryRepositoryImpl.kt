@@ -1,5 +1,9 @@
 package com.kkh.multimodule.core.data.repository
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
+import android.provider.Settings
 import com.kkh.multimodule.core.data.error.TimerApiException
 import com.kkh.multimodule.core.data.error.TimerError
 import com.kkh.multimodule.core.data.mapper.toDomain
@@ -15,19 +19,25 @@ import com.kkh.multimodule.core.domain.repository.HistoryRepository
 import com.kkh.multimodule.core.network.datasource.history.HistoryDataSource
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
 import com.kkh.multimodule.core.network.model.request.history.TotalImmersionRequestDto
+import java.util.UUID
 import javax.inject.Inject
+import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
 
-class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: HistoryDataSource) :
+class HistoryRepositoryImpl @Inject constructor(
+    private val historyDataSource: HistoryDataSource,
+    @ApplicationContext private val context: Context
+) :
     HistoryRepository {
     /**
      * 타이머 이력 조회
      */
     override suspend fun getHistoryList(): Result<List<HistoryModel>> =
         runCatching {
-            val requestModel = HistoryRequestDto(userId = com.kkh.multimodule.core.domain.UUID)
+            val requestModel = HistoryRequestDto(userId = getOrCreateUUID())
             val response = historyDataSource.getHistoryList(requestModel)
             if (response.success) {
-                response.data?.toDomain() ?: emptyList()
+                response.data?.toDomain(getOrCreateUUID()) ?: emptyList()
             } else {
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)
@@ -37,9 +47,10 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
     /**
      * 회고 여부가 포함된 타이머 이력 조회
      */
-    override suspend fun getHistoryListWithRetrospects(): Result<List<HistoryWithRetrospectsModel>>{
+    override suspend fun getHistoryListWithRetrospects(): Result<List<HistoryWithRetrospectsModel>> {
         return runCatching {
-            val response = historyDataSource.getHistoryListWithRetrospects(com.kkh.multimodule.core.domain.UUID)
+            val response =
+                historyDataSource.getHistoryListWithRetrospects(getOrCreateUUID())
             if (response.success) {
                 response.data?.toDomain() ?: emptyList()
             } else {
@@ -56,7 +67,8 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
         timerId: Int
     ): Result<LatestTimerHistoryModel> =
         runCatching {
-            val response = historyDataSource.getLatestHistoryId(com.kkh.multimodule.core.domain.UUID, timerId)
+            val response =
+                historyDataSource.getLatestHistoryId(getOrCreateUUID(), timerId)
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
             } else {
@@ -73,7 +85,8 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
         endTime: String
     ): Result<TotalImmersionModel> =
         runCatching {
-            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+            val request =
+                TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
 
             val response = historyDataSource.getTotalImmersion(request)
             if (response.success) {
@@ -92,7 +105,8 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
         endTime: String
     ): Result<TotalActualModel> =
         runCatching {
-            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+            val request =
+                TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
             val response = historyDataSource.getTotalActual(request)
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
@@ -110,7 +124,8 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
         endTime: String
     ): Result<List<ImmersionByWeekdayModel>> =
         runCatching {
-            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+            val request =
+                TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
             val response = historyDataSource.getImmersionByWeekend(request)
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()
@@ -128,7 +143,8 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
         endTime: String
     ): Result<List<FocusDistributionModel>> =
         runCatching {
-            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+            val request =
+                TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
             val response = historyDataSource.getFocusDistribution(request)
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()
@@ -146,7 +162,8 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
         endTime: String
     ): Result<List<ActualByWeekendModel>> =
         runCatching {
-            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+            val request =
+                TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
             val response = historyDataSource.getActualByWeekend(request)
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()
@@ -155,4 +172,9 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
                 throw TimerApiException(error)
             }
         }
+
+    @SuppressLint("HardwareIds")
+    private fun getOrCreateUUID(): String {
+        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    }
 }

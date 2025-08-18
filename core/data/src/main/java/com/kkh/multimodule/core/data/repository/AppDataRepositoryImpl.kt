@@ -5,7 +5,7 @@ import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-internal class AppDataRepositoryImpl @Inject constructor(
+class AppDataRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : AppDataRepository {
 
