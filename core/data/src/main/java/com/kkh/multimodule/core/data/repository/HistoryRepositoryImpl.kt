@@ -22,9 +22,9 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
     /**
      * 타이머 이력 조회
      */
-    override suspend fun getHistoryList(userId: String): Result<List<HistoryModel>> =
+    override suspend fun getHistoryList(): Result<List<HistoryModel>> =
         runCatching {
-            val requestModel = HistoryRequestDto(userId = userId)
+            val requestModel = HistoryRequestDto(userId = com.kkh.multimodule.core.domain.UUID)
             val response = historyDataSource.getHistoryList(requestModel)
             if (response.success) {
                 response.data?.toDomain() ?: emptyList()
@@ -37,9 +37,9 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
     /**
      * 회고 여부가 포함된 타이머 이력 조회
      */
-    override suspend fun getHistoryListWithRetrospects(userId: String): Result<List<HistoryWithRetrospectsModel>>{
+    override suspend fun getHistoryListWithRetrospects(): Result<List<HistoryWithRetrospectsModel>>{
         return runCatching {
-            val response = historyDataSource.getHistoryListWithRetrospects(userId)
+            val response = historyDataSource.getHistoryListWithRetrospects(com.kkh.multimodule.core.domain.UUID)
             if (response.success) {
                 response.data?.toDomain() ?: emptyList()
             } else {
@@ -53,11 +53,10 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 가장 최근 이력 조회
      */
     override suspend fun getLatestHistoryId(
-        userId: String,
         timerId: Int
     ): Result<LatestTimerHistoryModel> =
         runCatching {
-            val response = historyDataSource.getLatestHistoryId(userId, timerId)
+            val response = historyDataSource.getLatestHistoryId(com.kkh.multimodule.core.domain.UUID, timerId)
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
             } else {
@@ -70,12 +69,11 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 전체 몰입도
      */
     override suspend fun getTotalImmersion(
-        userId: String,
         startTime: String,
         endTime: String
     ): Result<TotalImmersionModel> =
         runCatching {
-            val request = TotalImmersionRequestDto(userId, startTime, endTime)
+            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
 
             val response = historyDataSource.getTotalImmersion(request)
             if (response.success) {
@@ -90,12 +88,11 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 전체 총 실험시간
      */
     override suspend fun getTotalActual(
-        userId: String,
         startTime: String,
         endTime: String
     ): Result<TotalActualModel> =
         runCatching {
-            val request = TotalImmersionRequestDto(userId, startTime, endTime)
+            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
             val response = historyDataSource.getTotalActual(request)
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
@@ -109,12 +106,11 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 요일 별 총 몰입도
      */
     override suspend fun getImmersionByWeekend(
-        userId: String,
         startTime: String,
         endTime: String
     ): Result<List<ImmersionByWeekdayModel>> =
         runCatching {
-            val request = TotalImmersionRequestDto(userId, startTime, endTime)
+            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
             val response = historyDataSource.getImmersionByWeekend(request)
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()
@@ -128,12 +124,11 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 몰입 유형 별 실제 시간 합
      */
     override suspend fun getFocusDistribution(
-        userId: String,
         startTime: String,
         endTime: String
     ): Result<List<FocusDistributionModel>> =
         runCatching {
-            val request = TotalImmersionRequestDto(userId, startTime, endTime)
+            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
             val response = historyDataSource.getFocusDistribution(request)
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()
@@ -147,12 +142,11 @@ class HistoryRepositoryImpl @Inject constructor(private val historyDataSource: H
      * 요일 별 실험 시간
      */
     override suspend fun getActualByWeekend(
-        userId: String,
         startTime: String,
         endTime: String
     ): Result<List<ActualByWeekendModel>> =
         runCatching {
-            val request = TotalImmersionRequestDto(userId, startTime, endTime)
+            val request = TotalImmersionRequestDto(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
             val response = historyDataSource.getActualByWeekend(request)
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()

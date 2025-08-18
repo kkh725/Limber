@@ -33,8 +33,8 @@ fun SingleTimerRequestDto.toDomain() = SingleTimerModel(
     status = TimerStatusModel.OFF
 )
 
-fun SingleTimerModel.toRequestDto(userId: String, timerCode: String) = SingleTimerRequestDto(
-    userId = userId,
+fun SingleTimerModel.toRequestDto(timerCode: String) = SingleTimerRequestDto(
+    userId = com.kkh.multimodule.core.domain.UUID,
     title = title,
     timerCode = timerCode,
     focusTypeId = focusTypeId,
@@ -125,7 +125,7 @@ fun DeleteTimerListRequestModel.toDto() : DeleteTimerRequestDto =
  */
 fun RetrospectsRequestModel.toDto() : RetrospectsRequestDto =
     RetrospectsRequestDto(
-        userId = userId,
+        userId = com.kkh.multimodule.core.domain.UUID,
         timerHistoryId = timerHistoryId,
         timerId = timerId,
         immersion = immersion,
@@ -140,7 +140,7 @@ fun HistoryResponseDto.toDomain(): HistoryModel =
     HistoryModel(
         id = this.id,
         timerId = this.timerId,
-        userId = this.userId,
+        userId = com.kkh.multimodule.core.domain.UUID,
         title = this.title,
         focusTypeId = this.focusTypeId,
         repeatCycleCode = this.repeatCycleCode,

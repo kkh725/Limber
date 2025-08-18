@@ -43,7 +43,7 @@ class RecallViewModel @Inject constructor(
 
     // 이력 리스트 가져오기.
     private suspend fun getHistoryList() {
-        val res = historyRepository.getHistoryListWithRetrospects(com.kkh.multimodule.core.domain.UUID)
+        val res = historyRepository.getHistoryListWithRetrospects()
 
         res.onSuccess {
             

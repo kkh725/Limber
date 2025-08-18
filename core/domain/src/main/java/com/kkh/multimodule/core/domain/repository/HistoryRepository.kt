@@ -11,19 +11,19 @@ import com.kkh.multimodule.core.domain.model.history.TotalImmersionModel
 
 interface HistoryRepository {
     // 이력조회
-    suspend fun getHistoryList(userId: String): Result<List<HistoryModel>>
+    suspend fun getHistoryList(): Result<List<HistoryModel>>
     // 회고 여부 파악한 이력조회
-    suspend fun getHistoryListWithRetrospects(userId: String): Result<List<HistoryWithRetrospectsModel>>
+    suspend fun getHistoryListWithRetrospects(): Result<List<HistoryWithRetrospectsModel>>
     // 가장 최근 이력 조회
-    suspend fun getLatestHistoryId(userId : String, timerId : Int) : Result<LatestTimerHistoryModel>
+    suspend fun getLatestHistoryId(timerId : Int) : Result<LatestTimerHistoryModel>
     // 전체 몰입도// 전체 몰입도
-    suspend fun getTotalImmersion(userId: String, startTime : String, endTime : String): Result<TotalImmersionModel>
+    suspend fun getTotalImmersion(startTime : String, endTime : String): Result<TotalImmersionModel>
     // 전체 총 실험시간
-    suspend fun getTotalActual(userId: String, startTime : String, endTime : String): Result<TotalActualModel>
+    suspend fun getTotalActual(startTime : String, endTime : String): Result<TotalActualModel>
     // 요일별 총 몰입도
-    suspend fun getImmersionByWeekend(userId: String, startTime : String, endTime : String): Result<List<ImmersionByWeekdayModel>>
+    suspend fun getImmersionByWeekend (startTime : String, endTime : String): Result<List<ImmersionByWeekdayModel>>
     // 몰입유형 별 실제 시간 합
-    suspend fun getFocusDistribution(userId: String, startTime : String, endTime : String): Result<List<FocusDistributionModel>>
+    suspend fun getFocusDistribution(startTime : String, endTime : String): Result<List<FocusDistributionModel>>
     // 요일별 총 실험 시간
-    suspend fun getActualByWeekend(userId: String, startTime : String, endTime : String): Result<List<ActualByWeekendModel>>
+    suspend fun getActualByWeekend(startTime : String, endTime : String): Result<List<ActualByWeekendModel>>
 }

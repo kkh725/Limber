@@ -106,7 +106,6 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun getFocusDistributionList() {
         val res = historyRepository.getFocusDistribution(
-            com.kkh.multimodule.core.domain.UUID,
             startTime = getTodayDate(),
             endTime = getTodayDate()
         )

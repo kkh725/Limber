@@ -38,7 +38,7 @@ class ReportViewModel @Inject constructor(
 
     // 총 집중시간
     private suspend fun getTotalHistoryTime(startTime: String, endTime: String) {
-        val res = historyRepository.getTotalActual(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+        val res = historyRepository.getTotalActual(startTime, endTime)
 
         res.onSuccess {
             reducer.setState(uiState.value.copy(totalTime = it.label))
@@ -49,7 +49,7 @@ class ReportViewModel @Inject constructor(
 
     // 총 몰입도
     private suspend fun getTotalImmersion(startTime: String, endTime: String) {
-        val res = historyRepository.getTotalImmersion(com.kkh.multimodule.core.domain.UUID, startTime, endTime)
+        val res = historyRepository.getTotalImmersion(startTime, endTime)
 
         res.onSuccess {
             reducer.setState(

@@ -36,7 +36,6 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        userId = com.kkh.multimodule.core.domain.UUID,
                         TimerCode.IMMEDIATE.text
                     )
                 )
@@ -69,7 +68,6 @@ class TimerRepositoryImpl @Inject constructor(
             val response =
                 timerDataSource.reserveTimer(
                     request.toRequestDto(
-                        userId = com.kkh.multimodule.core.domain.UUID,
                         TimerCode.SCHEDULED.text
                     )
                 )
@@ -113,9 +111,9 @@ class TimerRepositoryImpl @Inject constructor(
     /**
      * 타이머 리스트 get
      */
-    override suspend fun getTimerList(userId: String): Result<TimerListModel> =
+    override suspend fun getTimerList(): Result<TimerListModel> =
         runCatching {
-            val response = timerDataSource.getTimerList(userId)
+            val response = timerDataSource.getTimerList(com.kkh.multimodule.core.domain.UUID)
             if (response.success) {
                 response.data?.toDomainList() ?: emptyList()
             } else {

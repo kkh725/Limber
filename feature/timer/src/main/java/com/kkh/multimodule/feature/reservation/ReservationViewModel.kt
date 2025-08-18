@@ -60,7 +60,7 @@ class ReservationViewModel @Inject constructor(
     // 사용자 예약 목록 조회
     private suspend fun getTimerList() {
         reducer.sendEffect(CommonEffect.IsLoading(true))
-        timerRepository.getTimerList(com.kkh.multimodule.core.domain.UUID)
+        timerRepository.getTimerList()
             .onSuccess {
                 reducer.setState(uiState.value.copy(ReservationItemModelList = it.toReservationItemModelList()))
                 //empty가 아닐때에만 로컬 저장
@@ -125,7 +125,7 @@ class ReservationViewModel @Inject constructor(
             .onSuccess {
                 Log.d(TAG, "deleteTimer: success")
                 //삭제하면 다시 서버로 요청
-                timerRepository.getTimerList(com.kkh.multimodule.core.domain.UUID)
+                timerRepository.getTimerList()
                     .onSuccess {
                         reducer.setState(uiState.value.copy(ReservationItemModelList = it.toReservationItemModelList()))
                         //empty가 아닐때에만 로컬 저장
