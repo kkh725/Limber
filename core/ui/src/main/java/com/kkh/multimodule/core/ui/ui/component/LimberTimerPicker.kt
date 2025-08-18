@@ -76,9 +76,8 @@ fun LimberTimePicker24(
     timeFormat: TimeFormat = TimeFormat.TWENTY_FOUR_HOUR,
     onValueChanged: (LocalTime) -> Unit
 ) {
-
     var selectedTime by rememberSaveable { mutableStateOf(initial) } // 외부 제어용 상태
-
+    var hasCalledInitial by remember { mutableStateOf(false) }
 
     Box(Modifier
         .fillMaxWidth()
@@ -98,13 +97,14 @@ fun LimberTimePicker24(
                 shape = RoundedCornerShape(8.dp)
             )
         ) { newTime ->
-            onValueChanged(newTime)
+            if (!hasCalledInitial && newTime == initial) {
+                // 최초 렌더에서는 콜백 수행 안함, flag만 set
+                hasCalledInitial = true
+                selectedTime = newTime
+            } else {
+                selectedTime = newTime
+                onValueChanged(newTime)
+            }
         }
-//        Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-//            Spacer(Modifier.fillMaxWidth(0.585f))
-//            Text("시", style = LimberTextStyle.Heading2, color = Gray800)
-//            Spacer(Modifier.fillMaxWidth(0.56f))
-//            Text("분", style = LimberTextStyle.Heading2, color = Gray800)
-//        }
     }
 }

@@ -11,6 +11,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,7 +49,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -117,9 +129,15 @@ fun ReservationBottomSheet(
         previousHeightFraction = targetHeightFraction
     }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
     ModalBottomSheet(
         containerColor = Color.White,
-        modifier = modifier,
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    keyboardController?.hide()
+                }
+            },
         onDismissRequest = onDismissRequest,
         sheetState = sheetState
     ) {
@@ -198,7 +216,7 @@ fun ReservationBottomSheet(
                                     )
                                 )
                             },
-                            head = "반복 설정"
+                            head = "시작 시간"
                         )
                     }
 
@@ -221,7 +239,7 @@ fun ReservationBottomSheet(
                                     )
                                 )
                             },
-                            head = "반복 설정",
+                            head = "종료 시간",
                         )
                     }
 
@@ -312,7 +330,16 @@ fun ReservationBottomSheetContent(
     onClickTimerButton: (Int) -> Unit = {},
     onClickReservationButton: () -> Unit = {}
 ) {
-    Box(Modifier.fillMaxSize()) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { keyboardController?.hide() })
+    ) {
         Column(
             Modifier
                 .fillMaxSize()
@@ -337,19 +364,16 @@ fun ReservationBottomSheetContent(
                 ReservationInfo = ReservationInfo,
                 onClickButton = onClickTimerButton
             )
-            Spacer(Modifier.height(120.dp))
+            Spacer(Modifier.weight(1f))
 
+            LimberGradientButton(
+                onClick = onClickReservationButton,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp),
+                text = "예약하기"
+            )
         }
-    }
-    Box(Modifier.fillMaxSize()) {
-        LimberGradientButton(
-            onClick = onClickReservationButton,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 20.dp),
-            text = "예약하기"
-        )
     }
 }
 
@@ -364,7 +388,7 @@ fun ReservationFocusSection(
             .padding(horizontal = 20.dp)
     ) {
         Text(
-            "무엇에 집중하고 싶으신가요?",
+            "어떤 활동에 집중하고 싶으신가요?",
             style = LimberTextStyle.Heading4
         )
         Spacer(Modifier.height(12.dp))
@@ -374,7 +398,7 @@ fun ReservationFocusSection(
         )
         Spacer(Modifier.height(40.dp))
         Text(
-            "얼마나 집중하시겠어요?",
+            "얼마 동안 집중할까요?",
             style = LimberTextStyle.Heading4
         )
     }
@@ -410,6 +434,7 @@ fun ReservationSetting(
     helperText: String = "50자 이내로 작성해주세요.",
     helperColor: Color = Gray500
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier
             .fillMaxWidth()
@@ -420,7 +445,17 @@ fun ReservationSetting(
         Spacer(Modifier.height(12.dp))
         LimberOutlinedTextField(
             value = value,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onKeyEvent { keyEvent ->
+                    if (keyEvent.type == KeyEventType.KeyUp && keyEvent.key == Key.Enter) {
+                        keyboardController?.hide()
+                        true
+                    } else false
+                },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+
+
             onValueChange = onValueChange,
             placeholder = {
                 Text(

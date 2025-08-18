@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,9 +28,9 @@ import com.kkh.multimodule.feature.onboarding.contents.permission.TopBar
 
 
 @Composable
-fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {}){
+fun StartScreen(navigateToHome: () -> Unit = {}, onClickBack: () -> Unit = {}) {
 
-    val viewModel : OnboardingViewModel = hiltViewModel()
+    val viewModel: OnboardingViewModel = hiltViewModel()
 
     Column(
         Modifier
@@ -46,7 +47,11 @@ fun StartScreen(navigateToHome : () -> Unit = {}, onClickBack : () -> Unit = {})
             color = Gray800
         )
         Spacer(Modifier.height(90.dp))
-        Image(painter = painterResource(R.drawable.onboarding_start), contentDescription = null)
+        Image(
+            painter = painterResource(R.drawable.bg_onboarding_start),
+            modifier = Modifier.size(335.dp, 348.dp),
+            contentDescription = null
+        )
         Spacer(Modifier.weight(1f))
         Box(
             Modifier

@@ -368,7 +368,7 @@ fun TimerScreenContent(
             ) {
                 Spacer(modifier = Modifier.height(48.dp))
                 Text(
-                    "어떤 상황에 집중하고 싶은가요?",
+                    "어떤 활동에 집중하고 싶은가요?",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     style = LimberTextStyle.Heading3,

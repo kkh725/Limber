@@ -3,6 +3,7 @@ package com.kkh.multimodule.feature.home
 import android.annotation.SuppressLint
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.util.Log
 import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.accessibility.AppInfoProvider
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
@@ -50,14 +51,17 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
     override suspend fun reduce(oldState: HomeState, event: HomeEvent) {
         when (event) {
             is HomeEvent.EnterHomeScreen -> {
-                val context = event.context.applicationContext
-
+                // sheet이 올라오는지 내려가는지 확인
                 val newList = withContext(Dispatchers.IO) {
-                    AppInfoProvider.getUsageAppInfoList(context, UsageStatsManager.INTERVAL_DAILY)
+                    AppInfoProvider.getUsageAppInfoList(event.context, period = UsageStatsManager.INTERVAL_MONTHLY)
                 }
+                Log.d("TAG", "reduce: ${newList.first()}${newList[1]}${newList[2]}")
 
-                // UI 스레드에서 상태 업데이트
-                setState(oldState.copy(usageAppInfoList = newList))
+                setState(
+                    oldState.copy(
+                        usageAppInfoList = newList
+                    )
+                )
             }
             is HomeEvent.SetBlockingAppList -> {
                 setState(oldState.copy(blockingAppPackageList = event.appList))

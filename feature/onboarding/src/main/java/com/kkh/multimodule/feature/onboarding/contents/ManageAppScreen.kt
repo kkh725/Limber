@@ -54,7 +54,13 @@ fun ManageAppScreen(navigateToStart : () -> Unit) {
         mutableStateOf(List(appList.size) { false })
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.sendEvent(OnboardingEvent.OnEnterScreen(context))
+
+    }
+
     LaunchedEffect(appList) {
+        checkedList = List(appList.size) { false }
         if (appList.isNotEmpty()) {
             Log.d("ManageAppScreen", "appList updated: ${appList.size}")
             isSheetVisible = true

@@ -243,7 +243,7 @@ fun ReservationTopBar(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "진행중인 실험",
+                text = "진행 예정인 실험",
                 style = LimberTextStyle.Heading4,
                 color = Gray800
             )

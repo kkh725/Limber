@@ -23,6 +23,7 @@ data class OnBoardingState(
 }
 
 sealed class OnboardingEvent : UiEvent {
+    data class OnEnterScreen(val context: Context)  : OnboardingEvent()
     data class OnClickRegisterButton(val context: Context) : OnboardingEvent()
     data class OnCompleteRegisterButton (val appList : List<AppInfo>): OnboardingEvent()
     data object OnCompleteOnBoarding : OnboardingEvent()
@@ -33,6 +34,19 @@ class OnboardingReducer(state: OnBoardingState) : Reducer<OnBoardingState, Onboa
 
     override suspend fun reduce(oldState: OnBoardingState, event: OnboardingEvent) {
         when (event) {
+            is OnboardingEvent.OnEnterScreen -> {
+                // sheet이 올라오는지 내려가는지 확인
+                val newList = withContext(Dispatchers.IO) {
+                    AppInfoProvider.getUsageAppInfoList(event.context, period = UsageStatsManager.INTERVAL_MONTHLY)
+                }
+
+                setState(
+                    oldState.copy(
+                        usageAppInfoList = newList
+                    )
+                )
+            }
+
             is OnboardingEvent.OnClickRegisterButton -> {
                 val context = event.context.applicationContext
 

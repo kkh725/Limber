@@ -105,7 +105,7 @@ fun ActiveTimerScreen(
     val coroutineScope = rememberCoroutineScope()
     var tempLeftTime by remember { mutableStateOf(leftTime) }
 
-    var imageRes by remember { mutableStateOf(R.drawable.bg_active_timer_light) }
+    var imageRes by remember { mutableStateOf(R.drawable.bg_active_timer) }
 
     val sheetState = rememberModalBottomSheetState()
     val isSheetOpen = uiState.sheetState
@@ -272,7 +272,7 @@ fun CircularProgressBarWithHandleImage(
     percentage: Float,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
-    backgroundColor: Color = LimberColorStyle.Primary_Dark,
+    backgroundColor: Color = Color(0xFF6935A9),
     handleImage: ImageBitmap
 ) {
     val configuration = LocalConfiguration.current
@@ -446,13 +446,13 @@ fun TypeFocusText(
             )
             Text(
                 typeText,
-                style = LimberTextStyle.Heading4,
+                style = LimberTextStyle.Heading3,
                 color = LimberColorStyle.Primary_Main,
                 textAlign = TextAlign.Center
             )
             Text(
                 "에 집중하는 실험",
-                style = LimberTextStyle.Heading4,
+                style = LimberTextStyle.Heading3,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )

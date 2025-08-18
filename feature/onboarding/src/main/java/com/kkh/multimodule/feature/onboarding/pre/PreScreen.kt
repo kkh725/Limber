@@ -28,7 +28,7 @@ fun PreOnboardingScreen1(onNavigateToNextScreen: () -> Unit = {}) {
     }
     Box(Modifier.fillMaxSize().background(LimberColorStyle.Primary_Main)) {
         Image(
-            painter = painterResource(R.drawable.onboarding_pre_1),
+            painter = painterResource(R.drawable.onboarding_prev1),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.align(Alignment.Center)
@@ -41,7 +41,7 @@ fun PreOnboardingScreen1(onNavigateToNextScreen: () -> Unit = {}) {
 fun PreOnboardingScreen2(onNavigateToOnboarding: () -> Unit = {}) {
     Box(Modifier.fillMaxSize().background(LimberColorStyle.Primary_Main)) {
         Image(
-            painter = painterResource(R.drawable.onboarding_pre_2),
+            painter = painterResource(R.drawable.onboarding_prev2),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.align(Alignment.Center)

@@ -197,6 +197,8 @@ private fun HomeScreenMainBody(
     val focusMinutes = convertTimeStringToMinutes(totalFocusTime)
     val dopamineMinutes = convertTimeStringToMinutes(totalDopamineTime)
 
+    val imageResId = if (focusMinutes > dopamineMinutes) R.drawable.lv1_good else R.drawable.lv1_sad
+
     Box(modifier = modifier) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -204,8 +206,8 @@ private fun HomeScreenMainBody(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_lv1_good),
-                modifier = Modifier.size(114.dp),
+                painter = painterResource(imageResId),
+                modifier = Modifier.size(140.dp),
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
@@ -249,7 +251,8 @@ fun HomeTopBar(
         Image(
             painter = painterResource(R.drawable.logo_limber),
             modifier = Modifier.size(65.dp, 20.dp),
-            contentDescription = "Back"
+            contentDescription = "Back",
+            colorFilter = ColorFilter.tint(LimberColorStyle.Primary_Light)
         )
         Spacer(Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -356,8 +359,8 @@ fun HomeMainContent(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("집중한 시간", style = LimberTextStyle.Body2, color = focusTextColor)
-                Text("도파민 노출시간", style = LimberTextStyle.Body2, color = dopamineTextColor)
+                Text("집중 시간", style = LimberTextStyle.Body3, color = focusTextColor)
+                Text("도파민 노출시간", style = LimberTextStyle.Body3, color = dopamineTextColor)
             }
             Spacer(Modifier.height(2.dp))
             Row(
@@ -449,7 +452,7 @@ fun HomeMainContent(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LimberText("분석 더보기", LimberTextStyle.Body2, Gray700)
+                LimberText("분석 더보기", LimberTextStyle.Body2, Gray600)
                 Image(painterResource(R.drawable.ic_next), contentDescription = "")
             }
         }
@@ -476,7 +479,7 @@ fun TodayActivityBar(
                 .background(
                     color = backgroundColor, shape = RoundedCornerShape(100.dp)
                 )
-                .padding(vertical = 12.dp, horizontal = 20.dp),
+                .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -484,7 +487,7 @@ fun TodayActivityBar(
                 painter = painterResource(imageRes),
                 contentDescription = "Star"
             )
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(6.dp))
             Row {
                 Text(
                     title,
