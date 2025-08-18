@@ -33,6 +33,7 @@ class TimerViewModel @Inject constructor(
             when (e) {
                 is TimerEvent.OnEnterTimerScreen -> {
                     setTimerState()
+                    setBottomSheetCheckedList()
                 }
 
                 is TimerEvent.OnClickSheetCompleteButton -> {
@@ -82,6 +83,13 @@ class TimerViewModel @Inject constructor(
     private suspend fun setTimerState() {
         val isTimerActive = appDataRepository.getBlockMode()
         reducer.setState(uiState.value.copy(isTimerActive = isTimerActive))
+    }
+
+    private suspend fun setBottomSheetCheckedList() {
+        val res = appDataRepository.getBlockedPackageList()
+        val appInfoList = uiState.value.appDataList
+        val checkedList = appInfoList.map { res.contains(it.packageName) }
+        reducer.setState(uiState.value.copy(checkedList = checkedList))
     }
 
     // 당장 타이머 시작.

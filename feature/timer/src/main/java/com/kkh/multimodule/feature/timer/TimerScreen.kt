@@ -88,12 +88,14 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome: () -> Unit
     val coroutineScope = rememberCoroutineScope()
 
     val appList = uiState.appDataList
+
+    val checkedList = uiState.checkedList
     val modalAppList = uiState.modalAppDataList
 
     var selectedTime by remember { mutableStateOf(LocalTime(1, 0)) }
 
     LaunchedEffect(Unit) {
-        timerViewModel.sendEvent(TimerEvent.OnEnterTimerScreen)
+        timerViewModel.sendEvent(TimerEvent.OnEnterTimerScreen(context))
 
         timerViewModel.sideEffect.collect { effect ->
             when (effect) {
@@ -205,11 +207,15 @@ fun TimerScreen(onNavigateToActiveHome: () -> Unit, onNavigateToHome: () -> Unit
     }
 
     if (isSheetVisible) {
-        RegisterBlockAppBottomSheet(sheetState = sheetState, onDismissRequest = {
-            timerViewModel.sendEvent(TimerEvent.ShowSheet(false, context))
-        }, onClickComplete = { checkedAppList ->
-            timerViewModel.sendEvent(TimerEvent.OnClickSheetCompleteButton(checkedAppList))
-        }, appList = appList)
+        RegisterBlockAppBottomSheet(
+            sheetState = sheetState, onDismissRequest = {
+                timerViewModel.sendEvent(TimerEvent.ShowSheet(false, context))
+            }, onClickComplete = { checkedAppList ->
+                timerViewModel.sendEvent(TimerEvent.OnClickSheetCompleteButton(checkedAppList))
+            }, appList = appList, checkedList = checkedList,
+            onCheckClicked = { index ->
+                timerViewModel.sendEvent(TimerEvent.ToggleCheckedIndex(index))
+            })
     }
 }
 
@@ -330,7 +336,7 @@ fun TimerScreenContent(
     selectedTime: LocalTime = LocalTime.fromSecondOfDay(1200),
     onValueChanged: (LocalTime) -> Unit = {}
 ) {
-    Box(modifier.fillMaxSize()){
+    Box(modifier.fillMaxSize()) {
         if (isActive) {
             Column(
                 modifier = modifier
@@ -397,7 +403,9 @@ fun TimerScreenContent(
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 15.5.dp)
         ) {
-            LimberSnackBar(text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
+            LimberSnackBar(
+                text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown"
+            )
         }
     }
 }

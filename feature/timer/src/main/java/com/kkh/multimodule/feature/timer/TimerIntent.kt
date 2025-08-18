@@ -7,6 +7,8 @@ import com.kkh.multimodule.core.accessibility.AppInfoProvider
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.core.ui.ui.CommonEffect
+import com.kkh.multimodule.core.ui.ui.CommonEvent
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
@@ -58,7 +60,8 @@ data class TimerState(
     val appDataList: List<AppInfo>,
     val modalAppDataList: List<AppInfo>,
     val startBlockReservationInfo : ReservationItemModel,
-    val isTimerActive : Boolean
+    val isTimerActive: Boolean,
+    val checkedList: List<Boolean> = emptyList()
 ) : UiState {
     companion object {
         fun init() = TimerState(
@@ -67,19 +70,22 @@ data class TimerState(
             appDataList = emptyList(),
             modalAppDataList = emptyList(),
             startBlockReservationInfo = ReservationItemModel.mockList().first(),
-            isTimerActive = false
+            isTimerActive = false,
+            checkedList = emptyList()
         )
     }
 }
 
 sealed class TimerEvent : UiEvent {
-    data object OnEnterTimerScreen : TimerEvent()
+    data class OnEnterTimerScreen(val context: Context) : TimerEvent()
     data class OnClickTimerScreenButton(val timerScreenState: TimerScreenType) : TimerEvent()
     data class OnClickFocusChip(val chipText: String) : TimerEvent()
     data class ShowSheet(val isSheetVisible: Boolean, val context: Context) : TimerEvent()
     data class ShowModal(val isModalVisible: Boolean, val context: Context) : TimerEvent()
     data class OnClickSheetCompleteButton(val appDataList: List<AppInfo>) : TimerEvent()
     data class OnClickStartTimerNow(val startBlockReservationInfo : ReservationItemModel, val context: Context) : TimerEvent()
+    data class UpdateCheckedList(val checkedList: List<Boolean>) : TimerEvent()
+    data class ToggleCheckedIndex(val index: Int) : TimerEvent()
 }
 
 sealed class SideEffect : UiEffect {
@@ -90,6 +96,19 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
 
     override suspend fun reduce(oldState: TimerState, event: TimerEvent) {
         when (event) {
+
+            is TimerEvent.OnEnterTimerScreen -> {
+                // sheet이 올라오는지 내려가는지 확인
+                val newList = withContext(Dispatchers.IO) {
+                    AppInfoProvider.getUsageAppInfoList(event.context, period = UsageStatsManager.INTERVAL_MONTHLY)
+                }
+
+                setState(
+                    oldState.copy(
+                        appDataList = newList
+                    )
+                )
+            }
             is TimerEvent.OnClickTimerScreenButton -> {
                 setState(oldState.copy(timerScreenState = event.timerScreenState))
             }
@@ -152,6 +171,17 @@ class TimerReducer(state: TimerState) : Reducer<TimerState, TimerEvent>(state) {
                         isModalVisible = false
                     )
                 )
+            }
+
+            is TimerEvent.UpdateCheckedList -> {
+                setState(oldState.copy(checkedList = event.checkedList))
+            }
+
+            is TimerEvent.ToggleCheckedIndex -> {
+                val updatedChecked = oldState.checkedList.toMutableList().also {
+                    it[event.index] = !it.getOrElse(event.index) { false }
+                }
+                setState(oldState.copy(checkedList = updatedChecked))
             }
             else -> {}
         }

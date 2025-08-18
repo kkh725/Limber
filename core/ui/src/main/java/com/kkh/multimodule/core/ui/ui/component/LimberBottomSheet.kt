@@ -65,12 +65,10 @@ fun RegisterBlockAppBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onClickComplete: (List<AppInfo>) -> Unit,
-    appList: List<AppInfo>
+    appList: List<AppInfo>,
+    checkedList: List<Boolean>,
+    onCheckClicked: (Int) -> Unit
 ) {
-
-    var checkedList by remember {
-        mutableStateOf(List(appList.size) { false })
-    }
 
     val scope = rememberCoroutineScope()
 
@@ -94,11 +92,7 @@ fun RegisterBlockAppBottomSheet(
             onClickComplete = onClickComplete,
             appList = appList,
             checkedList = checkedList,
-            onCheckClicked = { index ->
-                checkedList = checkedList.toMutableList().also {
-                    it[index] = !it[index]
-                }
-            }
+            onCheckClicked = onCheckClicked
         )
     }
 }
@@ -143,8 +137,8 @@ fun RegisterBlockAppBottomSheetContent(
                         onClickComplete(selectedApps)
                     }
                 },
-                enabled = appList.filterIndexed { index, _ -> checkedList[index] }.isNotEmpty(),
-                colors = ButtonDefaults.textButtonColors(disabledContentColor = Gray400),
+                enabled = checkedList.isNotEmpty() && appList.zip(checkedList).any { (_, checked) -> checked },
+                        colors = ButtonDefaults.textButtonColors(disabledContentColor = Gray400),
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(

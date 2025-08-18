@@ -44,7 +44,9 @@ class HomeViewModel @Inject constructor(
                     setPackageList()
                     getActiveTimerId()
                     getFocusDistributionList()
+                    setBottomSheetCheckedList()
                 }
+
 
                 is HomeEvent.EndTimer -> {
                     setBlockMode(false)
@@ -76,6 +78,14 @@ class HomeViewModel @Inject constructor(
     private suspend fun setBlockReservationList() {
         val list = reservationRepository.getReservationList()
         reducer.setState(uiState.value.copy(blockReservationItemList = list))
+    }
+
+    private suspend fun setBottomSheetCheckedList(){
+        val res = appDataRepository.getBlockedPackageList()
+        val appInfoList = uiState.value.usageAppInfoList
+
+        val checkedList = appInfoList.map { res.contains(it.packageName) }
+        reducer.setState(uiState.value.copy(checkedList=checkedList))
     }
 
     private suspend fun getActiveTimerId() {

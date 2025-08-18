@@ -99,6 +99,8 @@ fun HomeScreen(
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    var checkedList = uiState.checkedList
+
     val totalDopamineTime =
         sumTimeStringsToHourMinuteFormat(appInfoList.take(3).map { it.usageTime })
     val totalFocusTime =
@@ -171,7 +173,11 @@ fun HomeScreen(
                 isSheetVisible = false
                 homeViewModel.sendEvent(HomeEvent.OnCompleteRegisterButton(checkedAppList))
             },
-            appList = appInfoList
+            appList = appInfoList,
+            checkedList = checkedList,
+            onCheckClicked = { index ->
+                homeViewModel.sendEvent(HomeEvent.ToggleCheckedIndex(index))
+            }
         )
     }
 }

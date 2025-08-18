@@ -20,7 +20,8 @@ data class HomeState(
     val isTimerActive: Boolean = false,
     val leftTime : String,
     val currentTimerId : Int,
-    val focusDistributionList : List<FocusDistributionModel>
+    val focusDistributionList : List<FocusDistributionModel>,
+    val checkedList : List<Boolean> = List(usageAppInfoList.size) { false }
 ) : UiState {
     companion object {
         fun init() = HomeState(
@@ -39,6 +40,8 @@ sealed class HomeEvent : UiEvent {
     data class SetBlockingAppList(val appList: List<String>) : HomeEvent()
     data class SetIsTimerActive(val isActive: Boolean) : HomeEvent()
     data object EndTimer : HomeEvent()
+    data class UpdateCheckedList(val checkedList: List<Boolean>) : HomeEvent()
+    data class ToggleCheckedIndex(val index: Int) : HomeEvent()
 }
 
 class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
@@ -64,6 +67,16 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
             }
             is HomeEvent.EndTimer -> {
                 setState(oldState.copy(isTimerActive = false))
+            }
+            is HomeEvent.UpdateCheckedList -> {
+                setState(oldState.copy(checkedList = event.checkedList))
+            }
+
+            is HomeEvent.ToggleCheckedIndex -> {
+                val updatedChecked = oldState.checkedList.toMutableList().also {
+                    it[event.index] = !it[event.index]
+                }
+                setState(oldState.copy(checkedList = updatedChecked))
             }
             else -> {}
         }
