@@ -243,8 +243,8 @@ fun RecallItemList(
                     item = item,
                     onRecallClick = onRecallClick,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .animateContentSize()
+//                        .fillMaxWidth()
+//                        .animateContentSize()
                 )
             }
         }
@@ -259,7 +259,7 @@ fun RecallCard(
 ) {
     Row(
         modifier = modifier
-            .shadow(12.dp, RoundedCornerShape(10.dp), clip = true) // clip = true
+            .shadow(elevation = 12.dp, spotColor = Color(0x14000000), ambientColor = Color(0x14000000))
             .background(Color.White, RoundedCornerShape(10.dp))   // shape 같이 지정
             .fillMaxWidth()
             .height(116.dp)

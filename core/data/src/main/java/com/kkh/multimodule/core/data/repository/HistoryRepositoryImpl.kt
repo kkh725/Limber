@@ -1,9 +1,11 @@
 package com.kkh.multimodule.core.data.repository
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.SharedPreferences
 import android.provider.Settings
+import android.util.Log
 import com.kkh.multimodule.core.data.error.TimerApiException
 import com.kkh.multimodule.core.data.error.TimerError
 import com.kkh.multimodule.core.data.mapper.toDomain
@@ -72,6 +74,7 @@ class HistoryRepositoryImpl @Inject constructor(
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
             } else {
+                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)
             }
@@ -92,6 +95,7 @@ class HistoryRepositoryImpl @Inject constructor(
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
             } else {
+                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)
             }
@@ -111,6 +115,7 @@ class HistoryRepositoryImpl @Inject constructor(
             if (response.success) {
                 response.data?.toDomain() ?: throw Exception("Unknown")
             } else {
+                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)
             }
@@ -130,6 +135,7 @@ class HistoryRepositoryImpl @Inject constructor(
             if (response.success) {
                 response.data?.map { it.toDomain() } ?: emptyList()
             } else {
+                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
                 val error = TimerError.from(response.error?.code, response.error?.message)
                 throw TimerApiException(error)
             }
