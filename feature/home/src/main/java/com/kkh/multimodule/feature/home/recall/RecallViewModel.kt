@@ -1,6 +1,8 @@
 package com.kkh.multimodule.feature.home.recall
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.provider.Settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
@@ -116,14 +118,8 @@ class RecallViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("HardwareIds")
     private fun getOrCreateUUID(): String {
-        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val key = "limber_user_uuid"
-        var uuid = prefs.getString(key, null)
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString()
-            prefs.edit { putString(key, uuid) }
-        }
-        return uuid
+        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider.getAppInfoListFromPackageNames
 import com.kkh.multimodule.core.accessibility.block.BlockAlarmManager
 import com.kkh.multimodule.core.data.mapper.toReservationItemModel
-import com.kkh.multimodule.core.data.error.onLimberFailure
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository

@@ -1,5 +1,6 @@
 package com.kkh.multimodule.core.data.repository
 
+import android.annotation.SuppressLint
 import com.kkh.multimodule.core.data.error.TimerApiException
 import com.kkh.multimodule.core.data.error.TimerError
 import com.kkh.multimodule.core.data.mapper.toDomain
@@ -22,6 +23,7 @@ import jakarta.inject.Inject
 import jakarta.inject.Named
 import android.content.Context
 import android.content.SharedPreferences
+import android.provider.Settings
 import java.util.UUID
 import dagger.hilt.android.qualifiers.ApplicationContext
 
@@ -172,14 +174,8 @@ public class TimerRepositoryImpl @Inject constructor(
         }
 
     //uuid 생성
+    @SuppressLint("HardwareIds")
     private fun getOrCreateUUID(): String {
-        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val key = "limber_user_uuid"
-        var uuid = prefs.getString(key, null)
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString()
-            prefs.edit().putString(key, uuid).apply()
-        }
-        return uuid
+        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 }
