@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.onboarding.pre
+package com.kkh.multimodule.feature.onboarding.preview
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

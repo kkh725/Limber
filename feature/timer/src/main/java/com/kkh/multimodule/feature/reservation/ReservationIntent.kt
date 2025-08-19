@@ -2,14 +2,12 @@ package com.kkh.multimodule.feature.reservation
 
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
-import com.kkh.multimodule.core.domain.model.mockReservationItems
-import com.kkh.multimodule.feature.timer.ReservationScreenState
+import com.kkh.multimodule.feature.util.ReservationScreenState
 import com.kkh.multimodule.feature.timer.ChipInfo
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
-import kotlinx.datetime.LocalTime
 import kotlin.collections.map
 
 sealed class BottomSheetState {

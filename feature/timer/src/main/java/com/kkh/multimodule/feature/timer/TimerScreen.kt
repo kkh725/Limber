@@ -1,7 +1,6 @@
 package com.kkh.multimodule.feature.timer
 
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -59,9 +58,8 @@ import com.kkh.multimodule.core.ui.ui.component.LimberSnackBar
 import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.LimberTimePicker24
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
-import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
 import com.kkh.multimodule.core.ui.util.getStartAndEndTime
-import com.kkh.multimodule.feature.reservation.SideEffect
+import com.kkh.multimodule.feature.util.TimerScreenType
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 

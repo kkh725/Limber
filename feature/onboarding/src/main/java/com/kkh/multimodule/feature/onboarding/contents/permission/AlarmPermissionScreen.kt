@@ -32,8 +32,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import com.kkh.multimodule.core.accessibility.PermissionManager
-import com.kkh.multimodule.core.accessibility.PermissionManager.openExactAlarmSettings
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager.openExactAlarmSettings
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800

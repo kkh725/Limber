@@ -1,6 +1,4 @@
-package com.kkh.multimodule.feature.timer
-
-import kotlinx.datetime.LocalTime
+package com.kkh.multimodule.feature.util
 
 enum class TimerScreenType {
     Now, Reserved

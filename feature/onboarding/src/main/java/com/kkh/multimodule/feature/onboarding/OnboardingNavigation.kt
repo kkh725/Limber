@@ -10,8 +10,8 @@ import com.kkh.multimodule.feature.onboarding.contents.StartScreen
 import com.kkh.multimodule.feature.onboarding.contents.permission.AccessPermissionScreen
 import com.kkh.multimodule.feature.onboarding.contents.permission.AlarmPermissionScreen
 import com.kkh.multimodule.feature.onboarding.contents.permission.ScreenTimePermissionScreen
-import com.kkh.multimodule.feature.onboarding.pre.PreOnboardingScreen1
-import com.kkh.multimodule.feature.onboarding.pre.PreOnboardingScreen2
+import com.kkh.multimodule.feature.onboarding.preview.PreOnboardingScreen1
+import com.kkh.multimodule.feature.onboarding.preview.PreOnboardingScreen2
 
 object OnBoardingRoute {
     const val PreOnboarding1 = "PreOnboarding1"

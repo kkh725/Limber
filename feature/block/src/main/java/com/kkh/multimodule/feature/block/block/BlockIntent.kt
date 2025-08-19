@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.block
+package com.kkh.multimodule.feature.block.block
 
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent

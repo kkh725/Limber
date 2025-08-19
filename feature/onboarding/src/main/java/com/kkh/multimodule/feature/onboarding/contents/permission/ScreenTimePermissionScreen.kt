@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import com.kkh.multimodule.core.accessibility.PermissionManager.hasUsageStatsPermission
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager.hasUsageStatsPermission
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800

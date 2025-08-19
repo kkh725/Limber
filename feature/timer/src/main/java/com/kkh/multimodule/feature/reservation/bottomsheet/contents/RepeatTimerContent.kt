@@ -1,4 +1,4 @@
-package com.kkh.multimodule.feature.reservation.bottomsheet
+package com.kkh.multimodule.feature.reservation.bottomsheet.contents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

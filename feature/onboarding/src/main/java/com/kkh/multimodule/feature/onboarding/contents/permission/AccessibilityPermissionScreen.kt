@@ -36,8 +36,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.kkh.multimodule.core.accessibility.block.BlockedAppAccessibilityService
-import com.kkh.multimodule.core.accessibility.PermissionManager
-import com.kkh.multimodule.core.accessibility.PermissionManager.openAccessibilitySettings
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager.openAccessibilitySettings
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300

@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.domain.model.history.LatestTimerHistoryModel
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
@@ -36,6 +35,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.feature.laboratory.report.ReportPagerContent
 import com.kkh.multimodule.feature.laboratory.recall.RecallHistoryPagerContent
+import com.kkh.multimodule.feature.laboratory.util.LaboratoryScreenType
 import kotlinx.coroutines.launch
 
 @Composable

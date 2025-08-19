@@ -1,4 +1,4 @@
-package com.kkh.multimodule.core.accessibility
+package com.kkh.multimodule.core.accessibility.permission
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
@@ -13,7 +13,6 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 
 object PermissionManager {
@@ -37,7 +36,7 @@ object PermissionManager {
     fun openAccessibilitySettings(context: Context) {
         try {
             val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                Intent.setFlags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             context.startActivity(intent)
         } catch (e: Exception) {
@@ -52,7 +51,7 @@ object PermissionManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try {
                 val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    Intent.setFlags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 context.startActivity(intent)
             } catch (e: Exception) {

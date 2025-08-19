@@ -4,6 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.kkh.multimodule.feature.block.block.BlockNavRoutes
+import com.kkh.multimodule.feature.block.block.blockScreen
+import com.kkh.multimodule.feature.block.block.navigateToUnBlockComplete
+import com.kkh.multimodule.feature.block.block.navigateToUnBlockReason
+import com.kkh.multimodule.feature.block.block.unBlockCompleteScreen
+import com.kkh.multimodule.feature.block.block.unBlockReasonScreen
 
 @Composable
 fun BlockNavHost(
