@@ -58,6 +58,7 @@ import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.designsystem.snackbar.showImmediately
 import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.core.ui.ui.CommonEvent
+import com.kkh.multimodule.core.ui.ui.component.LimberCheckButton
 import com.kkh.multimodule.core.ui.ui.component.LimberFilterChip
 import com.kkh.multimodule.core.ui.ui.component.LimberRoundButton
 import com.kkh.multimodule.core.ui.ui.component.LimberSnackBar
@@ -147,11 +148,14 @@ fun RecallTopBar(
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(
-                modifier = Modifier.size(24.dp),
-                selected = radioSelected,
-                onClick = onRadioClick
-            )
+//            RadioButton(
+//                modifier = Modifier.size(24.dp),
+//                selected = radioSelected,
+//                onClick = onRadioClick
+//            )
+            LimberCheckButton(isChecked = radioSelected, onClick = {
+                onRadioClick()
+            })
             Spacer(Modifier.width(8.dp))
             LimberText(
                 "미회고만 보기",
