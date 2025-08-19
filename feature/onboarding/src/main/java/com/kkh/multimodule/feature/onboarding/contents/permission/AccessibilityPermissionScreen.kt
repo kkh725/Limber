@@ -97,6 +97,7 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
     // permission이 있다면 다음페이지로 이동
     LaunchedEffect(hasPermission) {
         if (hasPermission) {
+            sheetState.hide()
             animationPlaying = true
             delay(1000)
             animationPlaying = false

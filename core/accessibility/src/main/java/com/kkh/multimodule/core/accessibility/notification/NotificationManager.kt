@@ -55,7 +55,7 @@ class NotificationManager @Inject constructor(
 
         coroutineScope.launch {
             val currentTimerId =  timerRepository.getActiveTimerId()
-            val historyId = historyRepository.getLatestHistoryId(currentTimerId)
+            historyRepository.getLatestHistoryId(currentTimerId)
                 .onSuccess {
                     // 알림 클릭 시 열릴 Activity 지정
                     val intent = Intent(

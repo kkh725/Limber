@@ -13,6 +13,7 @@ import retrofit2.Response
 
 interface TimerDataSource {
     suspend fun reserveTimer(request: SingleTimerRequestDto): SingleTimerResponse
+    suspend fun unlockTimer(timerId: Int, failReason : String) : BaseResponse
     suspend fun getCurrentTimerStatus(timerId: Int): CurrentTimerStatusResponse
     suspend fun getSingleTimer(timerId: Int): SingleTimerResponse
     suspend fun getTimerList(userId: String): TimerListResponse

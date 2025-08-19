@@ -16,7 +16,7 @@ fun BlockNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     onClickCloseScreen: () -> Unit,
-    onNavigateToStartTimerNow : () -> Unit
+    onNavigateToRecall : () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -33,7 +33,7 @@ fun BlockNavHost(
         )
         unBlockCompleteScreen(
             onClickCloseScreen = onClickCloseScreen,
-            onNavigateToStartTimerNow = onNavigateToStartTimerNow
+            onNavigateToRecall = onNavigateToRecall
         )
     }
 }

@@ -82,7 +82,7 @@ fun UnBlockReasonScreen(onClickBack: () -> Unit, onNavigateToComplete: () -> Uni
             bottomBar = {
                 UnBlockBottomButton(onClick = {
                     isLoading = true
-                    blockViewModel.sendEvent(BlockEvent.OnClickUnBlockButton)
+                    blockViewModel.sendEvent(BlockEvent.OnClickUnBlockButton(selectedIndex))
                     // TODO: 선택된 이유 처리
                     println("선택된 인덱스: $selectedIndex")
                 }, enabled = selectedIndex != -1)

@@ -40,7 +40,7 @@ import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 @Composable
 fun UnBlockCompleteScreen(
     onClickCloseScreen: () -> Unit = {},
-    onNavigateToTimerStartNow: () -> Unit = {}
+    onNavigateToRecall: () -> Unit = {}
 ) {
     Scaffold(
         containerColor = Gray50,
@@ -59,7 +59,7 @@ fun UnBlockCompleteScreen(
                     .padding(bottom = 20.dp)
                     .navigationBarsPadding(),
                 onClickCloseScreen = onClickCloseScreen,
-                onClickMakeOtherTimer = onNavigateToTimerStartNow
+                onNavigateToRecall = onNavigateToRecall
             )
         }
     ) { paddingValues ->
@@ -132,7 +132,7 @@ fun UnBlockReasonContent(
 fun UnBlockCompleteBottomBar(
     modifier: Modifier = Modifier,
     onClickCloseScreen: () -> Unit,
-    onClickMakeOtherTimer: () -> Unit
+    onNavigateToRecall: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -150,8 +150,8 @@ fun UnBlockCompleteBottomBar(
         Spacer(modifier = Modifier.width(12.dp))
 
         LimberSquareButton(
-            onClick = onClickMakeOtherTimer,
-            text = "다른 타이머 만들기",
+            onClick = onNavigateToRecall,
+            text = "회고하기",
             modifier = Modifier.weight(1f)
         )
 

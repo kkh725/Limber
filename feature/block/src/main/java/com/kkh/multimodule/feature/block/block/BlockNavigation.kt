@@ -34,8 +34,8 @@ fun NavGraphBuilder.blockScreen(
 }
 
 fun NavGraphBuilder.unBlockReasonScreen(
-    onClickBack : () -> Unit,
-    onNavigateToComplete : () -> Unit
+    onClickBack: () -> Unit,
+    onNavigateToComplete: () -> Unit
 ) {
     composable(BlockNavRoutes.UNBLOCK_REASON) {
         UnBlockReasonScreen(onClickBack, onNavigateToComplete)
@@ -43,10 +43,13 @@ fun NavGraphBuilder.unBlockReasonScreen(
 }
 
 fun NavGraphBuilder.unBlockCompleteScreen(
-    onClickCloseScreen : () -> Unit,
-    onNavigateToStartTimerNow : () -> Unit
+    onClickCloseScreen: () -> Unit,
+    onNavigateToRecall: () -> Unit
 ) {
     composable(BlockNavRoutes.UNBLOCK_COMPLETE) {
-        UnBlockCompleteScreen(onClickCloseScreen, onNavigateToStartTimerNow)
+        UnBlockCompleteScreen(
+            onClickCloseScreen = onClickCloseScreen,
+            onNavigateToRecall = onNavigateToRecall
+        )
     }
 }

@@ -8,6 +8,7 @@ import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
 import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
 import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
+import com.kkh.multimodule.core.network.model.request.UnLockRequestDto
 import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
@@ -22,6 +23,11 @@ class TimerDataSourceImpl @Inject constructor(
 
     override suspend fun reserveTimer(request: SingleTimerRequestDto): SingleTimerResponse {
         return timerApi.reserveTimer(request)
+    }
+
+    override suspend fun unlockTimer(timerId: Int, failReason: String): BaseResponse {
+        val request = UnLockRequestDto(timerId, failReason)
+        return timerApi.unlockTimer(request)
     }
 
     override suspend fun getCurrentTimerStatus(timerId: Int): CurrentTimerStatusResponse {

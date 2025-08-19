@@ -26,6 +26,7 @@ import android.content.SharedPreferences
 import android.provider.Settings
 import java.util.UUID
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlin.concurrent.timer
 
 public class TimerRepositoryImpl @Inject constructor(
     private val timerDataSource: TimerDataSource,
@@ -88,6 +89,20 @@ public class TimerRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun unlockTimer(
+        timerId: Int,
+        failReason: String
+    ): Result<Unit> =
+        runCatching {
+            val response = timerDataSource.unlockTimer(timerId = timerId, failReason = failReason)
+            if (response.success) {
+                // 삭제 성공
+            } else {
+                // 에러 처리
+                throw (Exception("error"))
+            }
+        }
 
     /**
      * 타이머 현재 상태. (진행중, 레디 등)

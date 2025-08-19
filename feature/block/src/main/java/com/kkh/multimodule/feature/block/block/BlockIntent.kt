@@ -15,14 +15,14 @@ data class BlockState(
 }
 
 sealed class BlockEvent : UiEvent {
-    data object OnClickUnBlockButton : BlockEvent()
+    data class OnClickUnBlockButton(val reasonId : Int) : BlockEvent()
     data object OnClickContinueButton : BlockEvent()
 }
 
 class BlockReducer(state: BlockState) : Reducer<BlockState, BlockEvent>(state) {
     override suspend fun reduce(oldState: BlockState, event: BlockEvent) {
         when (event) {
-            BlockEvent.OnClickUnBlockButton -> {
+            is BlockEvent.OnClickUnBlockButton -> {
                 setState(oldState.copy(loadingState = "changed"))
             }
             BlockEvent.OnClickContinueButton -> {

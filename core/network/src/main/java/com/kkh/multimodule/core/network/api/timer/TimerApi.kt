@@ -5,6 +5,7 @@ import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
 import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.request.UnLockRequestDto
 import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
 import com.kkh.multimodule.core.network.model.response.TimerListResponse
@@ -25,6 +26,14 @@ interface TimerApi {
     suspend fun reserveTimer(
         @Body singleTimerRequest : SingleTimerRequestDto
     ): SingleTimerResponse
+
+    /**
+     * 타이머 잠금 해제[]
+     */
+    @POST("/api/timers/unlock")
+    suspend fun unlockTimer(
+        @Body unLockRequestDto: UnLockRequestDto
+    ): BaseResponse
 
     /**
      * 타이머 상태 조회

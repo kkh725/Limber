@@ -20,4 +20,8 @@ enum class RepeatCycleCodeModel(val code: String) {
     WEEKEND("WEEKEND")
 }
 
+enum class FailReason{
+    LACK_OF_FOCUS_INTENTION, NEED_BREAK, FINISHED_EARLY, EMERGENCY, EXTERNAL_DISTURBANCE, NONE
+}
+
 const val UUID = "UUID22"
