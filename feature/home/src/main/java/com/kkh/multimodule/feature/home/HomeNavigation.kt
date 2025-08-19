@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.kkh.multimodule.feature.home.activeTimer.ActiveTimerScreen
 import com.kkh.multimodule.feature.home.recall.RecallScreen
 
@@ -16,7 +17,6 @@ object HomeRoutes {
     const val HOME = "home"
     const val ACTIVE_TIMER = "active_timer"
     const val RECALL = "recall"
-
 }
 
 fun NavController.navigateToHomeScreen() {
@@ -37,8 +37,8 @@ fun NavController.navigateToActiveTimerScreen(leftTime: String, timerId: Int) {
 fun NavController.navigateToRecallScreen() =
     navigate(HomeRoutes.RECALL)
 
-fun NavController.navigateToRecallScreen(timerId: Int,timerHistoryId: Int,) {
-    navigate("${HomeRoutes.ACTIVE_TIMER}?timerId=$timerId&timerHistoryId=$timerHistoryId") {
+fun NavController.navigateToRecallScreen(timerId: Int, timerHistoryId: Int,) {
+    navigate("${HomeRoutes.RECALL}?timerId=$timerId&timerHistoryId=$timerHistoryId") {
         launchSingleTop = true
     }
 }
@@ -99,7 +99,10 @@ fun NavGraphBuilder.homeNavGraph(
     }
 
     composable(
-        route = "${HomeRoutes.ACTIVE_TIMER}?timerId={timerId}&timerHistoryId={timerHistoryId}",
+        route = "${HomeRoutes.RECALL}?timerId={timerId}&timerHistoryId={timerHistoryId}",
+        deepLinks = listOf(navDeepLink {
+            uriPattern = "limber://recall?timerId={timerId}&timerHistoryId={timerHistoryId}"
+        }),
         arguments = listOf(
             navArgument("timerId") {
                 type = NavType.IntType

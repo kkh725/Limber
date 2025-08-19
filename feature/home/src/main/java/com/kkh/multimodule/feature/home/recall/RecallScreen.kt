@@ -97,6 +97,7 @@ import kotlin.math.roundToInt
 fun RecallScreen(
     timerId : Int = -1,
     timerHistoryId : Int = -1,
+    setStateRecall : () -> Unit = {},
     onPopBackStack: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onNavigateToReport: () -> Unit = {},
@@ -125,8 +126,8 @@ fun RecallScreen(
     }
     val compositions = remember {
         listOf(
-            LottieCompositionSpec.RawRes(R.raw.flow_20_60),
             LottieCompositionSpec.RawRes(R.raw.flow_60_20),
+            LottieCompositionSpec.RawRes(R.raw.flow_20_60),
             LottieCompositionSpec.RawRes(R.raw.flow_60_100)
         )
     }
@@ -164,6 +165,7 @@ fun RecallScreen(
     }
 
     LaunchedEffect(Unit) {
+        setStateRecall()
         recallViewModel.uiEffect.collect { effect ->
             when (effect) {
 

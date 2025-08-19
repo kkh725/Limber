@@ -69,6 +69,14 @@ fun LimberNavHost(
     LaunchedEffect(Unit) {
         rootViewModel.sendEvent(RootEvent.Init)
     }
+    // 딥링크로 들어오면 바텀바 표기 x
+    LaunchedEffect(navController.currentBackStackEntryFlow) {
+        navController.currentBackStackEntryFlow.collect { entry ->
+            if (entry.destination.route?.startsWith(HomeRoutes.RECALL) == true) {
+                rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+            }
+        }
+    }
 
     if (isOnboardingChecked == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

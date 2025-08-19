@@ -66,6 +66,28 @@ data class LatestTimerHistoryModel(
     val focusTypeTitle: String,
     val retrospectSummary: String
 ){
+    companion object{
+        val mockLatestTimerHistory = LatestTimerHistoryModel(
+            id = 1,
+            timerId = 101,
+            userId = "user123",
+            title = "CS 공부 타이머",
+            focusTypeId = 5,
+            repeatCycleCode = "WEEKLY",
+            repeatDays = "MON,WED,FRI",
+            historyDt = "2025-08-19T14:30:00Z",   // ISO 8601
+            historyStatus = "COMPLETED",
+            failReason = null,
+            startTime = "2025-08-19T14:30:00Z",
+            endTime = "2025-08-19T15:30:00Z",
+            hasRetrospect = true,
+            retrospectId = 501,
+            retrospectImmersion = 4,
+            retrospectComment = "오늘은 집중이 잘 됐음 👍",
+            focusTypeTitle = "알고리즘 문제풀이",
+            retrospectSummary = "문제 3개 풀었음"
+        )
+    }
     fun focusTypeIdToCategory(focusTypeId: Int): String {
         return when (focusTypeId) {
             1 -> "학습"

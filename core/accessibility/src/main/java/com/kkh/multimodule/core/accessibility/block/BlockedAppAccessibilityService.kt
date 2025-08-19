@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
 import androidx.core.net.toUri
+import com.kkh.multimodule.core.accessibility.notification.NotificationManager
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,8 +30,10 @@ class BlockedAppAccessibilityService : AccessibilityService() {
 
     @Inject
     lateinit var appDataRepository: AppDataRepository
+
     @Inject
     lateinit var blockReservationRepository: BlockReservationRepository
+    @Inject lateinit var appNotificationManager: NotificationManager
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -44,25 +47,34 @@ class BlockedAppAccessibilityService : AccessibilityService() {
         coroutineScope.launch {
             appDataRepository.observeBlockMode().collect { newState ->
                 blockedPackageListState.value = appDataRepository.getBlockedPackageList()
+
+                // 이 전 상태가 true 였다가, false로 바뀐경우에만 호출
+                if (!newState && isBlockedState.value) {
+                    appNotificationManager.showTerminateTimerNotification()
+                }
+
                 isBlockedState.value = newState
+                Log.i("차단 상태 체크", "차단 상태 ${newState}")
+
             }
         }
         coroutineScope.launch {
-            blockReservationRepository.observeReservationList().distinctUntilChanged().collect { reservationList ->
-                Log.d("TAG", "saveReservationInfoList: 방출 완")
-                reservationList.filter { it.isToggleChecked }.forEach { reservation ->
-                    BlockAlarmManager.scheduleBlockTrigger(
-                        this@BlockedAppAccessibilityService,
-                        reservation,
-                        true
-                    )
-                    BlockAlarmManager.scheduleBlockTrigger(
-                        this@BlockedAppAccessibilityService,
-                        reservation,
-                        false
-                    )
+            blockReservationRepository.observeReservationList().distinctUntilChanged()
+                .collect { reservationList ->
+                    Log.d("TAG", "saveReservationInfoList: 방출 완")
+                    reservationList.filter { it.isToggleChecked }.forEach { reservation ->
+                        BlockAlarmManager.scheduleBlockTrigger(
+                            this@BlockedAppAccessibilityService,
+                            reservation,
+                            true
+                        )
+                        BlockAlarmManager.scheduleBlockTrigger(
+                            this@BlockedAppAccessibilityService,
+                            reservation,
+                            false
+                        )
+                    }
                 }
-            }
         }
     }
 

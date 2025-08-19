@@ -1,8 +1,10 @@
 package com.kkh.multimodule.feature.onboarding.contents.permission
 
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,19 +19,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -47,14 +58,20 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberAnimation
 import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
+import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
 
     val context = LocalContext.current
     var isRequestingPermission by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
 
     var hasPermission by remember {
         mutableStateOf(
@@ -87,8 +104,10 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
         }
     }
 
-    Box(Modifier
-        .fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+    ) {
         Column(
             Modifier
                 .fillMaxSize()
@@ -123,18 +142,113 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
                 LimberGradientButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        if (!hasPermission) {
-                            openAccessibilitySettings(context)
-                            isRequestingPermission = true
+                        coroutineScope.launch {
+                            isBottomSheetVisible = true
+                            sheetState.show()
                         }
                     },
-                    text = "동의하기"
+                    text = "접근성 권한 허용하기"
                 )
             }
             Spacer(Modifier.height(20.dp))
         }
-
     }
+
+    if (isBottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isBottomSheetVisible = false },
+            containerColor = Color.White,
+            sheetState = sheetState,
+            dragHandle = {
+                Box(
+                    Modifier
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .padding(end = 20.dp, top = 10.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    LimberCloseButton {
+                        isBottomSheetVisible = false
+                    }
+                }
+            }
+        ) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    text = buildAnnotatedString {
+                        append("아래의 방법대로 ")
+                        withStyle(style = SpanStyle(color = LimberColorStyle.Primary_Main)) {
+                            append("접근성 권한")
+                        }
+                        append("을 허용하면 도파민 앱을 차단할 수 있어요.")
+                    },
+                    style = LimberTextStyle.Heading3
+                )
+                Spacer(Modifier.height(20.dp))
+                Row {
+                    Text(
+                        "1. 아래의 버튼을 눌러",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Gray800
+                    )
+                    Text(
+                        "\"설정 > 접근성\"",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Primary_Main
+                    )
+                    Text(
+                        "페이지로 이동합니다.",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Gray800
+                    )
+                }
+                Spacer(Modifier.height(2.dp))
+
+                Row {
+                    Text("2. ", style = LimberTextStyle.Body2, color = LimberColorStyle.Gray800)
+                    Text(
+                        "\"설치된 앱\"",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Primary_Main
+                    )
+                    Text(
+                        "을 클릭합니다.",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Gray800
+                    )
+                }
+                Spacer(Modifier.height(2.dp))
+
+                Row {
+                    Text(
+                        "3. \"림버\" 토글",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Gray800
+                    )
+                    Text(
+                        "을 눌러 권한을 허용합니다.",
+                        style = LimberTextStyle.Body2,
+                        color = LimberColorStyle.Gray800
+                    )
+                }
+                Spacer(Modifier.height(36.dp))
+                LimberGradientButton(onClick = {
+                    if (!hasPermission) {
+                        openAccessibilitySettings(context)
+                        isRequestingPermission = true
+
+                    }
+                }, modifier = Modifier.fillMaxWidth(), text = "접근성 권한 허용하기")
+            }
+        }
+    }
+
+
     // Show animation if playing
     if (animationPlaying) {
         Dialog(onDismissRequest = { /* no-op, 또는 로딩중에는 막기 */ }) {
@@ -172,7 +286,10 @@ fun LimberProgressBar(percentage: Float) {
         modifier = Modifier
             .fillMaxWidth()
             .height(6.dp)
-            .background(color = LimberColorStyle.Gray200, shape = RoundedCornerShape(100.dp)) // 배경 바
+            .background(
+                color = LimberColorStyle.Gray200,
+                shape = RoundedCornerShape(100.dp)
+            ) // 배경 바
     ) {
         Box(
             modifier = Modifier
@@ -187,7 +304,7 @@ fun LimberProgressBar(percentage: Float) {
 }
 
 @Composable
-fun PermissionBox(headText: String, bodyText: String, imgResId : Int = R.drawable.ic_data) {
+fun PermissionBox(headText: String, bodyText: String, imgResId: Int = R.drawable.ic_data) {
     Box(
         Modifier
             .fillMaxWidth()

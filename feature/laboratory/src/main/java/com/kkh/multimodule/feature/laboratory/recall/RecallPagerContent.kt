@@ -42,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -258,16 +259,11 @@ fun RecallCard(
 ) {
     Row(
         modifier = modifier
-            .shadow(
-                elevation = 12.dp,
-                spotColor = Color(0x14000000),
-                ambientColor = Color(0x14000000)
-            )
+            .shadow(12.dp, RoundedCornerShape(10.dp), clip = true) // clip = true
+            .background(Color.White, RoundedCornerShape(10.dp))   // shape 같이 지정
             .fillMaxWidth()
             .height(116.dp)
-            .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 10.dp))
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(20.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Row {
@@ -323,3 +319,12 @@ fun RecallCard(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun RecallCardPreview(){
+    Box(Modifier.fillMaxSize().padding(20.dp)){
+        RecallCard(LatestTimerHistoryModel.mockLatestTimerHistory,{})
+    }
+}
+

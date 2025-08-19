@@ -63,7 +63,7 @@ data class ReservationInfo(
         fun init() = ReservationInfo(
             startTime = getCurrentTime(),
             endTime = getTimePlus30Minutes(),
-            title = "포트폴리오 작업",
+            title = "기타",
             category = "공부",
             repeatDays = emptyList()
         )

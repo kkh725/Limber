@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.kkh.multimodule.core.accessibility.notification.NotificationReceiver
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -36,24 +35,24 @@ object BlockAlarmManager {
             triggerTime,
             triggerPendingIntent
         )
+//
+//        // 5분 전 알림 트리거 5분전 알림 없앰.
+//        val notificationTime = calculateNotificationTime(reservation, isStart)
+//        val notificationIntent =
+//            createIntent(context, reservation.id, isStart, NotificationReceiver::class.java)
+//        val notificationPendingIntent =
+//            createPendingIntent(context, reservation.id, isStart, notificationIntent)
+//
+//        alarmManager.setExactAndAllowWhileIdle(
+//            AlarmManager.RTC_WAKEUP,
+//            notificationTime,
+//            notificationPendingIntent
+//        )
 
-        // 5분 전 알림 트리거
-        val notificationTime = calculateNotificationTime(reservation, isStart)
-        val notificationIntent =
-            createIntent(context, reservation.id, isStart, NotificationReceiver::class.java)
-        val notificationPendingIntent =
-            createPendingIntent(context, reservation.id, isStart, notificationIntent)
-
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            notificationTime,
-            notificationPendingIntent
-        )
-
-        Log.d(
-            "ScheduleBlockTrigger", "예약 ID: ${reservation.id}, 시작 여부: $isStart, " +
-                    "블록 트리거: $triggerTime, 알림 트리거: $notificationTime"
-        )
+//        Log.d(
+//            "ScheduleBlockTrigger", "예약 ID: ${reservation.id}, 시작 여부: $isStart, " +
+//                    "블록 트리거: $triggerTime, 알림 트리거: $notificationTime"
+//        )
     }
 
     private fun calculateTriggerTime(reservation: ReservationItemModel, isStart: Boolean): Long {
