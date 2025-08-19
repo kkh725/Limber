@@ -1,11 +1,9 @@
 package com.kkh.multimodule.limber
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider
 
 class LimberLifeCycleObserver(private val context: Context) : DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {
@@ -14,21 +12,8 @@ class LimberLifeCycleObserver(private val context: Context) : DefaultLifecycleOb
         val installedApps =
             AppInfoProvider.getInstalledAppsWithIcons(context = context)
         for (app in installedApps) {
-            println("앱 이름: ${app}")
+            println("앱 이름: $app")
         }
-
-//        val statsList = AppUsageStatsManager.getMonthlyUsageStats(context)
-//        statsList.forEach { usageStats ->
-//            if (usageStats.totalTimeInForeground > 0){
-//                Log.d("UsageStats",
-//                    "패키지명: ${usageStats.packageName}, " +
-//                            "사용시간(ms): ${usageStats.totalTimeInForeground}, " +
-//                            "시작시간: ${Date(usageStats.firstTimeStamp)}, " +
-//                            "종료시간: ${Date(usageStats.lastTimeStamp)}, " +
-//                            "마지막사용: ${Date(usageStats.lastTimeUsed)}"
-//                )
-//            }
-//        }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -39,7 +24,6 @@ class LimberLifeCycleObserver(private val context: Context) : DefaultLifecycleOb
         super.onPause(owner)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
 

@@ -7,6 +7,7 @@ import com.kkh.multimodule.core.network.datasource.history.HistoryDataSource
 import com.kkh.multimodule.core.network.datasource.history.HistoryDataSourceImpl
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
 import com.kkh.multimodule.core.network.datasource.timer.TimerDataSourceImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,19 +36,23 @@ internal object NetworkModule {
     internal fun provideHistoryApi(retrofit: Retrofit): HistoryApi {
         return retrofit.create(HistoryApi::class.java)
     }
+}
 
-    @Provides
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataSourceModule {
+
+    @Binds
     @Singleton
-    fun provideTimerDataSource(timerApi: TimerApi, retrospectsApi: RetrospectsApi): TimerDataSource {
-        return TimerDataSourceImpl(timerApi,retrospectsApi)
-    }
+    abstract fun bindTimerDataSource(
+        impl: TimerDataSourceImpl
+    ): TimerDataSource
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideHistoryDataSource(historyApi: HistoryApi): HistoryDataSource {
-        return HistoryDataSourceImpl(historyApi)
-    }
-
+    abstract fun bindHistoryDataSource(
+        impl: HistoryDataSourceImpl
+    ): HistoryDataSource
 }
 
 

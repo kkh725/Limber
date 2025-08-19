@@ -3,7 +3,7 @@ package com.kkh.multimodule.feature.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
 import com.kkh.multimodule.core.domain.TimerStatusModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.BlockReservationRepository

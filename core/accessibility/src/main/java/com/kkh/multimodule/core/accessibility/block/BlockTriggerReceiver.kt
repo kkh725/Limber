@@ -1,4 +1,4 @@
-package com.kkh.multimodule.core.accessibility
+package com.kkh.multimodule.core.accessibility.block
 
 import android.content.BroadcastReceiver
 import android.content.Context

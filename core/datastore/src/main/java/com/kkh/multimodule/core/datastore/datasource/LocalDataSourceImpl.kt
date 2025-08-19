@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlin.concurrent.timer
 
-internal class LocalDataSourceImpl @Inject constructor() :
+class LocalDataSourceImpl @Inject constructor() :
     LocalDataSource {
     private val keyString = stringPreferencesKey("CUSTOM_TEXT")
     private val keyBoolean = booleanPreferencesKey("CUSTOM_BOOL")

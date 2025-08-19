@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.util.Log
-import com.kkh.multimodule.core.accessibility.AppInfo
-import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.ui.ui.Reducer

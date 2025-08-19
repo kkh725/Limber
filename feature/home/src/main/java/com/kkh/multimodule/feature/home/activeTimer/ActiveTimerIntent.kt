@@ -2,11 +2,10 @@ package com.kkh.multimodule.feature.home.activeTimer
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
-import kotlin.concurrent.timer
 
 data class ActiveTimerState(
     val blockedAppList: List<AppInfo>,

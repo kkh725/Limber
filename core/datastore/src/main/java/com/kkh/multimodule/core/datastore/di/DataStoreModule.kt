@@ -11,21 +11,16 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 import androidx.core.content.edit
-import com.kkh.multimodule.core.datastore.datasource.AppUuidProvider
+import dagger.Binds
+
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataStoreModule {
+abstract class DataSourceModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideLocalDataSource(): LocalDataSource {
-        return LocalDataSourceImpl()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAppUuid(@ApplicationContext context: Context): String {
-        return AppUuidProvider.getUuid(context)
-    }
+    abstract fun localDataSource(
+        impl: LocalDataSourceImpl
+    ): LocalDataSource
 }

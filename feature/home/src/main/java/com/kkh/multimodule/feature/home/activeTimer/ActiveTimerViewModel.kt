@@ -5,11 +5,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkh.multimodule.core.accessibility.AppInfo
-import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.TimerRepository
-import com.kkh.multimodule.core.ui.util.getStartAndEndTime
 import com.kkh.multimodule.core.ui.util.getTimeDifference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject

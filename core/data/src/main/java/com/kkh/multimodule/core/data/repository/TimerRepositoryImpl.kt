@@ -171,6 +171,7 @@ public class TimerRepositoryImpl @Inject constructor(
             }
         }
 
+    //uuid 생성
     private fun getOrCreateUUID(): String {
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val key = "limber_user_uuid"

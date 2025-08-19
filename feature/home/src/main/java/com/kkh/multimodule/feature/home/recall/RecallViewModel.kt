@@ -3,8 +3,8 @@ package com.kkh.multimodule.feature.home.recall
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkh.multimodule.core.accessibility.AppInfo
-import com.kkh.multimodule.core.accessibility.AppInfoProvider
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider
 import com.kkh.multimodule.core.domain.model.RetrospectsRequestModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
 import com.kkh.multimodule.core.domain.repository.HistoryRepository
@@ -18,7 +18,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 import java.util.UUID
-import kotlin.concurrent.timer
 import androidx.core.content.edit
 
 @HiltViewModel

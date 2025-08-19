@@ -1,4 +1,4 @@
-package com.kkh.multimodule.core.accessibility
+package com.kkh.multimodule.core.accessibility.appinfo
 
 import android.graphics.drawable.Drawable
 

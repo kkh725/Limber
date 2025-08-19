@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import com.kkh.multimodule.core.accessibility.BlockedAppAccessibilityService
+import com.kkh.multimodule.core.accessibility.block.BlockedAppAccessibilityService
 import com.kkh.multimodule.core.accessibility.PermissionManager
 import com.kkh.multimodule.core.accessibility.PermissionManager.openAccessibilitySettings
 import com.kkh.multimodule.core.ui.R

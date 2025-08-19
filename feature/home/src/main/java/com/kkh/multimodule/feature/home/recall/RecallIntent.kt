@@ -1,8 +1,7 @@
 package com.kkh.multimodule.feature.home.recall
 
 import android.annotation.SuppressLint
-import android.content.Context
-import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
 import com.kkh.multimodule.core.ui.ui.Reducer
 import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent

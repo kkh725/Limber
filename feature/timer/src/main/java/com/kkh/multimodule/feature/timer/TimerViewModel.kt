@@ -3,8 +3,8 @@ package com.kkh.multimodule.feature.timer
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkh.multimodule.core.accessibility.AppInfoProvider.getAppInfoListFromPackageNames
-import com.kkh.multimodule.core.accessibility.BlockAlarmManager
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider.getAppInfoListFromPackageNames
+import com.kkh.multimodule.core.accessibility.block.BlockAlarmManager
 import com.kkh.multimodule.core.data.mapper.toReservationItemModel
 import com.kkh.multimodule.core.data.error.onLimberFailure
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
@@ -112,7 +112,7 @@ class TimerViewModel @Inject constructor(
                 timerRepository.setActiveTimerId(it.id)
                 reducer.sendEffect(CommonEffect.NavigateToHome)
             }
-            .onLimberFailure { throwable ->
+            .onFailure { throwable ->
                 val message = throwable.message ?: "error"
                 reducer.sendEffect(CommonEffect.ShowSnackBar(message))
             }

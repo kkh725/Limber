@@ -41,7 +41,7 @@
         </activity>
 
         <service
-            android:name="com.kkh.multimodule.core.accessibility.BlockedAppAccessibilityService"
+            android:name="com.kkh.multimodule.core.accessibility.block.BlockedAppAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -66,7 +66,7 @@
 
         <!-- AndroidManifest.xml 내 application 태그 안 -->
         <receiver
-            android:name="com.kkh.multimodule.core.accessibility.BlockTriggerReceiver"
+            android:name="com.kkh.multimodule.core.accessibility.block.BlockTriggerReceiver"
             android:exported="true"/>
 
 

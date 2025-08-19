@@ -15,7 +15,7 @@ import jakarta.inject.Inject
 import retrofit2.Response
 import kotlin.concurrent.timer
 
-internal class TimerDataSourceImpl @Inject constructor(
+class TimerDataSourceImpl @Inject constructor(
     private val timerApi: TimerApi,
     private val retrospectsApi: RetrospectsApi
 ) : TimerDataSource {

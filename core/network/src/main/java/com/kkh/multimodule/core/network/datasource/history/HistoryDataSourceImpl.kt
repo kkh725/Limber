@@ -24,7 +24,7 @@ import com.kkh.multimodule.core.network.model.response.history.TotalActualRespon
 import com.kkh.multimodule.core.network.model.response.history.TotalImmersionResponseDto
 import jakarta.inject.Inject
 
-internal class HistoryDataSourceImpl @Inject constructor(
+class HistoryDataSourceImpl @Inject constructor(
     private val historyApi: HistoryApi
 ) : HistoryDataSource {
     /**
