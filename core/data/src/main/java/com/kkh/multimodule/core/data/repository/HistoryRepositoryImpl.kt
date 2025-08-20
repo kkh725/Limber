@@ -24,6 +24,7 @@ import com.kkh.multimodule.core.network.model.request.history.TotalImmersionRequ
 import java.util.UUID
 import javax.inject.Inject
 import androidx.core.content.edit
+import com.kkh.multimodule.core.network.model.response.processApiResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 class HistoryRepositoryImpl @Inject constructor(
@@ -37,13 +38,9 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getHistoryList(): Result<List<HistoryModel>> =
         runCatching {
             val requestModel = HistoryRequestDto(userId = getOrCreateUUID())
-            val response = historyDataSource.getHistoryList(requestModel)
-            if (response.success) {
-                response.data?.toDomain(getOrCreateUUID()) ?: emptyList()
-            } else {
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+
+            historyDataSource.getHistoryList(requestModel).processApiResponse()
+                .toDomain(getOrCreateUUID())
         }
 
     /**
@@ -51,14 +48,8 @@ class HistoryRepositoryImpl @Inject constructor(
      */
     override suspend fun getHistoryListWithRetrospects(): Result<List<HistoryWithRetrospectsModel>> {
         return runCatching {
-            val response =
-                historyDataSource.getHistoryListWithRetrospects(getOrCreateUUID())
-            if (response.success) {
-                response.data?.toDomain() ?: emptyList()
-            } else {
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+            historyDataSource.getHistoryListWithRetrospects(getOrCreateUUID()).processApiResponse()
+                .toDomain()
         }
     }
 
@@ -69,15 +60,8 @@ class HistoryRepositoryImpl @Inject constructor(
         timerId: Int
     ): Result<LatestTimerHistoryModel> =
         runCatching {
-            val response =
-                historyDataSource.getLatestHistoryId(getOrCreateUUID(), timerId)
-            if (response.success) {
-                response.data?.toDomain() ?: throw Exception("Unknown")
-            } else {
-                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+            historyDataSource.getLatestHistoryId(getOrCreateUUID(), timerId).processApiResponse()
+                .toDomain()
         }
 
     /**
@@ -91,14 +75,7 @@ class HistoryRepositoryImpl @Inject constructor(
             val request =
                 TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
 
-            val response = historyDataSource.getTotalImmersion(request)
-            if (response.success) {
-                response.data?.toDomain() ?: throw Exception("Unknown")
-            } else {
-                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+            historyDataSource.getTotalImmersion(request).processApiResponse().toDomain()
         }
 
     /**
@@ -111,14 +88,8 @@ class HistoryRepositoryImpl @Inject constructor(
         runCatching {
             val request =
                 TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
-            val response = historyDataSource.getTotalActual(request)
-            if (response.success) {
-                response.data?.toDomain() ?: throw Exception("Unknown")
-            } else {
-                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+
+            historyDataSource.getTotalActual(request).processApiResponse().toDomain()
         }
 
     /**
@@ -131,14 +102,9 @@ class HistoryRepositoryImpl @Inject constructor(
         runCatching {
             val request =
                 TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
-            val response = historyDataSource.getImmersionByWeekend(request)
-            if (response.success) {
-                response.data?.map { it.toDomain() } ?: emptyList()
-            } else {
-                Log.e(TAG, "code : ${response.error?.code}, message :${response.error?.message}", )
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+
+            historyDataSource.getImmersionByWeekend(request).processApiResponse()
+                .map { it.toDomain() }
         }
 
     /**
@@ -151,13 +117,9 @@ class HistoryRepositoryImpl @Inject constructor(
         runCatching {
             val request =
                 TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
-            val response = historyDataSource.getFocusDistribution(request)
-            if (response.success) {
-                response.data?.map { it.toDomain() } ?: emptyList()
-            } else {
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+
+            historyDataSource.getFocusDistribution(request).processApiResponse()
+                .map { it.toDomain() }
         }
 
     /**
@@ -170,15 +132,10 @@ class HistoryRepositoryImpl @Inject constructor(
         runCatching {
             val request =
                 TotalImmersionRequestDto(getOrCreateUUID(), startTime, endTime)
-            val response = historyDataSource.getActualByWeekend(request)
-            if (response.success) {
-                response.data?.map { it.toDomain() } ?: emptyList()
-            } else {
-                val error = TimerError.from(response.error?.code, response.error?.message)
-                throw TimerApiException(error)
-            }
+            historyDataSource.getActualByWeekend(request).processApiResponse().map { it.toDomain() }
         }
 
+    // uuid 생성 코드
     @SuppressLint("HardwareIds")
     private fun getOrCreateUUID(): String {
         return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)

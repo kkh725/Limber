@@ -10,3 +10,5 @@ data class TotalActualResponseDto(
     val totalMinutes : String,
     val label : String
 )
+
+

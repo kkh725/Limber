@@ -23,6 +23,7 @@ import com.kkh.multimodule.core.network.model.response.history.LatestTimerRespon
 import com.kkh.multimodule.core.network.model.response.history.TotalActualResponseDto
 import com.kkh.multimodule.core.network.model.response.history.TotalImmersionResponseDto
 import jakarta.inject.Inject
+import retrofit2.Response
 
 class HistoryDataSourceImpl @Inject constructor(
     private val historyApi: HistoryApi
@@ -30,7 +31,7 @@ class HistoryDataSourceImpl @Inject constructor(
     /**
      * 이력 조회
      */
-    override suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): HistoryResponse {
+    override suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): Response<HistoryResponse> {
         return historyApi.getTimerHistories(historyRequestDto)
     }
 
@@ -39,49 +40,49 @@ class HistoryDataSourceImpl @Inject constructor(
      */
     override suspend fun getHistoryListWithRetrospects(
         userId: String
-    ): HistoryWithRetrospectsResponse {
+    ): Response<HistoryWithRetrospectsResponse> {
         return historyApi.getTimerHistoriesWithRetrospect(userId)
     }
 
     /**
      * 특정 이력 조회
      */
-    override suspend fun getLatestHistoryId(userId: String, timerId: Int): LatestTimerResponse {
+    override suspend fun getLatestHistoryId(userId: String, timerId: Int): Response<LatestTimerResponse> {
         return historyApi.getTimerLatestId(userId, timerId)
     }
 
     /**
      * 전체 몰입도 조회
      */
-    override suspend fun getTotalImmersion(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalImmersionResponseDto> {
+    override suspend fun getTotalImmersion(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ApiResponse<TotalImmersionResponseDto>> {
         return historyApi.getTotalImmersion(totalImmersionRequestDto)
     }
 
     /**
      * 전체 실험시간 조회
      */
-    override suspend fun getTotalActual(totalImmersionRequestDto: TotalImmersionRequestDto): ApiResponse<TotalActualResponseDto> {
+    override suspend fun getTotalActual(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ApiResponse<TotalActualResponseDto>> {
         return historyApi.getTotalActual(totalImmersionRequestDto)
     }
 
     /**
      * 요일별 총 몰입도
      */
-    override suspend fun getImmersionByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): ImmersionByWeekdayResponse {
+    override suspend fun getImmersionByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ImmersionByWeekdayResponse> {
         return historyApi.getImmersionByWeekend(totalImmersionRequestDto)
     }
 
     /**
      * 몰입 유형 별 시간 합
      */
-    override suspend fun getFocusDistribution(totalImmersionRequestDto: TotalImmersionRequestDto): FocusDistributionResponse {
+    override suspend fun getFocusDistribution(totalImmersionRequestDto: TotalImmersionRequestDto): Response<FocusDistributionResponse> {
         return historyApi.getFocusDistribution(totalImmersionRequestDto)
     }
 
     /**
      * 요일 별 총 실험시간
      */
-    override suspend fun getActualByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): ActualByWeekendResponse {
+    override suspend fun getActualByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ActualByWeekendResponse> {
         return historyApi.getActualByWeekend(totalImmersionRequestDto)
     }
 }

@@ -14,6 +14,7 @@ import com.kkh.multimodule.core.network.model.response.history.FocusDistribution
 import com.kkh.multimodule.core.network.model.response.history.HistoryWithRetrospectsResponse
 import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
 import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -35,7 +36,7 @@ interface HistoryApi {
     @GET("/api/timer-histories/me")
     suspend fun getTimerHistories(
         @Body historyRequestDto: HistoryRequestDto
-    ): HistoryResponse
+    ): Response<HistoryResponse>
 
     /**
      * 타이머 이력조회 회고 여부 true,false로 구별가능함.
@@ -45,7 +46,7 @@ interface HistoryApi {
         @Query("userId") userId: String,
         @Query("searchRange") searchRange: String = "WEEKLY",
         @Query("onlyIncompleteRetrospect") onlyIncompleteRetrospect: Boolean = false
-    ): HistoryWithRetrospectsResponse
+    ): Response<HistoryWithRetrospectsResponse>
 
     /**
      * 가장 최근 이력 조회
@@ -54,7 +55,7 @@ interface HistoryApi {
     suspend fun getTimerLatestId(
         @Query("userId") userId: String,
         @Query("timerId") timerId: Int
-    ): LatestTimerResponse
+    ): Response<LatestTimerResponse>
 
     /**
      * 총 몰입도 조회
@@ -62,7 +63,7 @@ interface HistoryApi {
     @POST("/api/timer-histories/total-immersion")
     suspend fun getTotalImmersion(
         @Body totalImmersionRequestDto: TotalImmersionRequestDto
-    ): ApiResponse<TotalImmersionResponseDto>
+    ): Response<ApiResponse<TotalImmersionResponseDto>>
 
     /**
      * 전체 총 실험시간
@@ -70,7 +71,7 @@ interface HistoryApi {
     @POST("/api/timer-histories/total-actual")
     suspend fun getTotalActual(
         @Body totalImmersionRequestDto: TotalImmersionRequestDto
-    ): ApiResponse<TotalActualResponseDto>
+    ): Response<ApiResponse<TotalActualResponseDto>>
 
     /**
      * 요일별 총 몰입도
@@ -78,7 +79,7 @@ interface HistoryApi {
     @POST("/api/timer-histories/immersion-by-weekend")
     suspend fun getImmersionByWeekend(
         @Body totalImmersionRequestDto: TotalImmersionRequestDto
-    ): ImmersionByWeekdayResponse
+    ): Response<ImmersionByWeekdayResponse>
 
     /**
      * 몰입유형 별 실제 시간 합
@@ -86,7 +87,7 @@ interface HistoryApi {
     @POST("/api/timer-histories/focus-distribution")
     suspend fun getFocusDistribution(
         @Body totalImmersionRequestDto: TotalImmersionRequestDto
-    ): FocusDistributionResponse
+    ): Response<FocusDistributionResponse>
 
     /**
      * 요일 별 총 실험 시간
@@ -94,6 +95,6 @@ interface HistoryApi {
     @POST("/api/timer-histories/actual-by-weekend")
     suspend fun getActualByWeekend(
         @Body totalImmersionRequestDto: TotalImmersionRequestDto
-    ): ActualByWeekendResponse
+    ): Response<ActualByWeekendResponse>
 
 }
