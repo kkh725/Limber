@@ -21,36 +21,36 @@ class TimerDataSourceImpl @Inject constructor(
     private val retrospectsApi: RetrospectsApi
 ) : TimerDataSource {
 
-    override suspend fun reserveTimer(request: SingleTimerRequestDto): SingleTimerResponse {
+    override suspend fun reserveTimer(request: SingleTimerRequestDto): Response<SingleTimerResponse> {
         return timerApi.reserveTimer(request)
     }
 
-    override suspend fun unlockTimer(timerId: Int, failReason: String): BaseResponse {
+    override suspend fun unlockTimer(timerId: Int, failReason: String): Response<BaseResponse> {
         val request = UnLockRequestDto(timerId, failReason)
         return timerApi.unlockTimer(request)
     }
 
-    override suspend fun getCurrentTimerStatus(timerId: Int): CurrentTimerStatusResponse {
+    override suspend fun getCurrentTimerStatus(timerId: Int): Response<CurrentTimerStatusResponse> {
         return timerApi.getCurrentTimerStatus(timerId)
     }
 
-    override suspend fun getSingleTimer(timerId: Int): SingleTimerResponse {
+    override suspend fun getSingleTimer(timerId: Int): Response<SingleTimerResponse> {
         return timerApi.getSingleTimer(timerId)
     }
 
-    override suspend fun getTimerList(userId: String): TimerListResponse {
+    override suspend fun getTimerList(userId: String): Response<TimerListResponse> {
         return timerApi.getTimerList(userId)
     }
 
-    override suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequestDto) : BaseResponse {
-        return timerApi.patchTimerStatus(timerId, PatchTimerStatusRequestDto = status)
+    override suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequestDto) : Response<BaseResponse> {
+        return timerApi.patchTimerStatus(timerId, patchTimerStatusRequestDto = status)
     }
 
     override suspend fun deleteTimer(timerIdList: List<Int>): Response<Unit> {
         return timerApi.deleteTimerList(DeleteTimerRequestDto(timerIdList))
     }
 
-    override suspend fun writeRetrospects(request: RetrospectsRequestDto): BaseResponse {
+    override suspend fun writeRetrospects(request: RetrospectsRequestDto): Response<BaseResponse> {
         return retrospectsApi.writeRetrospects(request)
     }
 }

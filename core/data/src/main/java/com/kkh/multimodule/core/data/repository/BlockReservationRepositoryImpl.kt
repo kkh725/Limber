@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * 차단 예약 관련 레포 (timer)
  */
-public class BlockReservationRepositoryImpl @Inject constructor(private val localDataSource: LocalDataSource) :
+class BlockReservationRepositoryImpl @Inject constructor(private val localDataSource: LocalDataSource) :
     BlockReservationRepository {
     override suspend fun setReservationList(reservationList: List<ReservationItemModel>) {
         localDataSource.setReservationList(reservationList)

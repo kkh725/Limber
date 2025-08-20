@@ -1,13 +1,8 @@
 package com.kkh.multimodule.core.data.repository
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.content.SharedPreferences
 import android.provider.Settings
-import android.util.Log
-import com.kkh.multimodule.core.data.error.TimerApiException
-import com.kkh.multimodule.core.data.error.TimerError
 import com.kkh.multimodule.core.data.mapper.toDomain
 import com.kkh.multimodule.core.domain.model.history.ActualByWeekendModel
 import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
@@ -21,9 +16,7 @@ import com.kkh.multimodule.core.domain.repository.HistoryRepository
 import com.kkh.multimodule.core.network.datasource.history.HistoryDataSource
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
 import com.kkh.multimodule.core.network.model.request.history.TotalImmersionRequestDto
-import java.util.UUID
 import javax.inject.Inject
-import androidx.core.content.edit
 import com.kkh.multimodule.core.network.model.response.processApiResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
 

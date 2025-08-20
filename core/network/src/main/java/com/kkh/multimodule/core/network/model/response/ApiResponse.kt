@@ -17,48 +17,36 @@ data class ApiResponse<T>(
         val code: String,
         @SerializedName("message")
         val message: String
-    ){
-        companion object{
-            val empty = ApiError("500", "server error")
-        }
-    }
+    )
 }
-
 
 enum class HttpErrorStatus(val code: Int, val message: String){
-    UNAUTHORIZED(401, "인증 오류"),
-    DUPLICATE(409, "중복 에러"),
-    INTERNAL_SERVER_ERROR(500, "서버 내부 오류")
-}
-
-enum class ApiErrorStatus(val code: String, val message: String){
-
+    UNAUTHORIZED(401, "인증 오류가 발생했습니다."),
+    INVALID_INPUT(400,"입력값이 올바르지 않습니다."),
+    DUPLICATE(409, "해당 시간에 이미 진행중인 타이머가 존재합니다."),
+    INTERNAL_SERVER_ERROR(500, "서버 내부 오류"),
+    NOT_FOUND_TIMER(404,"타이머가 존재하지 않습니다.")
 }
 
 fun handleHttpError(code: Int): Exception {
     return when (code) {
         HttpErrorStatus.UNAUTHORIZED.code -> IllegalAccessException(HttpErrorStatus.UNAUTHORIZED.message)
+        HttpErrorStatus.INVALID_INPUT.code -> IllegalArgumentException(HttpErrorStatus.INVALID_INPUT.message)
         HttpErrorStatus.DUPLICATE.code -> IllegalStateException(HttpErrorStatus.UNAUTHORIZED.message)
         HttpErrorStatus.INTERNAL_SERVER_ERROR.code -> Exception(HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
+        HttpErrorStatus.NOT_FOUND_TIMER.code -> Exception(HttpErrorStatus.NOT_FOUND_TIMER.message)
         else -> Exception("HTTP 오류 코드: $code")
-    }
-}
-
-fun handleApiError(apiError : ApiResponse.ApiError): Exception {
-    return when (apiError.code) {
-        "409" -> IllegalStateException("중복된 요청입니다.")
-        else -> Exception("API 에러: [$apiError.code] ${apiError.message}")
     }
 }
 
 inline fun <reified T> Response<ApiResponse<T>>.processApiResponse(): T {
     if (this.isSuccessful) {
-        val body = this.body() ?: throw NullPointerException("응답 바디가 null입니다.")
+        val body = this.body() ?: throw NullPointerException(HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
 
         if (body.success) {
-            return body.data ?: throw NullPointerException("응답 데이터가 null입니다.")
+            return body.data ?: throw NullPointerException(HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
         } else {
-            throw handleApiError(body.error ?: ApiResponse.ApiError.empty)
+            throw Exception(body.error?.message ?: HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
         }
     } else {
         throw handleHttpError(this.code())

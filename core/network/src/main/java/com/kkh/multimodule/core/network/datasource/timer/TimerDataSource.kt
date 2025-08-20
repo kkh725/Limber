@@ -12,12 +12,12 @@ import com.kkh.multimodule.core.network.model.response.TimerListResponse
 import retrofit2.Response
 
 interface TimerDataSource {
-    suspend fun reserveTimer(request: SingleTimerRequestDto): SingleTimerResponse
-    suspend fun unlockTimer(timerId: Int, failReason : String) : BaseResponse
-    suspend fun getCurrentTimerStatus(timerId: Int): CurrentTimerStatusResponse
-    suspend fun getSingleTimer(timerId: Int): SingleTimerResponse
-    suspend fun getTimerList(userId: String): TimerListResponse
-    suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequestDto) : BaseResponse
+    suspend fun reserveTimer(request: SingleTimerRequestDto): Response<SingleTimerResponse>
+    suspend fun unlockTimer(timerId: Int, failReason : String) : Response<BaseResponse>
+    suspend fun getCurrentTimerStatus(timerId: Int): Response<CurrentTimerStatusResponse>
+    suspend fun getSingleTimer(timerId: Int): Response<SingleTimerResponse>
+    suspend fun getTimerList(userId: String): Response<TimerListResponse>
+    suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequestDto) : Response<BaseResponse>
     suspend fun deleteTimer(timerIdList: List<Int>): Response<Unit>
-    suspend fun writeRetrospects(request : RetrospectsRequestDto): BaseResponse
+    suspend fun writeRetrospects(request : RetrospectsRequestDto): Response<BaseResponse>
 }

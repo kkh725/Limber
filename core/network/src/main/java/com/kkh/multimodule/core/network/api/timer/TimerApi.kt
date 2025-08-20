@@ -25,7 +25,7 @@ interface TimerApi {
     @POST("/api/timers")
     suspend fun reserveTimer(
         @Body singleTimerRequest : SingleTimerRequestDto
-    ): SingleTimerResponse
+    ): Response<SingleTimerResponse>
 
     /**
      * 타이머 잠금 해제[]
@@ -33,7 +33,7 @@ interface TimerApi {
     @POST("/api/timers/unlock")
     suspend fun unlockTimer(
         @Body unLockRequestDto: UnLockRequestDto
-    ): BaseResponse
+    ): Response<BaseResponse>
 
     /**
      * 타이머 상태 조회
@@ -41,7 +41,7 @@ interface TimerApi {
     @GET("/api/timers/{timerId}/status")
     suspend fun getCurrentTimerStatus(
         @Path("timerId") timerId : Int
-    ): CurrentTimerStatusResponse
+    ): Response<CurrentTimerStatusResponse>
 
     /**
      * 단일 타이머 조회
@@ -49,7 +49,7 @@ interface TimerApi {
     @GET("/api/timers/{timerId}")
     suspend fun getSingleTimer(
         @Path("timerId") timerId : Int
-    ): SingleTimerResponse
+    ): Response<SingleTimerResponse>
 
     /**
      * 타이머 목록 조회
@@ -57,7 +57,7 @@ interface TimerApi {
     @GET("/api/timers/user/{userId}")
     suspend fun getTimerList(
         @Path("userId") userId : String
-    ): TimerListResponse
+    ): Response<TimerListResponse>
 
     /**
      * 타이머 상태 변경 toggle on off
@@ -65,8 +65,8 @@ interface TimerApi {
     @PATCH("/api/timers/{timerId}/status")
     suspend fun patchTimerStatus(
         @Path("timerId") timerId : Int,
-        @Body PatchTimerStatusRequestDto: PatchTimerStatusRequestDto
-    ): BaseResponse
+        @Body patchTimerStatusRequestDto: PatchTimerStatusRequestDto
+    ): Response<BaseResponse>
 
     /**
      * 타이머 삭제 204 no content 이기때문에 Unit으로
