@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkh.multimodule.core.accessibility.appinfo.AppInfoProvider.getAppInfoListFromPackageNames
 import com.kkh.multimodule.core.accessibility.block.BlockAlarmManager
+import com.kkh.multimodule.core.accessibility.block.BlockedAppAccessibilityService
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager
 import com.kkh.multimodule.core.data.mapper.toReservationItemModel
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.repository.AppDataRepository
@@ -48,24 +50,38 @@ class TimerViewModel @Inject constructor(
                 }
 
                 is TimerEvent.OnClickStartTimerNow -> {
-                    val type = uiState.value.chipList.find { it.isSelected }
-                    type?.let {
-                        val newReservation =
-                            e.startBlockReservationInfo.reservationInfo.copy(category = it.text)
-                        val reservationItem =
-                            e.startBlockReservationInfo.copy(reservationInfo = newReservation)
-                        // 타이머 지금 시작 추가.
-                        startImmediateTimer(
-                            context = e.context,
-                            timerItemModel = reservationItem
-                        )
+                    val checkPermission = checkPermission(e.context)
 
+                    if (checkPermission){
+                        val type = uiState.value.chipList.find { it.isSelected }
+                        type?.let {
+                            val newReservation =
+                                e.startBlockReservationInfo.reservationInfo.copy(category = it.text)
+                            val reservationItem =
+                                e.startBlockReservationInfo.copy(reservationInfo = newReservation)
+                            // 타이머 지금 시작 추가.
+                            startImmediateTimer(
+                                context = e.context,
+                                timerItemModel = reservationItem
+                            )
+                        }
                     }
                 }
 
                 else -> {}
             }
         }
+    }
+
+    private suspend fun checkPermission(context: Context) : Boolean{
+        val hasPermission = PermissionManager.isAccessibilityServiceEnabled(
+            context = context,
+            service = BlockedAppAccessibilityService::class.java
+        )
+        if (!hasPermission){
+            reducer.sendEffect(CommonEffect.ShowSnackBar("접근성 권한이 없습니다. 설정 페이지에서 접근성 권한을 허용해주세요!"))
+        }
+        return hasPermission
     }
 
     private suspend fun setBlockedAppList(context: Context) {

@@ -1,9 +1,12 @@
 package com.kkh.multimodule.feature.reservation
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kkh.multimodule.core.accessibility.block.BlockedAppAccessibilityService
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager
 import com.kkh.multimodule.core.data.mapper.toReservationItemModelList
 import com.kkh.multimodule.core.domain.model.PatchTimerModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
@@ -37,10 +40,12 @@ class ReservationViewModel @Inject constructor(
                 }
 
                 is ReservationEvent.BottomSheet.OnClickReservationButton -> {
-                    if (e.title.isEmpty()) {
-                        reducer.sendEffect(CommonEffect.ShowSnackBar("실험의 제목을 설정해주세요."))
-                    } else {
-                        reserveScheduledTimer(e.title)
+                    if ((checkPermission(e.context))){
+                        if (e.title.isEmpty()) {
+                            reducer.sendEffect(CommonEffect.ShowSnackBar("실험의 제목을 설정해주세요."))
+                        } else {
+                            reserveScheduledTimer(e.title)
+                        }
                     }
                 }
 
@@ -140,5 +145,16 @@ class ReservationViewModel @Inject constructor(
             }.onFailure { e ->
                 Log.e(TAG, "deleteTimer: fail $e")
             }
+    }
+
+    private suspend fun checkPermission(context: Context) : Boolean{
+        val hasPermission = PermissionManager.isAccessibilityServiceEnabled(
+            context = context,
+            service = BlockedAppAccessibilityService::class.java
+        )
+        if (!hasPermission){
+            reducer.sendEffect(CommonEffect.ShowSnackBar("접근성 권한이 없습니다. 설정 페이지에서 접근성 권한을 허용해주세요!"))
+        }
+        return hasPermission
     }
 }

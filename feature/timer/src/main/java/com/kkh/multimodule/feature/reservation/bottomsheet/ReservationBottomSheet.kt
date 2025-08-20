@@ -54,6 +54,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -95,6 +96,8 @@ fun ReservationBottomSheet(
     val reservationViewModel: ReservationViewModel = hiltViewModel()
 
     val uiState by reservationViewModel.uiState.collectAsState()
+
+    val context = LocalContext.current
 
     val bottomSheetState = uiState.reservationBottomSheetState
     val chipList = uiState.chipList
@@ -192,7 +195,8 @@ fun ReservationBottomSheet(
                             onClickReservationButton = {
                                 reservationViewModel.sendEvent(
                                     ReservationEvent.BottomSheet.OnClickReservationButton(
-                                        titleText
+                                        title = titleText,
+                                        context = context
                                     )
                                 )
                             }

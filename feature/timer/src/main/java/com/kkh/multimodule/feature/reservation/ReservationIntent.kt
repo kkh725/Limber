@@ -1,5 +1,6 @@
 package com.kkh.multimodule.feature.reservation
 
+import android.content.Context
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
 import com.kkh.multimodule.feature.util.ReservationScreenState
@@ -62,7 +63,7 @@ sealed class ReservationEvent : UiEvent {
         data object OnClickRepeatOptionCompleteButton : BottomSheet()
         data class OnClickStartTimeCompleteButton(val time: String) : BottomSheet()
         data class OnClickEndTimeCompleteButton(val time: String) : BottomSheet()
-        data class OnClickReservationButton(val title: String) : BottomSheet()
+        data class OnClickReservationButton(val title: String, val context : Context) : BottomSheet()
     }
 }
 
