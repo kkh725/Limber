@@ -53,7 +53,7 @@ class HomeReducer(state: HomeState) : Reducer<HomeState, HomeEvent>(state) {
             is HomeEvent.EnterHomeScreen -> {
                 // sheet이 올라오는지 내려가는지 확인
                 val newList = withContext(Dispatchers.IO) {
-                    AppInfoProvider.getUsageAppInfoList(event.context, period = UsageStatsManager.INTERVAL_MONTHLY)
+                    AppInfoProvider.getUsageAppInfoList(event.context, period = UsageStatsManager.INTERVAL_DAILY)
                 }
                 Log.d("TAG", "reduce: ${newList.first()}${newList[1]}${newList[2]}")
 

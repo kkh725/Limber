@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -51,6 +53,7 @@ import com.kkh.multimodule.core.accessibility.permission.PermissionManager
 import com.kkh.multimodule.core.accessibility.permission.PermissionManager.openAccessibilitySettings
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
@@ -60,12 +63,16 @@ import com.kkh.multimodule.core.ui.ui.component.LimberAnimation
 import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
 import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
+import com.kkh.multimodule.feature.onboarding.contents.SelectTopBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
+fun AccessPermissionScreen(
+    navigateToAlertPermission: () -> Unit,
+    onClickBack: () -> Unit
+) {
 
     val context = LocalContext.current
     var isRequestingPermission by remember { mutableStateOf(false) }
@@ -114,9 +121,11 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
                 .fillMaxSize()
                 .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(
-                Modifier
-                    .height(84.dp)
+            SelectTopBar(
+                modifier = Modifier
+                    .padding(vertical = 18.dp),
+                onClickBack = onClickBack,
+                onClickSkip = navigateToAlertPermission
             )
 
             LimberProgressBar(0.4f)
@@ -262,12 +271,6 @@ fun AccessPermissionScreen(navigateToAlertPermission: () -> Unit) {
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
-@Composable
-fun AccessPermissionScreenPreview() {
-    AccessPermissionScreen({})
-}
-
 @Composable
 fun TopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
     Row(
@@ -277,7 +280,8 @@ fun TopBar(modifier: Modifier = Modifier, onClickBack: () -> Unit = {}) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         LimberBackButton(onClick = onClickBack)
-        TextButton({}, enabled = false, contentPadding = PaddingValues(0.dp)) {}
+        Text("")
+
     }
 }
 

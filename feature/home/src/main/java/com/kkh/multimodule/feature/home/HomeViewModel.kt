@@ -89,15 +89,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun getActiveTimerId() {
-
         val activeTimerId = timerRepository.getActiveTimerId()
         Log.d("getActiveTimerId", "현재 진행중인 타이머 id : $activeTimerId")
         timerRepository.getSingleTimer(activeTimerId)
             .onSuccess {
                 if (it.status != TimerStatusModel.OFF) {
                     Log.d(
-                        "getActiveTimerId",
-                        "남은 시간 ${getRemainingTimeFormattedSafe(it.endTime)}"
+                        "getSingleTimer",
+                        "status on, 남은 시간 ${getRemainingTimeFormattedSafe(it.endTime)}"
                     )
 
                     reducer.setState(
@@ -106,12 +105,11 @@ class HomeViewModel @Inject constructor(
                             currentTimerId = it.id
                         )
                     )
+                }else{
+                    Log.e("getSingleTimer", "status off 아무 동작 없음.")
                 }
-
             }.onFailure { throwable ->
-                //수시로 호출하기 때문에 부수효과 x
-//                    reducer.sendEffect(CommonEffect.ShowSnackBar(throwable.message.toString()))
-            }
+                Log.e("getSingleTimer", "${throwable.message}")}
     }
 
     private suspend fun getFocusDistributionList() {

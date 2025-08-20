@@ -1,5 +1,6 @@
 package com.kkh.multimodule.core.network.model.response
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import retrofit2.Response
@@ -44,11 +45,14 @@ inline fun <reified T> Response<ApiResponse<T>>.processApiResponse(): T {
         val body = this.body() ?: throw NullPointerException(HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
 
         if (body.success) {
+            Log.d("ApiResponse", "success: ${true}, data: ${body.data}")
             return body.data ?: throw NullPointerException(HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
         } else {
+            Log.e("ApiResponse", "success: ${false}, data: ${body.data}")
             throw Exception(body.error?.message ?: HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
         }
     } else {
+        Log.e("HttpError", "${this.code()}")
         throw handleHttpError(this.code())
     }
 }

@@ -15,7 +15,7 @@
       </SelectionState>
       <SelectionState runConfigName="limber.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-08-20T01:04:21.185730Z">
+        <DropdownSelection timestamp="2025-08-20T14:04:21.124541Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/kkh/.android/avd/Pixel_3a_API_35.avd" />

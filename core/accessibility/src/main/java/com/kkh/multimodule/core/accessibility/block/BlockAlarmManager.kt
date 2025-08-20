@@ -23,6 +23,8 @@ object BlockAlarmManager {
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        Log.i("TAG", "scheduleBlockTrigger: ${reservation}")
+
         // 실제 블록 모드 트리거
         val triggerTime = calculateTriggerTime(reservation, isStart)
         val triggerIntent =

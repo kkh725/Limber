@@ -24,6 +24,7 @@ object OnBoardingRoute {
     const val SelectType = "select_type"
     const val StartScreen = "final_onboarding"
 }
+
 fun NavController.navigateToPreOnboarding1Screen() =
     navigate(OnBoardingRoute.PreOnboarding1)
 
@@ -53,7 +54,7 @@ fun NavController.navigateToStartScreenScreen() =
 
 fun NavGraphBuilder.onBoardingNavGraph(
     navigateToPreOnboarding2Screen: () -> Unit,
-    navigateToOnboardingScreen : () -> Unit,
+    navigateToOnboardingScreen: () -> Unit,
     navigateToScreenTimePermissionScreen: () -> Unit,
     navigateToAccessPermissionScreen: () -> Unit,
     navigateToManageAppScreen: () -> Unit,
@@ -74,12 +75,18 @@ fun NavGraphBuilder.onBoardingNavGraph(
     }
     composable(OnBoardingRoute.ScreenTimePermission) {
         RightHorizontalEnterAnimation {
-            ScreenTimePermissionScreen(navigateToAccessPermission = navigateToAccessPermissionScreen)
+            ScreenTimePermissionScreen(
+                onClickBack = onClickBack,
+                navigateToAccessPermission = navigateToAccessPermissionScreen
+            )
         }
     }
     composable(OnBoardingRoute.AccessPermission) {
         RightHorizontalEnterAnimation {
-            AccessPermissionScreen(navigateToAlertPermission = navigateToAlertPermission)
+            AccessPermissionScreen(
+                navigateToAlertPermission = navigateToAlertPermission,
+                onClickBack = onClickBack
+            )
         }
         // 👇 여기에 BackHandler 추가
         BackHandler(enabled = true) {}

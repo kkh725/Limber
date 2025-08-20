@@ -69,7 +69,7 @@ class NotificationManager @Inject constructor(
                     val notification = NotificationCompat.Builder(context, channelId)
                         .setSmallIcon(R.drawable.ic_app)
                         .setContentTitle("집중 실험이 종료되었어요!")
-//                        .setContentText("이번 실험에 얼마나 몰입하셨나요? 회고를 작성하며 실험을 복기해봐요.")
+                        .setContentText("이번 실험에 얼마나 몰입하셨나요? 회고를 작성하며 실험을 복기해봐요.")
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true)
                         .setContentIntent(pendingIntent) // ✅ 알림 클릭 시 이동

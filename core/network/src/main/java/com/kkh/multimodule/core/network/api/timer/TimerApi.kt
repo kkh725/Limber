@@ -28,7 +28,7 @@ interface TimerApi {
     ): Response<SingleTimerResponse>
 
     /**
-     * 타이머 잠금 해제[]
+     * 타이머 잠금 해제
      */
     @POST("/api/timers/unlock")
     suspend fun unlockTimer(
