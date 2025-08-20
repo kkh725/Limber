@@ -13,7 +13,7 @@ import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.TimerStatus
 import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
-import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequestDto
 import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
 import com.kkh.multimodule.core.network.model.response.HistoryResponse
 import com.kkh.multimodule.core.network.model.response.HistoryResponseDto
@@ -108,11 +108,11 @@ fun List<SingleTimerModel>.toReservationItemModelList(): List<ReservationItemMod
  * timer status 토글변경
  */
 
-fun PatchTimerStatusRequest.toDomain(): PatchTimerModel =
+fun PatchTimerStatusRequestDto.toDomain(): PatchTimerModel =
     PatchTimerModel(status = this.status)
 
-fun PatchTimerModel.toDto(): PatchTimerStatusRequest =
-    PatchTimerStatusRequest(status = this.status)
+fun PatchTimerModel.toDto(): PatchTimerStatusRequestDto =
+    PatchTimerStatusRequestDto(status = this.status)
 
 /**
  * timer 삭제

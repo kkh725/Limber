@@ -3,7 +3,7 @@ package com.kkh.multimodule.core.network.datasource.history
 import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
-import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequestDto
 import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
 import com.kkh.multimodule.core.network.model.request.history.TotalImmersionRequestDto
 import com.kkh.multimodule.core.network.model.response.ApiResponse

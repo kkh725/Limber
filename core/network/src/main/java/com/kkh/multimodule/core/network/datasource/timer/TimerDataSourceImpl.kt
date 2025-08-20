@@ -6,7 +6,7 @@ import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
-import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequestDto
 import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
 import com.kkh.multimodule.core.network.model.request.UnLockRequestDto
 import com.kkh.multimodule.core.network.model.response.BaseResponse
@@ -42,8 +42,8 @@ class TimerDataSourceImpl @Inject constructor(
         return timerApi.getTimerList(userId)
     }
 
-    override suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequest) : BaseResponse {
-        return timerApi.patchTimerStatus(timerId, patchTimerStatusRequest = status)
+    override suspend fun patchTimerStatus(timerId: Int, status: PatchTimerStatusRequestDto) : BaseResponse {
+        return timerApi.patchTimerStatus(timerId, PatchTimerStatusRequestDto = status)
     }
 
     override suspend fun deleteTimer(timerIdList: List<Int>): Response<Unit> {

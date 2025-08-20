@@ -4,7 +4,7 @@ import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
 import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
 import com.kkh.multimodule.core.network.model.SingleTimerStatusDto
 import com.kkh.multimodule.core.network.model.request.DeleteTimerRequestDto
-import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequest
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequestDto
 import com.kkh.multimodule.core.network.model.request.UnLockRequestDto
 import com.kkh.multimodule.core.network.model.response.BaseResponse
 import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
@@ -65,7 +65,7 @@ interface TimerApi {
     @PATCH("/api/timers/{timerId}/status")
     suspend fun patchTimerStatus(
         @Path("timerId") timerId : Int,
-        @Body patchTimerStatusRequest: PatchTimerStatusRequest
+        @Body PatchTimerStatusRequestDto: PatchTimerStatusRequestDto
     ): BaseResponse
 
     /**

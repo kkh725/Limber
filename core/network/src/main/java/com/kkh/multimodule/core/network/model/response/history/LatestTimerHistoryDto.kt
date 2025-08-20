@@ -2,7 +2,7 @@ package com.kkh.multimodule.core.network.model.response.history
 
 import com.kkh.multimodule.core.network.model.response.ApiResponse
 
-data class LatestTimerHistoryDto(
+data class LatestTimerHistoryResponseDto(
     val id: Int,
     val timerId: Int,
     val userId: String,
@@ -23,5 +23,5 @@ data class LatestTimerHistoryDto(
     val retrospectSummary: String
 )
 
-typealias LatestTimerResponse = ApiResponse<LatestTimerHistoryDto>
+typealias LatestTimerResponse = ApiResponse<LatestTimerHistoryResponseDto>
 

@@ -10,14 +10,16 @@ data class ApiResponse<T>(
     val data: T?,
     @SerializedName("error")
     val error: ApiError?
-)
+){
+    data class ApiError(
+        @SerializedName("code")
+        val code: String,
+        @SerializedName("message")
+        val message: String
+    )
+}
 
-data class ApiError(
-    @SerializedName("code")
-    val code: String,
-    @SerializedName("message")
-    val message: String
-)
+
 
 // 단일 조회
 typealias SingleTimerResponse = ApiResponse<SingleTimerStatusDto>

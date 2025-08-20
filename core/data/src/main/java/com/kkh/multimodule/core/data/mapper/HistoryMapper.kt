@@ -15,7 +15,7 @@ import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.domain.model.history.ActualByWeekendModel
 import com.kkh.multimodule.core.domain.model.history.LatestTimerHistoryModel
 import com.kkh.multimodule.core.domain.model.history.HistoryWithRetrospectsModel
-import com.kkh.multimodule.core.network.model.response.history.LatestTimerHistoryDto
+import com.kkh.multimodule.core.network.model.response.history.LatestTimerHistoryResponseDto
 import kotlin.Boolean
 
 fun TotalImmersionResponseDto.toDomain(): TotalImmersionModel =
@@ -54,7 +54,7 @@ fun ActualByWeekendResponseDto.toDomain(): ActualByWeekendModel =
         totalActualMinutes = this.totalActualMinutes
     )
 
-fun LatestTimerHistoryDto.toDomain(): LatestTimerHistoryModel =
+fun LatestTimerHistoryResponseDto.toDomain(): LatestTimerHistoryModel =
     LatestTimerHistoryModel(
         id = this.id,
         timerId = this.timerId,
