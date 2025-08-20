@@ -40,23 +40,35 @@ class BlockActivity : ComponentActivity() {
                 onNavigateToRecall = {
                     var uri = "limber://app".toUri()
 
-                    coroutineScope.launch {
-                        val currentTimerId = timerRepository.getActiveTimerId()
-                        historyRepository.getLatestHistoryId(currentTimerId)
-                            .onSuccess {
-                                uri =
-                                    "limber://recall?timerId=${currentTimerId}&timerHistoryId=${it}".toUri()
-                                val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    // resValue로 생성된 문자열 리소스 참조
+                    val buildType = getString(R.string.build_type)
+                    val isProductBuild = buildType == "product"
+
+                    if (isProductBuild){
+                        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        this@BlockActivity.startActivity(intent)
+                    }else{
+                        coroutineScope.launch {
+                            val currentTimerId = timerRepository.getActiveTimerId()
+                            historyRepository.getLatestHistoryId(currentTimerId)
+                                .onSuccess {
+                                    uri =
+                                        "limber://recall?timerId=${currentTimerId}&timerHistoryId=${it}".toUri()
+                                    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    this@BlockActivity.startActivity(intent)
+                                }.onFailure {
+                                    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    this@BlockActivity.startActivity(intent)
                                 }
-                                this@BlockActivity.startActivity(intent)
-                            }.onFailure {
-                                val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                this@BlockActivity.startActivity(intent)
-                            }
+                        }
                     }
+
                     // 네비게이션 백스택 비우기
                     navHostController.popBackStack(
                         route = navHostController.graph.startDestinationRoute ?: return@BlockNavHost,

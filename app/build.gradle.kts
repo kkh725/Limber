@@ -10,6 +10,17 @@ tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:deprecation")
 }
 
+android{
+    buildTypes {
+        create("product") {
+            initWith(getByName("debug")) // debug 설정 복사
+            matchingFallbacks.add("debug") // 리소스/코드 fallback
+            applicationIdSuffix = ".product"
+            versionNameSuffix = "-product"
+        }
+    }
+}
+
 dependencies {
 
     implementation(project(":feature:block"))

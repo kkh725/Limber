@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -134,6 +135,12 @@ fun UnBlockCompleteBottomBar(
     onClickCloseScreen: () -> Unit,
     onNavigateToRecall: () -> Unit
 ) {
+
+    val context = LocalContext.current
+    // resValue로 생성된 문자열 리소스 참조
+    val buildType = context.getString(com.kkh.multimodule.feature.block.R.string.build_type)
+    val isProductBuild = buildType == "product"
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -151,7 +158,7 @@ fun UnBlockCompleteBottomBar(
 
         LimberSquareButton(
             onClick = onNavigateToRecall,
-            text = "회고하기",
+            text = if (isProductBuild) "새 타이머 시작" else "회고하기",
             modifier = Modifier.weight(1f)
         )
 

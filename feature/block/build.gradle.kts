@@ -7,6 +7,14 @@ plugins {
 
 android {
     namespace = "com.kkh.multimodule.feature.block"
+
+    buildTypes {
+        create("product") {
+            initWith(getByName("debug")) // debug 설정 복사
+            matchingFallbacks.add("debug") // 리소스/코드 fallback
+            resValue("string", "build_type", "product")
+        }
+    }
 }
 
 dependencies {
