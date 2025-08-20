@@ -36,6 +36,7 @@
             <option value="$PROJECT_DIR$/feature/block" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/laboratory" />
+            <option value="$PROJECT_DIR$/feature/more" />
             <option value="$PROJECT_DIR$/feature/onboarding" />
             <option value="$PROJECT_DIR$/feature/timer" />
           </set>

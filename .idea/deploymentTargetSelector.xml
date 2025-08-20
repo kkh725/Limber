@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="limber.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-08-20T14:04:21.124541Z">
+        <DropdownSelection timestamp="2025-08-20T14:22:03.564006Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/kkh/.android/avd/Pixel_3a_API_35.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R39M30CVAGA" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -27,10 +27,10 @@
       <SelectionState runConfigName="LimberAnimation">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AccessPermissionScreenPreview">
+      <SelectionState runConfigName="RecallCardPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RecallCardPreview">
+      <SelectionState runConfigName="MoreContents">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

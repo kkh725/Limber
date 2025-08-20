@@ -86,7 +86,7 @@ fun ReservationListScreenPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit = {}){
+fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit = {}) {
     val reservationViewModel: ReservationViewModel = hiltViewModel()
     val uiState by reservationViewModel.uiState.collectAsState()
 
@@ -110,6 +110,7 @@ fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit 
                         snackbarHostState.showImmediately(effect.message)
                     }
                 }
+
                 is SideEffect.NavigateToHome -> {
                     onNavigateToHome()
                 }
@@ -208,7 +209,9 @@ fun ReservationPage(modifier: Modifier = Modifier, onNavigateToHome: () -> Unit 
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = 15.5.dp, vertical = 10.dp)
         ) {
-            LimberSnackBar(text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
+            LimberSnackBar(
+                text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown"
+            )
         }
     }
 
@@ -381,7 +384,7 @@ fun ReservationItemModelComposable(
     } else {
         if (info.reservationInfo.repeatDays.isNotEmpty()) {
             "${info.reservationInfo.repeatDays.joinToString(",")}, "
-        } else ""
+        } else "반복 없음, "
     }
 
     Column(
@@ -425,18 +428,18 @@ fun ReservationItemModelComposable(
             color = if (info.isToggleChecked) Gray800 else Gray600
         )
         Spacer(Modifier.height(6.dp))
-        Row {
-            Text(
-                text = dayText,
-                style = LimberTextStyle.Body2,
-                color = descriptionColor
-            )
-            Text(
-                text = "${info.reservationInfo.startTime} ~ ${info.reservationInfo.endTime}",
-                style = LimberTextStyle.Body2,
-                color = descriptionColor
-            )
-        }
+            Row {
+                Text(
+                    text = dayText,
+                    style = LimberTextStyle.Body2,
+                    color = descriptionColor
+                )
+                Text(
+                    text = "${info.reservationInfo.startTime} ~ ${info.reservationInfo.endTime}",
+                    style = LimberTextStyle.Body2,
+                    color = descriptionColor
+                )
+            }
     }
 }
 

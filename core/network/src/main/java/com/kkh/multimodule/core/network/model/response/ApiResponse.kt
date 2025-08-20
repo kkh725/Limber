@@ -33,7 +33,7 @@ fun handleHttpError(code: Int): Exception {
     return when (code) {
         HttpErrorStatus.UNAUTHORIZED.code -> IllegalAccessException(HttpErrorStatus.UNAUTHORIZED.message)
         HttpErrorStatus.INVALID_INPUT.code -> IllegalArgumentException(HttpErrorStatus.INVALID_INPUT.message)
-        HttpErrorStatus.DUPLICATE.code -> IllegalStateException(HttpErrorStatus.UNAUTHORIZED.message)
+        HttpErrorStatus.DUPLICATE.code -> IllegalStateException(HttpErrorStatus.DUPLICATE.message)
         HttpErrorStatus.INTERNAL_SERVER_ERROR.code -> Exception(HttpErrorStatus.INTERNAL_SERVER_ERROR.message)
         HttpErrorStatus.NOT_FOUND_TIMER.code -> Exception(HttpErrorStatus.NOT_FOUND_TIMER.message)
         else -> Exception("HTTP 오류 코드: $code")
