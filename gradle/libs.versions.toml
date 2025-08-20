@@ -32,11 +32,10 @@ okhttp = "5.1.0"
 #datastore
 datastore = "1.1.7"
 
-
 # Project versions
 projectApplicationId = "com.kkh.cmc.limber"
-projectVersionName = "0.0.6"
-projectVersionCode = "6"
+projectVersionName = "0.0.7"
+projectVersionCode = "7"
 projectMinSdkVersion = "29"
 projectTargetSdkVersion = "35"
 projectCompileSdkVersion = "35"

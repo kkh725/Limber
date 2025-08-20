@@ -10,8 +10,8 @@ android {
 
     buildTypes {
         create("product") {
-            initWith(getByName("debug")) // debug 설정 복사
-            matchingFallbacks.add("debug") // 리소스/코드 fallback
+            initWith(getByName("release")) // debug 설정 복사
+            matchingFallbacks.add("release") // 리소스/코드 fallback
             resValue("string", "build_type", "product")
         }
     }
