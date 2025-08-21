@@ -132,7 +132,7 @@ fun AccessPermissionScreen(
 
             Spacer(Modifier.height(40.dp))
             Text(
-                "방해되는 앱을 차단하기 위해\n" +
+                "방해되는 앱을 제어하기 위해\n" +
                         "접근성 허용이 필요해요",
                 textAlign = TextAlign.Center,
                 style = LimberTextStyle.Heading3,
@@ -140,10 +140,10 @@ fun AccessPermissionScreen(
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
+                "스마트폰을 줄이고 집중하기 위해 권한을 허용해주세요", style = LimberTextStyle.Body2, color = Gray600
             )
             Spacer(Modifier.height(40.dp))
-            PermissionBox(headText = "접근성 허용", bodyText = "앱 차단 허용")
+            PermissionBox(headText = "접근성 허용", bodyText = "설정한 시간 동안 방해되는 앱을 제어합니다")
             Spacer(Modifier.weight(1f))
             Box(
                 Modifier

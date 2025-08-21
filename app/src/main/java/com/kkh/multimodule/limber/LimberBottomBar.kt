@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.kkh.multimodule.core.ui.R
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.kkh.more.MoreRoute
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
@@ -39,7 +40,7 @@ sealed class BottomNavItem(
     object LABORATORY :
         BottomNavItem(LaboratoryRoutes.LABORATORY, "실험실", R.drawable.ic_bottom_experiment)
 
-    object MORE : BottomNavItem(BottomNavRoutes.MORE, "더보기", R.drawable.ic_bottom_more)
+    object MORE : BottomNavItem(MoreRoute.MORE, "더보기", R.drawable.ic_bottom_more)
 }
 
 @Composable
@@ -52,7 +53,7 @@ fun LimberBottomBar(
         BottomNavItem.Home,
         BottomNavItem.TIMER,
         BottomNavItem.LABORATORY,
-//        BottomNavItem.MORE
+        BottomNavItem.MORE
     )
     val navBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = navBackStackEntry?.destination?.route

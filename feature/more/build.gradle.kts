@@ -34,5 +34,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.compose.foundation:foundation:1.9.0")
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
 
 }

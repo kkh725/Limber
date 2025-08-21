@@ -125,12 +125,12 @@ fun AlarmPermissionScreen(navigateToManageApp: () -> Unit) {
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
+                "스마트폰을 줄이고 집중하기 위해 권한을 허용해주세요", style = LimberTextStyle.Body2, color = Gray600
             )
             Spacer(Modifier.height(40.dp))
             PermissionBox(
                 headText = "알림 허용",
-                bodyText = "앱 차단 허용",
+                bodyText = "푸시 알림 및 메시지를 수신합니다",
                 imgResId = R.drawable.ic_permission_alert
             )
             Spacer(Modifier.weight(1f))

@@ -14,6 +14,9 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.kkh.more.MoreRoute
+import com.kkh.more.moreNavGraph
+import com.kkh.more.navigateFocusState
 import com.kkh.multimodule.limber.RootViewModel
 import com.kkh.multimodule.core.domain.ScreenState
 import com.kkh.multimodule.core.ui.R
@@ -58,6 +61,7 @@ fun LimberNavHost(
                     ScreenState.LABORATORY_SCREEN
                 )
             )
+            MoreRoute.MORE -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.MORE_SCREEN))
 
             else -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
         }
@@ -146,6 +150,10 @@ fun LimberNavHost(
                         timerHistoryId = item.id
                     )
                 }
+            )
+
+            moreNavGraph(
+                navigateFocusState = navController::navigateFocusState
             )
         }
     }

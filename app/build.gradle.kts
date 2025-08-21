@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":feature:timer"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:laboratory"))
+    implementation(project(":feature:more"))
 
     implementation(project(":core:data"))
     implementation(project(":core:datastore"))

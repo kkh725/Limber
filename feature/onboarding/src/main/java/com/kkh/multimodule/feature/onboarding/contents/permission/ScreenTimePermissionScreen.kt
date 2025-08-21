@@ -88,7 +88,7 @@ fun ScreenTimePermissionScreen(onClickBack: () -> Unit,navigateToAccessPermissio
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
+                "스마트폰을 줄이고 집중하기 위해 권한을 허용해주세요", style = LimberTextStyle.Body2, color = Gray600
             )
             Spacer(Modifier.height(40.dp))
             PermissionBox(headText = "스크린타임 데이터", bodyText = "앱 별 사용 시간 조회")
