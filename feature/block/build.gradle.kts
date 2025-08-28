@@ -9,6 +9,14 @@ android {
     namespace = "com.kkh.multimodule.feature.block"
 
     buildTypes {
+        getByName("debug") {
+            // 원래 있는 debug 타입에 추가
+            resValue("string", "build_type", "debug")
+        }
+        getByName("release") {
+            // 원래 있는 release 타입에 추가
+            resValue("string", "build_type", "release")
+        }
         create("product") {
             initWith(getByName("release")) // debug 설정 복사
             matchingFallbacks.add("release") // 리소스/코드 fallback
