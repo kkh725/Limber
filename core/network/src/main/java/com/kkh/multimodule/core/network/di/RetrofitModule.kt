@@ -8,54 +8,35 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-
-// NetworkQualifiers.kt
-// baseUrl 이 두 개 이상일 때 retrofit을 다르게 생성 후 주입 필요.
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class TestApi3
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class TestApi2
 
 // NetworkModule.kt
 @Module
 @InstallIn(SingletonComponent::class)
 internal object RetrofitModule {
 
+    private const val BASE_URL = "http://3.35.146.79:8888/"
 
-    @Provides
     @Singleton
     internal fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS) // 연결 타임아웃
+            .readTimeout(5, TimeUnit.SECONDS)    // 읽기 타임아웃
+            .writeTimeout(5, TimeUnit.SECONDS)   // 쓰기 타임아웃
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .build()
     }
 
-    @TestApi2
     @Provides
     @Singleton
-    internal fun provideJsonPlaceholderRetrofit(): Retrofit {
+    internal fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(provideOkHttpClient())
-            .build()
-    }
-
-    @TestApi3
-    @Provides
-    @Singleton
-    internal fun provideAnotherApiRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(provideOkHttpClient())
             .build()

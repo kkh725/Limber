@@ -1,5 +1,9 @@
 package com.kkh.multimodule.feature.home
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,8 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,10 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,19 +46,17 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kkh.multimodule.core.accessibility.AppInfo
-import com.kkh.multimodule.core.accessibility.AppInfoProvider.getUsageAppInfoList
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
+import com.kkh.multimodule.core.domain.model.history.FocusDistributionModel
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray700
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Main
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Secondary_Light
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Secondary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.DopamineActBox
@@ -66,9 +64,7 @@ import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.ui.component.RegisterBlockAppBottomSheet
 import com.kkh.multimodule.core.ui.util.convertTimeStringToMinutes
 import com.kkh.multimodule.core.ui.util.decrementOneSecond
-import com.kkh.multimodule.core.ui.util.getCurrentTimeInKoreanFormat
-import com.kkh.multimodule.core.ui.util.getRemainingTimeFormatted
-import com.kkh.multimodule.core.ui.util.isNowWithinTimeRange
+import com.kkh.multimodule.core.ui.util.formatMinutesToHoursMinutes
 import com.kkh.multimodule.core.ui.util.sumTimeStringsToHourMinuteFormat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -76,7 +72,8 @@ import kotlinx.coroutines.isActive
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToActiveTimer: () -> Unit
+    onNavigateToActiveTimer: (String, Int) -> Unit,
+    onNavigateToSetTimer: () -> Unit
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsState()
@@ -84,30 +81,37 @@ fun HomeScreen(
     val appInfoList = uiState.usageAppInfoList
     val blockingAppPackageList = uiState.blockingAppPackageList
     val localBlockReservationList = uiState.blockReservationItemList
-    val isTimerActive = uiState.isTimerActive
 
+    val isTimerActive = uiState.isTimerActive
+    var leftTime by rememberSaveable { mutableStateOf("00:00:00") }
+    val focusDistributionList = uiState.focusDistributionList
     var isSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-
-    var timerText by remember { mutableStateOf(getCurrentTimeInKoreanFormat()) }
+    var checkedList = uiState.checkedList
 
     val totalDopamineTime =
         sumTimeStringsToHourMinuteFormat(appInfoList.take(3).map { it.usageTime })
+    val totalFocusTime =
+        formatMinutesToHoursMinutes(focusDistributionList.take(3).sumOf { it.totalActualMinutes })
 
     LaunchedEffect(Unit) {
         homeViewModel.sendEvent(HomeEvent.EnterHomeScreen(context))
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(uiState.leftTime) {
+        leftTime = uiState.leftTime
+    }
+
+    LaunchedEffect(isTimerActive) {
         // 현재 진행되고 있는 타이머가 존재하는지 확인.
         if (isTimerActive) {
-            // 현재 진행중인 타이머는 서버에서 내려줄것.
-//            timerText = getRemainingTimeFormatted(it.reservationInfo.endTime)
             while (isActive) {
                 delay(1000)
-                if (timerText != "00:00:00") {
-                    timerText = decrementOneSecond(timerText)
+                if (leftTime != "00:00:00") {
+                    leftTime = decrementOneSecond(leftTime)
+                } else {
+                    homeViewModel.sendEvent(HomeEvent.EndTimer)
                 }
             }
         }
@@ -116,7 +120,7 @@ fun HomeScreen(
     Image(
         painterResource(R.drawable.bg_home),
         contentDescription = null,
-        contentScale = ContentScale.None,
+        contentScale = ContentScale.FillWidth,
     )
 
     Column(
@@ -138,10 +142,13 @@ fun HomeScreen(
                 .weight(1f)
                 .fillMaxSize(),
             appInfoList = appInfoList,
-            navigateToActiveTimer = onNavigateToActiveTimer,
-            navigateToSetTimer = onNavigateToActiveTimer, // todo 수정필요
-            timerText = timerText,
-            totalFocusTime = totalDopamineTime,
+            navigateToActiveTimer = {
+                onNavigateToActiveTimer(it, uiState.currentTimerId)
+            },
+            navigateToSetTimer = onNavigateToSetTimer,
+            leftTime = leftTime,
+            totalFocusTime = totalFocusTime,
+            focusDistributionList = focusDistributionList,
             totalDopamineTime = totalDopamineTime,
             isTimerActive = isTimerActive
         )
@@ -155,7 +162,11 @@ fun HomeScreen(
                 isSheetVisible = false
                 homeViewModel.sendEvent(HomeEvent.OnCompleteRegisterButton(checkedAppList))
             },
-            appList = appInfoList
+            appList = appInfoList,
+            checkedList = checkedList,
+            onCheckClicked = { index ->
+                homeViewModel.sendEvent(HomeEvent.ToggleCheckedIndex(index))
+            }
         )
     }
 }
@@ -164,13 +175,19 @@ fun HomeScreen(
 private fun HomeScreenMainBody(
     modifier: Modifier = Modifier,
     appInfoList: List<AppInfo>,
-    navigateToActiveTimer: () -> Unit = {},
+    navigateToActiveTimer: (String) -> Unit = {},
     navigateToSetTimer: () -> Unit = {},
-    timerText: String = "00:00:00",
+    leftTime: String = "00:00:00",
+    focusDistributionList: List<FocusDistributionModel>,
     totalFocusTime: String = "1시간 2분",
     totalDopamineTime: String = "1시간 0분",
     isTimerActive: Boolean = false
 ) {
+    val focusMinutes = convertTimeStringToMinutes(totalFocusTime)
+    val dopamineMinutes = convertTimeStringToMinutes(totalDopamineTime)
+
+    val imageResId = if (focusMinutes > dopamineMinutes) R.drawable.lv1_good else R.drawable.lv1_sad
+
     Box(modifier = modifier) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -178,21 +195,21 @@ private fun HomeScreenMainBody(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_lv1_good),
-                modifier = Modifier.size(114.dp),
+                painter = painterResource(imageResId),
+                modifier = Modifier.size(140.dp),
                 contentDescription = null
             )
             Spacer(Modifier.height(10.dp))
             TimerButton(
                 onClickActiveTimer = navigateToActiveTimer,
-                onClickStartTimer = {},
-                timerText = timerText,
+                onClickStartTimer = navigateToSetTimer,
+                leftTime = leftTime,
                 isTimerActive = isTimerActive
             )
             Spacer(Modifier.height(24.dp))
             TodayActivityBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                onClick = navigateToSetTimer
+                isFocusTimeMore = focusMinutes > dopamineMinutes
             )
             Spacer(Modifier.height(13.dp))
             HomeMainContent(
@@ -201,6 +218,7 @@ private fun HomeScreenMainBody(
                     .padding(horizontal = 20.dp),
                 appInfoList = appInfoList,
                 focusTime = totalFocusTime,
+                focusDistributionList = focusDistributionList,
                 dopamineTime = totalDopamineTime
             )
         }
@@ -222,7 +240,8 @@ fun HomeTopBar(
         Image(
             painter = painterResource(R.drawable.logo_limber),
             modifier = Modifier.size(65.dp, 20.dp),
-            contentDescription = "Back"
+            contentDescription = "Back",
+            colorFilter = ColorFilter.tint(LimberColorStyle.Primary_Light)
         )
         Spacer(Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -246,37 +265,67 @@ fun HomeTopBar(
                 )
             }
             Spacer(Modifier.width(6.dp))
-            IconButton(onClick = onClickNoti, Modifier) {
-                Image(
-                    painter = painterResource(R.drawable.ic_noti),
-                    modifier = Modifier.size(20.dp),
-                    contentDescription = "Back"
-                )
-            }
+            // todo 주석해제
+//            IconButton(onClick = onClickNoti, Modifier) {
+//                Image(
+//                    painter = painterResource(R.drawable.ic_noti),
+//                    modifier = Modifier.size(20.dp),
+//                    contentDescription = "Back"
+//                )
+//            }
         }
     }
 }
-
 @Composable
 fun HomeMainContent(
     modifier: Modifier = Modifier,
     appInfoList: List<AppInfo>,
+    focusDistributionList: List<FocusDistributionModel>,
     focusTime: String,
     dopamineTime: String
 ) {
-    val focusTextColor = if (focusTime == "0분") Primary_Main else Primary_Main.copy(alpha = 0.3f)
-    val dopamineTextColor =
-        if (dopamineTime == "0분") Secondary_Main else Secondary_Main.copy(alpha = 0.3f)
-    val focusTimeColor = if (focusTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
-    val dopamineTimeColor = if (dopamineTime == "0분") Gray800 else Gray800.copy(alpha = 0.3f)
-
+    // 문자열 -> 분 단위 변환
     val focusMinutes = convertTimeStringToMinutes(focusTime)
     val dopamineMinutes = convertTimeStringToMinutes(dopamineTime)
     val total = focusMinutes + dopamineMinutes
-    val focusRatio = if (total > 0) focusMinutes.toFloat() / total else 0.5f
-    val dopamineRatio = 1f - focusRatio
 
-    // 카드 형태 컨테이너
+    // 비율 계산
+    val targetFocusRatio = when (focusMinutes) {
+        0 -> 0.1f
+        else -> if (total > 0) focusMinutes.toFloat() / total else 0.5f
+    }
+    val targetDopamineRatio = 1f - targetFocusRatio
+
+    // 애니메이션 적용
+    val focusRatio by animateFloatAsState(
+        targetValue = targetFocusRatio.takeIf { it != 0f } ?: 0.01f,
+        animationSpec = tween(durationMillis = 500)
+    )
+    val dopamineRatio by animateFloatAsState(
+        targetValue = targetDopamineRatio.takeIf { it != 0f } ?: 0.01f,
+        animationSpec = tween(durationMillis = 500)
+    )
+
+    val totalFocusMinutes = focusDistributionList.take(3).sumOf { it.totalActualMinutes }
+    val animatedFocusMinutes by animateIntAsState(
+        targetValue = totalFocusMinutes,
+        animationSpec = tween(durationMillis = 500)
+    )
+    val animatedDopamineMinutes by animateIntAsState(
+        targetValue = dopamineMinutes,
+        animationSpec = tween(durationMillis = 500)
+    )
+
+    // 텍스트 색상 애니메이션
+    val focusTextColor by animateColorAsState(
+        targetValue = if (focusMinutes > dopamineMinutes) Gray800 else Gray800.copy(alpha = 0.3f),
+        animationSpec = tween(300)
+    )
+    val dopamineTextColor by animateColorAsState(
+        targetValue = if (dopamineMinutes > focusMinutes) Gray800 else Gray800.copy(alpha = 0.3f),
+        animationSpec = tween(300)
+    )
+
     Box(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -291,32 +340,36 @@ fun HomeMainContent(
             .background(Color.White)
             .padding(20.dp, top = 20.dp, end = 20.dp, bottom = 14.dp)
     ) {
-        // 메인 수직 배치(콘텐츠)
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize()
         ) {
-            // 제목 및 값 Rows
             Spacer(Modifier.height(4.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("집중한 시간", style = LimberTextStyle.Body2, color = focusTextColor)
-                Text("도파민 노출시간", style = LimberTextStyle.Body2, color = dopamineTextColor)
+                Text("집중 시간", style = LimberTextStyle.Body3, color = focusTextColor)
+                Text("도파민 노출시간", style = LimberTextStyle.Body3, color = dopamineTextColor)
             }
             Spacer(Modifier.height(2.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(focusTime, style = LimberTextStyle.Heading1, color = focusTimeColor)
-                Text(dopamineTime, style = LimberTextStyle.Heading1, color = dopamineTimeColor)
+                Text(
+                    text = formatMinutesToHoursMinutes(animatedFocusMinutes),
+                    style = LimberTextStyle.Heading1,
+                    color = focusTextColor
+                )
+                Text(
+                    text = formatMinutesToHoursMinutes(animatedDopamineMinutes),
+                    style = LimberTextStyle.Heading1,
+                    color = dopamineTextColor
+                )
             }
             Spacer(Modifier.height(12.dp))
 
-            // 그래프(바 형태)
+            // 그래프 애니메이션
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -356,9 +409,8 @@ fun HomeMainContent(
                         .background(Secondary_Main)
                 )
             }
-            Spacer(Modifier.height(16.dp))
 
-            // 활동 박스 2개를 나란히
+            Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -368,7 +420,8 @@ fun HomeMainContent(
                         .height(138.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Gray100)
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    focusDistributionList = focusDistributionList
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 DopamineActBox(
@@ -381,13 +434,14 @@ fun HomeMainContent(
                     appInfoList = appInfoList
                 )
             }
+
             Spacer(Modifier.height(14.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LimberText("분석 더보기", LimberTextStyle.Body2, Gray700)
+                LimberText("분석 더보기", LimberTextStyle.Body2, Gray600)
                 Image(painterResource(R.drawable.ic_next), contentDescription = "")
             }
         }
@@ -395,39 +449,42 @@ fun HomeMainContent(
 }
 
 
+
 @Composable
 fun TodayActivityBar(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = LimberColorStyle.Primary_BG_Dark,
-    textColor: Color = LimberColorStyle.Primary_Vivid,
-    onClick: () -> Unit
+    isFocusTimeMore: Boolean = false
 ) {
-    Box(modifier = modifier) {
+    val backgroundColor = if (isFocusTimeMore)LimberColorStyle.Primary_BG_Dark else Secondary_Light
+    val textColor = if (isFocusTimeMore)LimberColorStyle.Primary_Vivid else Color(0xFFFF462B)
+    val imageRes = if (isFocusTimeMore) R.drawable.ic_fire else R.drawable.ic_dopamin
+    val title = if (isFocusTimeMore)"집중 시간" else "도파민 노출"
+    val subTitle = if (isFocusTimeMore)"이 앞서고있어요! 계속 이어가요" else "이 과다해요! 집중을 더 늘려봐요"
+
+
+    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Row(
             Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
                 .background(
                     color = backgroundColor, shape = RoundedCornerShape(100.dp)
                 )
-//                .clickable(onClick = {})
-                .padding(vertical = 12.dp, horizontal = 20.dp),
+                .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 modifier = Modifier.size(24.dp),
-                painter = painterResource(R.drawable.ic_star),
+                painter = painterResource(imageRes),
                 contentDescription = "Star"
             )
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(6.dp))
             Row {
                 Text(
-                    "집중 시간",
+                    title,
                     style = LimberTextStyle.Body2,
                     color = textColor
                 )
                 Text(
-                    "이 앞서고있어요! 계속 이어가요",
+                    subTitle,
                     style = LimberTextStyle.Body2,
                     color = Gray800
                 )
@@ -437,7 +494,10 @@ fun TodayActivityBar(
 }
 
 @Composable
-fun FocusActBox(modifier: Modifier = Modifier) {
+fun FocusActBox(
+    modifier: Modifier = Modifier,
+    focusDistributionList: List<FocusDistributionModel>
+) {
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -453,32 +513,27 @@ fun FocusActBox(modifier: Modifier = Modifier) {
             Text("집중 활동", style = LimberTextStyle.Body2, color = Gray600)
         }
         Spacer(Modifier.height(16.dp))
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row {
-                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
-                Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
-            }
-            Row {
-                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
-                Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
-            }
-            Row {
-                Text("학습", style = LimberTextStyle.Body3, color = Gray400)
-                Spacer(Modifier.width(10.dp))
-                Text("1시간 2분", style = LimberTextStyle.Body3, color = Gray400)
+        if (focusDistributionList.isEmpty()){
+            Text("집중 활동이 없습니다.", style = LimberTextStyle.Body3, color = Gray400)
+        }else{
+            Column {
+                focusDistributionList.take(3).forEach {
+                    Row {
+                        Text(it.focusTypeName, style = LimberTextStyle.Body3, color = Gray400)
+                        Spacer(Modifier.width(10.dp))
+                        Text(formatMinutesToHoursMinutes(it.totalActualMinutes), style = LimberTextStyle.Body3, color = Gray400)
+                    }
+                }
             }
         }
-
     }
 }
 
 @Composable
 fun TimerButton(
-    onClickActiveTimer: () -> Unit,
+    onClickActiveTimer: (String) -> Unit,
     onClickStartTimer: () -> Unit,
-    timerText: String = "22:22:22",
+    leftTime: String = "22:22:22",
     isTimerActive: Boolean
 ) {
 
@@ -494,7 +549,9 @@ fun TimerButton(
             Modifier
                 .height(60.dp)
                 .clip(RoundedCornerShape(100.dp))
-                .clickable(onClick = onClickActiveTimer)
+                .clickable(onClick = {
+                    onClickActiveTimer(leftTime)
+                })
                 .background(Color.Red)
                 .then(backgroundModifier)
                 .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -506,7 +563,7 @@ fun TimerButton(
             )
             Spacer(Modifier.width(21.5.dp))
             Text(
-                text = timerText,
+                text = leftTime,
                 style = LimberTextStyle.Heading2,
                 color = Color.White,
             )
@@ -522,27 +579,18 @@ fun TimerButton(
     } else {
         Row(
             Modifier
-                .height(60.dp)
                 .clip(RoundedCornerShape(100.dp))
                 .clickable(onClick = onClickStartTimer)
                 .background(Color.Red)
                 .then(backgroundModifier)
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .padding(horizontal = 57.dp, vertical = 17.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "집중 시작하기",
-                style = LimberTextStyle.Heading2,
+                style = LimberTextStyle.Heading5,
                 color = Color.White
             )
         }
     }
-
-
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen {}
 }

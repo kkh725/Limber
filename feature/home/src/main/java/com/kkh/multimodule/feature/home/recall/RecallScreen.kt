@@ -1,17 +1,13 @@
 package com.kkh.multimodule.feature.home.recall
 
 import android.annotation.SuppressLint
-import android.graphics.Color.alpha
-import android.widget.Space
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,99 +25,82 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kkh.multimodule.core.accessibility.AppInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Dark
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
-import com.kkh.multimodule.core.ui.ui.AppList
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Dialog
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray300
+import com.airbnb.lottie.compose.LottieAnimatable
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray400
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
-import com.kkh.multimodule.core.ui.ui.WarnDialog
+import com.kkh.multimodule.core.ui.designsystem.snackbar.showImmediately
+import com.kkh.multimodule.core.ui.ui.CommonEffect
 import com.kkh.multimodule.core.ui.ui.component.LimberCloseButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import com.kkh.multimodule.core.ui.ui.component.LimberOutlinedTextField
+import com.kkh.multimodule.core.ui.ui.component.LimberSnackBar
 import com.kkh.multimodule.core.ui.ui.component.LimberText
 import com.kkh.multimodule.core.ui.util.getTodayInKoreanFormat
-import com.kkh.multimodule.feature.home.activeTimer.ActiveTimerEvent
 import kotlinx.coroutines.delay
 import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.roundToInt
-import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecallScreen(
+    timerId : Int = -1,
+    timerHistoryId : Int = -1,
+    setStateRecall : () -> Unit = {},
     onPopBackStack: () -> Unit = {},
-    onNavigateToHome: () -> Unit = {}
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToReport: () -> Unit = {},
 ) {
     val recallViewModel: RecallViewModel = hiltViewModel()
     val uiState by recallViewModel.uiState.collectAsState()
@@ -133,141 +112,255 @@ fun RecallScreen(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isSheetOpen = uiState.sheetState
-    var isRecallComplete by remember { mutableStateOf(false) }
+    var isRecallComplete = uiState.isRecallCompleted
+    val category = uiState.category
 
-    var selectedIndex by remember { mutableIntStateOf(-1) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    var selectedIndex by remember { mutableIntStateOf(0) }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(Modifier.height(20.dp))
-
-        RecallTopBar(
-            modifier = Modifier.fillMaxWidth(),
-            type = "학습",
-            onClickClose = {
-                if (text.isEmpty()) {
-                    onPopBackStack()
-                } else {
-                    recallViewModel.sendEvent(RecallEvent.SetModalState(true))
-                }
-            }
-        )
-        Spacer(Modifier.height(20.dp))
-        Box(
-            Modifier
-                .background(Primary_Dark, shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-        ) {
-            Text(
-                "작은 회고가 쌓여 나만의 집중 루틴을 만들어줄거에요",
-                style = LimberTextStyle.Body3,
-                color = LimberColorStyle.Primary_Main
-            )
-        }
-
-        Spacer(Modifier.height(32.dp))
-
-        LimberText("이번 실험, 얼마나 집중했나요?", LimberTextStyle.Heading3, Gray800)
-
-        Spacer(Modifier.height(28.dp))
-
-        Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = null)
-
-        Spacer(Modifier.height(4.dp))
-        SelectFocusDegree(selectedIndex, onSelectedIndexChange = {
-            selectedIndex = it
-        })
-        Spacer(Modifier.height(32.dp))
-        RecallTextFieldBox(text, onClick = {
-            recallViewModel.sendEvent(
-                RecallEvent.SetSheetState(
-                    true
-                )
-            )
-        })
-
-        Spacer(Modifier.weight(1f))
-        LimberGradientButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { isRecallComplete = true },
-            text = "저장하기",
-            textColor = Color.White
-        )
-
+    val imageRes = when (selectedIndex) {
+        0 -> R.drawable.ic_beaker_20
+        1 -> R.drawable.ic_beaker_60
+        2 -> R.drawable.ic_beaker_100
+        else -> R.drawable.ic_beaker_20
     }
-    // BottomSheet
-    if (isSheetOpen) {
-        ModalBottomSheet(
-            containerColor = Color.White,
-            onDismissRequest = {
+    val compositions = remember {
+        listOf(
+            LottieCompositionSpec.RawRes(R.raw.flow_60_20),
+            LottieCompositionSpec.RawRes(R.raw.flow_20_60),
+            LottieCompositionSpec.RawRes(R.raw.flow_60_100)
+        )
+    }
+
+    val composition1 by rememberLottieComposition(compositions[0])
+    val composition2 by rememberLottieComposition(compositions[1])
+    val composition3 by rememberLottieComposition(compositions[2])
+
+    val currentComposition = when (selectedIndex) {
+        0 -> composition1
+        1 -> composition2
+        2 -> composition3
+        else -> composition1
+    }
+
+    val animatable = remember { LottieAnimatable() }
+
+    // composition이 바뀔 때마다 한 번만 재생 (null 체크로 깜박임 방지)
+    var previousIndex by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(selectedIndex) {
+        if (selectedIndex != previousIndex) {
+            previousIndex = selectedIndex
+
+            // 새 composition은 항상 0에서 시작!
+            animatable.snapTo(progress = 0f)
+            currentComposition?.let { comp ->
+                animatable.animate(
+                    composition = comp,
+                    iterations = 1,
+                    speed = 1f
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        setStateRecall()
+        recallViewModel.uiEffect.collect { effect ->
+            when (effect) {
+
+                is CommonEffect.ShowSnackBar -> {
+                    coroutineScope.launch {
+                        snackbarHostState.showImmediately(effect.message)
+                    }
+                }
+                is RecallSideEffect.OnNavigateToHome -> onNavigateToHome()
+                is RecallSideEffect.OnNavigateToReport -> onNavigateToReport()
+            }
+        }
+    }
+
+
+    Box(Modifier.fillMaxSize()) {
+        Image(
+            painterResource(R.drawable.bg_recall_dark),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(20.dp))
+
+            RecallTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                type = category,
+                onClickClose = {
+                    if (text.isEmpty()) {
+                        onPopBackStack()
+                    } else {
+                        recallViewModel.sendEvent(RecallEvent.SetModalState(true))
+                    }
+                }
+            )
+
+            Spacer(Modifier.height(40.dp))
+
+            LimberText("이번 실험, 얼마나 집중했나요?", LimberTextStyle.Heading3, Color.White)
+
+            Spacer(Modifier.height(28.dp))
+
+            currentComposition?.let { comp ->
+                LottieAnimation(
+                    modifier = Modifier.size(200.dp),
+                    composition = comp,
+                    progress = { animatable.progress },
+                )
+            }
+
+//            AnimatedContent(
+//                targetState = imageRes,
+//                modifier = Modifier.size(200.dp),
+//                transitionSpec = {
+//                    (fadeIn(tween(220)) + scaleIn(
+//                        initialScale = 0.9f,
+//                        animationSpec = tween(220)
+//                    )) togetherWith
+//                            (fadeOut(tween(120)) + scaleOut(
+//                                targetScale = 1.05f,
+//                                animationSpec = tween(120)
+//                            ))
+//                },
+//                label = "percentAnimated"
+//            ) { res ->
+//                Image(painterResource(res), contentDescription = null, modifier = Modifier)
+//            }
+
+            Spacer(Modifier.height(4.dp))
+            SelectFocusDegree(selectedIndex, onSelectedIndexChange = {
+                selectedIndex = it
+            })
+            Spacer(Modifier.height(32.dp))
+            RecallTextFieldBox(text, onClick = {
                 recallViewModel.sendEvent(
                     RecallEvent.SetSheetState(
-                        false
+                        true
                     )
                 )
-            },
-            sheetState = sheetState
-        ) {
-            BottomSheetContent(
-                value = text,
-                onValueChange = {
-                    recallViewModel.sendEvent(RecallEvent.OnValueChange(it))
-                },
-                onClose = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        recallViewModel.sendEvent(
-                            RecallEvent.SetSheetState(
-                                false
-                            )
+            })
+
+            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.weight(1f))
+            if (text.isEmpty()) {
+                LimberText(
+                    "회고를 다 완성해야 저장할 수 있어요",
+                    LimberTextStyle.Body2,
+                    Gray500
+                )
+                Spacer(Modifier.height(20.dp))
+            }
+
+            LimberGradientButton(
+                enabled = text.isNotEmpty(),
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    recallViewModel.sendEvent(
+                        RecallEvent.OnCompleteRecall(
+                            timerId = timerId,
+                            timerHistoryId = timerHistoryId,
+                            immersion = selectedIndex,
+                            comment = text
                         )
+                    )
+                },
+                text = "저장하기",
+                textColor = Color.White
+            )
+
+        }
+        // BottomSheet
+        if (isSheetOpen) {
+            ModalBottomSheet(
+                containerColor = Color.White,
+                onDismissRequest = {
+                    recallViewModel.sendEvent(
+                        RecallEvent.SetSheetState(
+                            false
+                        )
+                    )
+                },
+                sheetState = sheetState
+            ) {
+                BottomSheetContent(
+                    value = text,
+                    onValueChange = {
+                        recallViewModel.sendEvent(RecallEvent.OnValueChange(it))
+                    },
+                    onClose = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            recallViewModel.sendEvent(
+                                RecallEvent.SetSheetState(
+                                    false
+                                )
+                            )
+                        }
+                    },
+                    onClickSheetComplete = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            recallViewModel.sendEvent(RecallEvent.OnClickSheetComplete)
+                        }
                     }
-                },
-                onClickSheetComplete = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        recallViewModel.sendEvent(RecallEvent.OnClickSheetComplete)
+                )
+            }
+        }
+        if (isModalVisible) {
+            Dialog({ recallViewModel.sendEvent(RecallEvent.SetModalState(false)) }) {
+                RecallCloseWarnModal(
+                    onClickClose = {
+                        recallViewModel.sendEvent(RecallEvent.SetModalState(false))
+                        onPopBackStack()
+                    },
+                    onClickCancel = {
+                        recallViewModel.sendEvent(RecallEvent.SetModalState(false))
+                        onNavigateToHome()
                     }
-                }
-            )
+                )
+            }
+        }
+        if (isRecallComplete) {
+            Dialog({ isRecallComplete = false }) {
+                RecallCompleteWarnModal(
+                    onClickNavigateHome = {
+                        isRecallComplete = false
+                        recallViewModel.sendEffect(RecallSideEffect.OnNavigateToHome)
+                    },
+                    onClickWatchReport = {
+                        isRecallComplete = false
+                        recallViewModel.sendEffect(RecallSideEffect.OnNavigateToReport)
+                    }
+                )
+            }
+        }
+        SnackbarHost(
+            snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 15.5.dp, vertical = 20.dp)
+        ) {
+            LimberSnackBar(text = snackbarHostState.currentSnackbarData?.visuals?.message ?: "Unknown")
         }
     }
-    if (isModalVisible) {
-        Dialog({ recallViewModel.sendEvent(RecallEvent.SetModalState(false)) }) {
-            RecallCloseWarnModal(
-                onClickClose = {
-                    recallViewModel.sendEvent(RecallEvent.SetModalState(false))
-                    onPopBackStack()
-                },
-                onClickCancel = {
-                    recallViewModel.sendEvent(RecallEvent.SetModalState(false))
-                    onNavigateToHome()
-                }
-            )
-        }
-    }
-    if (isRecallComplete){
-        Dialog({ isRecallComplete = false }) {
-            RecallCompleteWarnModal(
-                onClickNavigateHome = {
-                    isRecallComplete = false
-                    onNavigateToHome()
-                },
-                onClickWatchReport = {
-                    isRecallComplete = false
-                    onNavigateToHome()
-                }
-            )
-        }
-    }
+
 }
 
 @Composable
@@ -324,7 +417,7 @@ fun SelectFocusDegree(selectedIndex: Int = -1, onSelectedIndexChange: (Int) -> U
         ) {
             Image(
                 painter = painterResource(
-                    imageResources.getOrElse(selectedIndex) { R.drawable.ic_percent100 }
+                    imageResources.getOrElse(selectedIndex) { R.drawable.ic_percent20 }
                 ),
                 contentDescription = null,
                 modifier = Modifier.size(48.dp) // 필요 시 이미지 크기 지정
@@ -482,18 +575,19 @@ fun RecallTextFieldBox(
         modifier = modifier
             .height(80.dp)
             .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
             .background(
                 color = Color.White.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(4.dp) // 적당한 모서리 곡률
+                shape = RoundedCornerShape(10.dp) // 적당한 모서리 곡률
             )
             .clickable { onClick() }
-            .padding(start = 20.dp, top = 20.dp)
+            .padding(start = 20.dp, top = 16.dp)
     ) {
         if (value.isEmpty()) {
             LimberText(
-                text = "구체적으로 어떤 일에 집중했나요?",
+                text = "오늘 집중한 활동을 간단히 기록해보세요",
                 style = LimberTextStyle.Body2,
-                color = LimberColorStyle.Gray400
+                color = Gray400
             )
         } else {
             LimberText(
@@ -571,7 +665,9 @@ fun BottomSheetContent(
             Spacer(Modifier.weight(1f))
 
             LimberGradientButton(
-                modifier = Modifier.fillMaxWidth().imePadding(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding(),
                 onClick = {
                     keyboardController?.hide()
                     onClickSheetComplete()
@@ -603,6 +699,7 @@ fun FocusTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
+            textStyle = LimberTextStyle.Body2,
             onValueChange = onValueChange,
             placeholder = {
                 Text(
@@ -680,11 +777,12 @@ fun RecallCompleteWarnModal(
     Column(
         Modifier
             .background(Color.White, RoundedCornerShape(16.dp))
-            .fillMaxWidth().padding(12.dp),
+            .fillMaxWidth()
+            .padding(12.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painter = painterResource(R.drawable.ic_star), contentDescription = null)
+        Image(painter = painterResource(R.drawable.ic_check), contentDescription = null)
         Spacer(Modifier.height(10.dp))
 
         Text(

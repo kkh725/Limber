@@ -1,10 +1,14 @@
 package com.kkh.multimodule.core.domain.model
 
+import com.kkh.multimodule.core.domain.RepeatCycleCodeModel
+import com.kkh.multimodule.core.domain.TimerStatusModel
+import com.kkh.multimodule.core.domain.getCurrentTime
+import com.kkh.multimodule.core.domain.getTimePlus30Minutes
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReservationItemModel(
-    val id: Int,
+    val id: Int = -1,
     val reservationInfo: ReservationInfo,
     var isToggleChecked: Boolean = false,
     var isRemoveChecked: Boolean = false,
@@ -25,7 +29,26 @@ data class ReservationItemModel(
 
         fun mockList() = mockReservationItems()
     }
+    fun toSingleTimerModel(
+        focusTypeId: Int = 1, // 필요 시 호출부에서 전달
+        repeatCycleCode: String = RepeatCycleCodeModel.NONE.code, // 필요 시 호출부에서 전달
+        status: TimerStatusModel = TimerStatusModel.OFF
+    ): SingleTimerModel {
+        return SingleTimerModel(
+            id = id,
+            title = reservationInfo.title,
+            focusTypeId = focusTypeId,
+            repeatCycleCode = repeatCycleCode,
+            repeatDays = reservationInfo.repeatDays.joinToString(","), // List -> String 변환
+            startTime = reservationInfo.startTime,
+            endTime = reservationInfo.endTime,
+            status = status
+        )
+    }
 }
+
+
+
 
 @Serializable
 data class ReservationInfo(
@@ -33,15 +56,31 @@ data class ReservationInfo(
     val category: String,
     val startTime: String,
     val endTime: String,
-    val repeatDays: List<String> = emptyList()
+    val repeatDays: List<String> = emptyList(),
+    val repeatOption: String = RepeatCycleCodeModel.NONE.code
 ) {
     companion object {
         fun init() = ReservationInfo(
-            startTime = "08 : 00",
-            endTime = "08 : 00",
-            title = "포트폴리오 작업",
+            startTime = getCurrentTime(),
+            endTime = getTimePlus30Minutes(),
+            title = "기타",
             category = "공부",
             repeatDays = emptyList()
+        )
+    }
+    fun toSingleTimerModel(
+        focusTypeId: Int = 1, // 필요 시 호출부에서 전달
+        repeatCycleCode: String = RepeatCycleCodeModel.NONE.code, // 필요 시 호출부에서 전달
+        status: TimerStatusModel = TimerStatusModel.OFF
+    ): SingleTimerModel {
+        return SingleTimerModel(
+            title = title,
+            focusTypeId = focusTypeId,
+            repeatCycleCode = repeatCycleCode,
+            repeatDays = repeatDays.joinToString(","), // List -> String 변환
+            startTime = startTime,
+            endTime = endTime,
+            status = status
         )
     }
 }

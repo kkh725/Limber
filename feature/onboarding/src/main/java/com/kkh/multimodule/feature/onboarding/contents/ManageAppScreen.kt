@@ -50,7 +50,17 @@ fun ManageAppScreen(navigateToStart : () -> Unit) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val appList = uiState.usageAppInfoList
 
+    var checkedList by remember {
+        mutableStateOf(List(appList.size) { false })
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sendEvent(OnboardingEvent.OnEnterScreen(context))
+
+    }
+
     LaunchedEffect(appList) {
+        checkedList = List(appList.size) { false }
         if (appList.isNotEmpty()) {
             Log.d("ManageAppScreen", "appList updated: ${appList.size}")
             isSheetVisible = true
@@ -107,6 +117,12 @@ fun ManageAppScreen(navigateToStart : () -> Unit) {
                 navigateToStart()
             },
             appList = appList,
+            checkedList = checkedList,
+            onCheckClicked = { index ->
+                checkedList = checkedList.toMutableList().also {
+                    it[index] = !it[index]
+                }
+            }
         )
     }
 }

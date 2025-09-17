@@ -1,9 +1,11 @@
 package com.kkh.multimodule.feature.home.activeTimer
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +14,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -49,14 +49,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
@@ -64,25 +61,26 @@ import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Dark
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Primary_Main
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.AppList
 import com.kkh.multimodule.core.ui.ui.component.LimberSquareButton
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray50
-import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray500
+import androidx.compose.ui.layout.ContentScale
+import com.kkh.multimodule.core.ui.util.calculateTimerPercentReversed
+import com.kkh.multimodule.core.ui.util.decrementOneSecond
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.math.cos
 import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
 fun ActiveTimerScreen(
+    timerId : Int,
+    leftTime: String,
     onPopBackStack: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onNavigateToRecall: () -> Unit = {}
@@ -93,16 +91,37 @@ fun ActiveTimerScreen(
 
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_star)
     val coroutineScope = rememberCoroutineScope()
+    var tempLeftTime by remember { mutableStateOf(leftTime) }
+
+    var imageRes by remember { mutableStateOf(R.drawable.bg_active_timer) }
 
     val sheetState = rememberModalBottomSheetState()
     val isSheetOpen = uiState.sheetState
     val blockedAppList = uiState.blockedAppList
-    val timerPercent = uiState.timerPercent
     val focusType = uiState.focusType
+    val totalTime = uiState.totalTime
 
-    val isTimerEnd = timerPercent == 0f
+    val isTimerEnd = uiState.timerPercent == 100f
 
     var countdownSeconds by remember(isTimerEnd) { mutableIntStateOf(10) }
+
+    LaunchedEffect(uiState.totalTime) {
+        activeTimerViewModel.sendEvent(ActiveTimerEvent.OnEnterScreen)
+
+        while (isActive) {
+            if (tempLeftTime != "00:00:00") {
+                tempLeftTime = decrementOneSecond(tempLeftTime)
+
+                val percent = calculateTimerPercentReversed(totalTime, tempLeftTime)
+                Log.d(TAG, "총시간/남은시간 의 퍼센티지 : $percent")
+                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(percent))
+            } else {
+                activeTimerViewModel.sendEvent(ActiveTimerEvent.SetTimerPercent(100f))
+                imageRes = R.drawable.bg_recall_dark
+            }
+            delay(1000)
+        }
+    }
 
     LaunchedEffect(isTimerEnd) {
         if (isTimerEnd) {
@@ -111,40 +130,45 @@ fun ActiveTimerScreen(
                 countdownSeconds = i
                 delay(1000)
             }
-//            onNavigateToRecall()
+            onNavigateToRecall()
         }
-    }
-
-    Box(Modifier.fillMaxSize()) {
-        Image(painter = painterResource(R.drawable.logo_limber), contentDescription = null)
     }
 
     Box(
         Modifier
             .fillMaxSize()
     ) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(imageRes),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
+
         Scaffold(
-            containerColor = Gray50,
+            containerColor = Color.Transparent,
             bottomBar = {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                BottomBar(
-                    isTimerEnd = isTimerEnd,
-                    onNavigateToHome = onNavigateToHome,
-                    onNavigateToRecall = onNavigateToRecall
-                )
-            }
-        }) { paddingValues ->
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                ) {
+                    BottomBar(
+                        isTimerEnd = isTimerEnd,
+                        onNavigateToHome = onNavigateToHome,
+                        onNavigateToRecall = onNavigateToRecall
+                    )
+                }
+            }) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
+                Spacer(Modifier.height(80.dp))
                 CircularProgressBarWithHandleImage(
-                    percentage = timerPercent,
+                    leftTime = tempLeftTime,
+                    percentage = uiState.timerPercent,
                     handleImage = imageBitmap
                 )
 
@@ -178,6 +202,7 @@ fun ActiveTimerScreen(
                             Text(
                                 "차단중인 앱 보기  >",
                                 style = LimberTextStyle.Body2,
+                                color = Color.White
                             )
                         }
                     }
@@ -196,6 +221,11 @@ fun ActiveTimerScreen(
         // BottomSheet
         if (isSheetOpen) {
             ModalBottomSheet(
+                dragHandle = {
+                    Box(
+                        modifier = Modifier.height(33.dp)
+                    )
+                },
                 containerColor = Color.White,
                 onDismissRequest = {
                     activeTimerViewModel.sendEvent(
@@ -226,10 +256,11 @@ fun ActiveTimerScreen(
 
 @Composable
 fun CircularProgressBarWithHandleImage(
+    leftTime: String,
     percentage: Float,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
-    backgroundColor: Color = Color.LightGray,
+    backgroundColor: Color = Color(0xFF6935A9),
     handleImage: ImageBitmap
 ) {
     val configuration = LocalConfiguration.current
@@ -264,7 +295,6 @@ fun CircularProgressBarWithHandleImage(
                 center = Offset(size.width / 2f, size.height / 2f)
             )
         }
-
 
         Canvas(
             modifier = Modifier
@@ -318,12 +348,42 @@ fun CircularProgressBarWithHandleImage(
             )
         }
 
-        // 중앙 텍스트
-        Text(
-            text = "${(percentage * 100).toInt()}%",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Crossfade(targetState = percentage == 100f, label = "") { isEnd ->
+                val imgResId = if (isEnd) {
+                    R.drawable.char_lv2
+                } else {
+                    R.drawable.char_sad
+                }
+                Image(
+                    painterResource(imgResId),
+                    contentDescription = null,
+                    modifier = Modifier.size(140.dp)
+                )
+            }
+            Crossfade(targetState = percentage == 100f, label = "") { isEnd ->
+                val imgResId = if (isEnd) {
+                    R.drawable.text_timer_end
+                } else {
+                    R.drawable.text_focus
+                }
+                Image(
+                    painter = painterResource(id = imgResId),
+                    contentDescription = null
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "$leftTime",
+                color = LimberColorStyle.Primary_BG_Light,
+                style = LimberTextStyle.DisPlay1
+            )
+        }
+
     }
 }
 
@@ -334,6 +394,31 @@ fun TypeFocusText(
     modifier: Modifier = Modifier
 ) {
     val alphaValue = if (isTimerEnd) 0.5f else 1f
+    val iconRes = when (typeText) {
+        "학습" -> {
+            R.drawable.ic_stud
+        }
+
+        "업무" -> {
+            R.drawable.ic_working
+        }
+
+        "회의" -> {
+            R.drawable.ic_business
+        }
+
+        "작업" -> {
+            R.drawable.ic_working
+        }
+
+        "독서" -> {
+            R.drawable.ic_stud
+        }
+
+        else -> {
+            R.drawable.ic_working
+        }
+    }
 
     Box(
         modifier
@@ -341,16 +426,21 @@ fun TypeFocusText(
             .background(color = Primary_Dark, shape = RoundedCornerShape(size = 100.dp))
             .padding(vertical = 12.dp, horizontal = 20.dp)
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painterResource(iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
             Text(
                 typeText,
-                style = LimberTextStyle.Body3,
+                style = LimberTextStyle.Heading3,
                 color = LimberColorStyle.Primary_Main,
                 textAlign = TextAlign.Center
             )
             Text(
                 "에 집중하는 실험",
-                style = LimberTextStyle.Body3,
+                style = LimberTextStyle.Heading3,
                 color = Color.White,
                 textAlign = TextAlign.Center
             )

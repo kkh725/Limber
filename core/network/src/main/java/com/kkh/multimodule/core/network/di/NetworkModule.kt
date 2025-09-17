@@ -1,8 +1,13 @@
 package com.kkh.multimodule.core.network.di
 
-import com.kkh.multimodule.core.network.api.TestApi
-import com.kkh.multimodule.core.network.datasource.TestDataSource
-import com.kkh.multimodule.core.network.datasource.TestDataSourceImpl
+import com.kkh.multimodule.core.network.api.timer.HistoryApi
+import com.kkh.multimodule.core.network.api.timer.RetrospectsApi
+import com.kkh.multimodule.core.network.api.timer.TimerApi
+import com.kkh.multimodule.core.network.datasource.history.HistoryDataSource
+import com.kkh.multimodule.core.network.datasource.history.HistoryDataSourceImpl
+import com.kkh.multimodule.core.network.datasource.timer.TimerDataSource
+import com.kkh.multimodule.core.network.datasource.timer.TimerDataSourceImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,23 +21,38 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    internal fun provideTestApi(@TestApi3 retrofit: Retrofit): TestApi {
-        return retrofit.create(TestApi::class.java)
+    internal fun provideTimerApi(retrofit: Retrofit): TimerApi {
+        return retrofit.create(TimerApi::class.java)
     }
 
     @Provides
     @Singleton
-    internal fun provideTestApi2(@TestApi2 retrofit: Retrofit): TestApi2 {
-        return retrofit.create(TestApi2::class.java)
+    internal fun provideRetrospectsApi(retrofit: Retrofit): RetrospectsApi {
+        return retrofit.create(RetrospectsApi::class.java)
     }
 
-    //최종적으로 TestDataSource 만 공개함.
     @Provides
     @Singleton
-    fun provideTestDataSource(testApi: TestApi) : TestDataSource {
-        return TestDataSourceImpl(testApi)
+    internal fun provideHistoryApi(retrofit: Retrofit): HistoryApi {
+        return retrofit.create(HistoryApi::class.java)
     }
+}
 
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataSourceModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindTimerDataSource(
+        impl: TimerDataSourceImpl
+    ): TimerDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindHistoryDataSource(
+        impl: HistoryDataSourceImpl
+    ): HistoryDataSource
 }
 
 

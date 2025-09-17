@@ -1,14 +1,14 @@
 package com.kkh.multimodule.feature.reservation
 
+import android.content.Context
 import com.kkh.multimodule.core.domain.model.ReservationItemModel
 import com.kkh.multimodule.core.domain.model.ReservationInfo
-import com.kkh.multimodule.core.domain.model.mockReservationItems
-import com.kkh.multimodule.feature.timer.ReservationScreenState
+import com.kkh.multimodule.feature.util.ReservationScreenState
 import com.kkh.multimodule.feature.timer.ChipInfo
 import com.kkh.multimodule.core.ui.ui.Reducer
+import com.kkh.multimodule.core.ui.ui.UiEffect
 import com.kkh.multimodule.core.ui.ui.UiEvent
 import com.kkh.multimodule.core.ui.ui.UiState
-import kotlinx.datetime.LocalTime
 import kotlin.collections.map
 
 sealed class BottomSheetState {
@@ -33,7 +33,7 @@ data class ReservationState(
         fun init() = ReservationState(
             reservationScreenState = ReservationScreenState.Idle,
             isClickedAllSelected = false,
-            ReservationItemModelList = ReservationItemModel.mockList(),
+            ReservationItemModelList = emptyList(),
             chipList = ChipInfo.mockList,
             repeatOptionList = ChipInfo.repeatOptionList,
             reservationBottomSheetState = BottomSheetState.Idle,
@@ -44,11 +44,13 @@ data class ReservationState(
 }
 
 sealed class ReservationEvent : UiEvent {
+    data object OnEnteredScreen : ReservationEvent()
     data object OnClickModifyButton : ReservationEvent()
     data class OnToggleChanged(val id: Int, val checked: Boolean) : ReservationEvent()
     data object OnClickModifyCompleteButton : ReservationEvent()
     data class OnRemoveCheckChanged(val id: Int, val checked: Boolean) : ReservationEvent()
     data object OnClickAllSelected : ReservationEvent()
+    data object OnClickRemoveButton : ReservationEvent()
 
     sealed class BottomSheet : ReservationEvent() {
         data class NavigateTo(val state: BottomSheetState) : BottomSheet()
@@ -61,24 +63,29 @@ sealed class ReservationEvent : UiEvent {
         data object OnClickRepeatOptionCompleteButton : BottomSheet()
         data class OnClickStartTimeCompleteButton(val time: String) : BottomSheet()
         data class OnClickEndTimeCompleteButton(val time: String) : BottomSheet()
-        data class OnClickReservationButton(val title: String) : BottomSheet()
+        data class OnClickReservationButton(val title: String, val context : Context) : BottomSheet()
     }
+}
+
+sealed class SideEffect : UiEffect {
+    data object NavigateToHome : SideEffect()
 }
 
 class ReservationReducer(state: ReservationState) :
     Reducer<ReservationState, ReservationEvent>(state) {
     override suspend fun reduce(oldState: ReservationState, event: ReservationEvent) {
         when (event) {
+
             is ReservationEvent.OnClickModifyButton -> {
                 setState(oldState.copy(reservationScreenState = ReservationScreenState.Modify))
             }
 
-            is ReservationEvent.OnToggleChanged -> {
-                val newList = oldState.ReservationItemModelList.map {
-                    if (it.id == event.id) it.copy(isToggleChecked = event.checked) else it
-                }
-                setState(oldState.copy(ReservationItemModelList = newList))
-            }
+//            is ReservationEvent.OnToggleChanged -> {
+//                val newList = oldState.ReservationItemModelList.map {
+//                    if (it.id == event.id) it.copy(isToggleChecked = event.checked) else it
+//                }
+//                setState(oldState.copy(ReservationItemModelList = newList))
+//            }
 
             is ReservationEvent.OnRemoveCheckChanged -> {
                 val newList = oldState.ReservationItemModelList.map {
@@ -291,7 +298,7 @@ class ReservationReducer(state: ReservationState) :
             }
             // 바텀시트 시작 시각 저장 이벤트
             is ReservationEvent.BottomSheet.OnClickStartTimeCompleteButton -> {
-                val newTime = oldState.ReservationInfo.copy(startTime = event.time)
+                val newTime = oldState.ReservationInfo.copy(startTime = event.time.trim())
                 setState(
                     oldState.copy(
                         ReservationInfo = newTime,
@@ -301,7 +308,7 @@ class ReservationReducer(state: ReservationState) :
             }
             // 바텀시트 종료 시각 저장 이벤트
             is ReservationEvent.BottomSheet.OnClickEndTimeCompleteButton -> {
-                val newTime = oldState.ReservationInfo.copy(endTime = event.time)
+                val newTime = oldState.ReservationInfo.copy(endTime = event.time.trim())
                 setState(
                     oldState.copy(
                         ReservationInfo = newTime,
@@ -309,17 +316,7 @@ class ReservationReducer(state: ReservationState) :
                     )
                 )
             }
-            // 바텀시트 최종 예약하기 버튼
-            is ReservationEvent.BottomSheet.OnClickReservationButton -> {
-                val newReservationInfo = oldState.ReservationInfo.copy(title = event.title)
-
-                setState(
-                    oldState.copy(
-                        ReservationInfo = newReservationInfo,
-                        isSheetVisible = false
-                    )
-                )
-            }
+            else -> {}
         }
     }
 }

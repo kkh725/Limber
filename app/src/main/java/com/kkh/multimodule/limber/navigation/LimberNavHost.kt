@@ -1,17 +1,33 @@
 package com.kkh.multimodule.limber.navigation
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.kkh.more.MoreRoute
+import com.kkh.more.moreNavGraph
+import com.kkh.more.navigateFocusState
 import com.kkh.multimodule.limber.RootViewModel
 import com.kkh.multimodule.core.domain.ScreenState
+import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.feature.home.HomeRoutes
 import com.kkh.multimodule.feature.laboratory.laboratoryGraph
 import com.kkh.multimodule.feature.home.homeNavGraph
 import com.kkh.multimodule.feature.home.navigateToActiveTimerScreen
 import com.kkh.multimodule.feature.home.navigateToHomeScreen
 import com.kkh.multimodule.feature.home.navigateToRecallScreen
+import com.kkh.multimodule.feature.laboratory.LaboratoryRoutes
+import com.kkh.multimodule.feature.laboratory.navigateToLaboratoryScreen
 import com.kkh.multimodule.feature.onboarding.OnBoardingRoute
 import com.kkh.multimodule.limber.intent.RootEvent
 import com.kkh.multimodule.feature.timer.timerNavGraph
@@ -19,9 +35,13 @@ import com.kkh.multimodule.feature.onboarding.navigateToAccessPermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToAlertPermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToStartScreenScreen
 import com.kkh.multimodule.feature.onboarding.navigateToManageAppScreen
+import com.kkh.multimodule.feature.onboarding.navigateToOnboardingScreen
+import com.kkh.multimodule.feature.onboarding.navigateToPreOnboarding2Screen
 import com.kkh.multimodule.feature.onboarding.navigateToScreenTimePermissionScreen
 import com.kkh.multimodule.feature.onboarding.navigateToSelectTypeScreen
 import com.kkh.multimodule.feature.onboarding.onBoardingNavGraph
+import com.kkh.multimodule.feature.timer.TimerRoute
+import com.kkh.multimodule.feature.timer.navigateToTimer
 
 @Composable
 fun LimberNavHost(
@@ -29,40 +49,113 @@ fun LimberNavHost(
     modifier: Modifier = Modifier,
     rootViewModel: RootViewModel
 ) {
+    val onPopBackStack: () -> Unit = {
+        navController.popBackStack()
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
 
-//    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+        when (currentRoute) {
+            HomeRoutes.HOME -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+            TimerRoute.ROUTE -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.TIMER_SCREEN))
+            LaboratoryRoutes.LABORATORY -> rootViewModel.sendEvent(
+                RootEvent.SetScreenState(
+                    ScreenState.LABORATORY_SCREEN
+                )
+            )
+            MoreRoute.MORE -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.MORE_SCREEN))
 
-    NavHost(
-        navController = navController,
-        startDestination = OnBoardingRoute.Onboarding,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
-        modifier = modifier,
-    ) {
-        onBoardingNavGraph(
-            navigateToScreenTimePermissionScreen = navController::navigateToScreenTimePermissionScreen,
-            navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
-            navigateToAlertPermission = navController::navigateToAlertPermissionScreen,
-            navigateToManageAppScreen = navController::navigateToManageAppScreen,
-            navigateToStartScreenScreen = navController::navigateToStartScreenScreen,
-            navigateToHome = {
-                navController.navigateToHomeScreen()
-                rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
-            },
-            onClickBack = navController::popBackStack
-        )
+            else -> rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+        }
+    }
 
-        homeNavGraph(
-            onNavigateToActiveTimer = navController::navigateToActiveTimerScreen,
-            onNavigateToHome = navController::navigateToHomeScreen,
-            onPopBackStack = navController::popBackStack,
-            onNavigateToRecall = navController::navigateToRecallScreen
-        )
+    val uiState by rootViewModel.uiState.collectAsState()
+    val isOnboardingChecked = uiState.isOnboardingChecked
 
-        timerNavGraph(onNavigateToActiveHome = {
-            navController.navigateToHomeScreen()
-            rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
-        })
+    LaunchedEffect(Unit) {
+        rootViewModel.sendEvent(RootEvent.Init)
+    }
+    // 딥링크로 들어오면 바텀바 표기 x
+    LaunchedEffect(navController.currentBackStackEntryFlow) {
+        navController.currentBackStackEntryFlow.collect { entry ->
+            if (entry.destination.route?.startsWith(HomeRoutes.RECALL) == true) {
+                rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+            }
+        }
+    }
 
-        laboratoryGraph()
+    if (isOnboardingChecked == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Image(painterResource(R.drawable.ic_splash), contentDescription = null)
+        }
+    } else {
+        val startDestination =
+            if (isOnboardingChecked) HomeRoutes.HOME else OnBoardingRoute.PreOnboarding1
 
+        NavHost(
+            navController = navController,
+            startDestination = startDestination, //HomeRoutes.RECALL, //startDestination,// HomeRoutes.HOME, //OnBoardingRoute.Onboarding,
+            modifier = modifier,
+        ) {
+            onBoardingNavGraph(
+                navigateToPreOnboarding2Screen = navController::navigateToPreOnboarding2Screen,
+                navigateToOnboardingScreen = navController::navigateToOnboardingScreen,
+                navigateToScreenTimePermissionScreen = navController::navigateToScreenTimePermissionScreen,
+                navigateToAccessPermissionScreen = navController::navigateToAccessPermissionScreen,
+                navigateToAlertPermission = navController::navigateToAlertPermissionScreen,
+                navigateToManageAppScreen = navController::navigateToManageAppScreen,
+                navigateToStartScreenScreen = navController::navigateToStartScreenScreen,
+                navigateToHome = {
+                    navController.navigateToHomeScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+                },
+                onClickBack = onPopBackStack
+            )
+
+            homeNavGraph(
+                onNavigateToActiveTimer = { leftTime, timerId ->
+                    navController.navigateToActiveTimerScreen(
+                        leftTime = leftTime,
+                        timerId = timerId
+                    )
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+                },
+                onNavigateToHome = {
+                    navController.navigateToHomeScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+                },
+                onPopBackStack = onPopBackStack,
+                onNavigateToSetTimer = {
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.TIMER_SCREEN))
+                    navController.navigateToTimer()
+                },
+                onNavigateToReport = {
+                    navController.navigateToLaboratoryScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.LABORATORY_SCREEN))
+                },
+                onNavigateToRecall = navController::navigateToRecallScreen
+            )
+
+            timerNavGraph(
+                onNavigateToActiveHome = {
+                    navController.navigateToHomeScreen()
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.HOME_SCREEN))
+                },
+                onNavigateToHome = navController::navigateToHomeScreen
+            )
+
+            laboratoryGraph(
+                onNavigateToRecall = { item ->
+                    rootViewModel.sendEvent(RootEvent.SetScreenState(ScreenState.NONE_SCREEN))
+                    navController.navigateToRecallScreen(
+                        timerId = item.timerId,
+                        timerHistoryId = item.id
+                    )
+                }
+            )
+
+            moreNavGraph(
+                navigateFocusState = navController::navigateFocusState
+            )
+        }
     }
 }
+

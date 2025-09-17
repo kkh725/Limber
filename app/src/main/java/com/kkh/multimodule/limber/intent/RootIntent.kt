@@ -10,7 +10,8 @@ import com.kkh.multimodule.feature.timer.TimerRoute
 import com.kkh.multimodule.limber.navigation.BottomNavRoutes
 
 data class RootState(
-    val screenState: ScreenState
+    val screenState: ScreenState,
+    val isOnboardingChecked: Boolean? = null
 ) : UiState {
     companion object {
         fun init() = RootState(
@@ -22,6 +23,7 @@ data class RootState(
 sealed class RootEvent : UiEvent {
     data class SetScreenState(val screenState: ScreenState) : RootEvent()
     data class OnClickedBottomNaviItem(val route: String) : RootEvent()
+    data object Init : RootEvent()
 }
 
 class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
@@ -49,6 +51,7 @@ class RootReducer(state: RootState) : Reducer<RootState, RootEvent>(state) {
                     }
                 }
             }
+            else -> {}
         }
     }
 }

@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import com.kkh.multimodule.core.accessibility.AppInfo
+import com.kkh.multimodule.core.accessibility.appinfo.AppInfo
 import com.kkh.multimodule.core.ui.R
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray100
@@ -65,7 +65,6 @@ fun WarnDialog(
     Box(
         Modifier
             .fillMaxWidth()
-            .height(536.dp)
             .verticalScroll(rememberScrollState())
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)

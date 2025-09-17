@@ -61,7 +61,7 @@ object DataStoreManager {
 
 
     fun readString(key: Preferences.Key<String>): Flow<String> = read(key, "")
-    fun readInt(key: Preferences.Key<Int>): Flow<Int> = read(key, 0)
+    fun readInt(key: Preferences.Key<Int>): Flow<Int> = read(key, -1)
     fun readBool(key: Preferences.Key<Boolean>): Flow<Boolean> = read(key, false)
     fun readStringList(key: Preferences.Key<Set<String>>): Flow<List<String>> {
         return dataStore.data.catch { e ->

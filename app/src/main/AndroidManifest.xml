@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,12 +14,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.Moduletest"
-        android:name=".LimberApplication"
+        android:name="com.kkh.multimodule.limber.LimberApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.kkh.multimodule.limber.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyApp.Splash">
@@ -35,10 +38,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="limber" android:host="app" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="limber" android:host="recall"/>
+            </intent-filter>
         </activity>
 
         <service
-            android:name="com.kkh.multimodule.core.accessibility.BlockedAppAccessibilityService"
+            android:name="com.kkh.multimodule.core.accessibility.block.BlockedAppAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -63,7 +73,7 @@
 
         <!-- AndroidManifest.xml 내 application 태그 안 -->
         <receiver
-            android:name="com.kkh.multimodule.core.accessibility.BlockTriggerReceiver"
+            android:name="com.kkh.multimodule.core.accessibility.block.BlockTriggerReceiver"
             android:exported="true"/>
 
 

@@ -4,13 +4,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.kkh.multimodule.feature.block.block.BlockNavRoutes
+import com.kkh.multimodule.feature.block.block.blockScreen
+import com.kkh.multimodule.feature.block.block.navigateToUnBlockComplete
+import com.kkh.multimodule.feature.block.block.navigateToUnBlockReason
+import com.kkh.multimodule.feature.block.block.unBlockCompleteScreen
+import com.kkh.multimodule.feature.block.block.unBlockReasonScreen
 
 @Composable
 fun BlockNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     onClickCloseScreen: () -> Unit,
-    onNavigateToStartTimerNow : () -> Unit
+    onNavigateToRecall : () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -19,7 +25,7 @@ fun BlockNavHost(
     ) {
         blockScreen(
             onClickUnBlock = navController::navigateToUnBlockReason,
-            onClickContinue = {}
+            onClickContinue = onClickCloseScreen
         )
         unBlockReasonScreen(
             onClickBack = { navController.popBackStack() },
@@ -27,7 +33,7 @@ fun BlockNavHost(
         )
         unBlockCompleteScreen(
             onClickCloseScreen = onClickCloseScreen,
-            onNavigateToStartTimerNow = onNavigateToStartTimerNow
+            onNavigateToRecall = onNavigateToRecall
         )
     }
 }

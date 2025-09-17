@@ -1,0 +1,33 @@
+package com.kkh.multimodule.core.network.datasource.history
+
+import com.kkh.multimodule.core.network.model.CurrentTimerStatusResponse
+import com.kkh.multimodule.core.network.model.SingleTimerRequestDto
+import com.kkh.multimodule.core.network.model.request.HistoryRequestDto
+import com.kkh.multimodule.core.network.model.request.PatchTimerStatusRequestDto
+import com.kkh.multimodule.core.network.model.request.RetrospectsRequestDto
+import com.kkh.multimodule.core.network.model.request.history.TotalImmersionRequestDto
+import com.kkh.multimodule.core.network.model.response.ApiResponse
+import com.kkh.multimodule.core.network.model.response.BaseResponse
+import com.kkh.multimodule.core.network.model.response.HistoryResponse
+import com.kkh.multimodule.core.network.model.response.SingleTimerResponse
+import com.kkh.multimodule.core.network.model.response.TimerListResponse
+import com.kkh.multimodule.core.network.model.response.history.ActualByWeekendResponse
+import com.kkh.multimodule.core.network.model.response.history.FocusDistributionResponse
+import com.kkh.multimodule.core.network.model.response.history.HistoryWithRetrospectsResponse
+import com.kkh.multimodule.core.network.model.response.history.ImmersionByWeekdayResponse
+import com.kkh.multimodule.core.network.model.response.history.LatestTimerResponse
+import com.kkh.multimodule.core.network.model.response.history.TotalActualResponseDto
+import com.kkh.multimodule.core.network.model.response.history.TotalImmersionResponseDto
+import retrofit2.Response
+
+interface HistoryDataSource {
+    suspend fun getHistoryList(historyRequestDto: HistoryRequestDto): Response<HistoryResponse>
+    suspend fun getHistoryListWithRetrospects(userId: String): Response<HistoryWithRetrospectsResponse>
+    suspend fun getLatestHistoryId(userId: String, timerId: Int): Response<LatestTimerResponse>
+    suspend fun getTotalImmersion(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ApiResponse<TotalImmersionResponseDto>>
+    suspend fun getTotalActual(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ApiResponse<TotalActualResponseDto>>
+    suspend fun getImmersionByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ImmersionByWeekdayResponse>
+    suspend fun getFocusDistribution(totalImmersionRequestDto: TotalImmersionRequestDto): Response<FocusDistributionResponse>
+    suspend fun getActualByWeekend(totalImmersionRequestDto: TotalImmersionRequestDto): Response<ActualByWeekendResponse>
+}
+

@@ -2,14 +2,19 @@ package com.kkh.multimodule.feature.onboarding.contents.permission
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,18 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import com.kkh.multimodule.core.accessibility.PermissionManager.hasUsageStatsPermission
+import com.kkh.multimodule.core.accessibility.permission.PermissionManager.hasUsageStatsPermission
 import com.kkh.multimodule.core.ui.R
+import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray200
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray600
 import com.kkh.multimodule.core.ui.designsystem.LimberColorStyle.Gray800
 import com.kkh.multimodule.core.ui.designsystem.LimberTextStyle
 import com.kkh.multimodule.core.ui.ui.component.LimberAnimation
+import com.kkh.multimodule.core.ui.ui.component.LimberBackButton
 import com.kkh.multimodule.core.ui.ui.component.LimberGradientButton
 import kotlinx.coroutines.delay
 
 
 @Composable
-fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
+fun ScreenTimePermissionScreen(onClickBack: () -> Unit,navigateToAccessPermission: () -> Unit = {}) {
 
     val context = LocalContext.current
     var isRequestingPermission by remember { mutableStateOf(false) }
@@ -67,8 +74,7 @@ fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
                 .fillMaxSize()
                 .padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBar(Modifier
-                .padding(vertical = 18.dp), onClickBack = {})
+            Spacer(Modifier.height(84.dp))
 
             LimberProgressBar(0.2f)
 
@@ -82,10 +88,10 @@ fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                "권한에 동의해야 림버를 제대로 사용할 수 있어요", style = LimberTextStyle.Body2, color = Gray600
+                "스마트폰을 줄이고 집중하기 위해 권한을 허용해주세요", style = LimberTextStyle.Body2, color = Gray600
             )
             Spacer(Modifier.height(40.dp))
-            PermissionBox(headText = "스크틴타임 데이터", bodyText = "앱 별 사용 시간 조회")
+            PermissionBox(headText = "스크린타임 데이터", bodyText = "앱 별 사용 시간 조회")
             Spacer(Modifier.weight(1f))
             Box(
                 Modifier
@@ -122,5 +128,5 @@ fun ScreenTimePermissionScreen(navigateToAccessPermission: () -> Unit = {}) {
 @Preview(showBackground = true)
 @Composable
 fun ScreenTimePermissionScreenPreview() {
-    ScreenTimePermissionScreen()
+    ScreenTimePermissionScreen({})
 }

@@ -10,8 +10,12 @@ import com.kkh.multimodule.feature.onboarding.contents.StartScreen
 import com.kkh.multimodule.feature.onboarding.contents.permission.AccessPermissionScreen
 import com.kkh.multimodule.feature.onboarding.contents.permission.AlarmPermissionScreen
 import com.kkh.multimodule.feature.onboarding.contents.permission.ScreenTimePermissionScreen
+import com.kkh.multimodule.feature.onboarding.preview.PreOnboardingScreen1
+import com.kkh.multimodule.feature.onboarding.preview.PreOnboardingScreen2
 
 object OnBoardingRoute {
+    const val PreOnboarding1 = "PreOnboarding1"
+    const val PreOnboarding2 = "PreOnboarding2"
     const val Onboarding = "onboarding"
     const val AccessPermission = "access_permission"
     const val ManageApp = "manage_app"
@@ -20,6 +24,12 @@ object OnBoardingRoute {
     const val SelectType = "select_type"
     const val StartScreen = "final_onboarding"
 }
+
+fun NavController.navigateToPreOnboarding1Screen() =
+    navigate(OnBoardingRoute.PreOnboarding1)
+
+fun NavController.navigateToPreOnboarding2Screen() =
+    navigate(OnBoardingRoute.PreOnboarding2)
 
 fun NavController.navigateToOnboardingScreen() =
     navigate(OnBoardingRoute.Onboarding)
@@ -43,39 +53,53 @@ fun NavController.navigateToStartScreenScreen() =
     navigate(OnBoardingRoute.StartScreen)
 
 fun NavGraphBuilder.onBoardingNavGraph(
+    navigateToPreOnboarding2Screen: () -> Unit,
+    navigateToOnboardingScreen: () -> Unit,
     navigateToScreenTimePermissionScreen: () -> Unit,
     navigateToAccessPermissionScreen: () -> Unit,
     navigateToManageAppScreen: () -> Unit,
-    navigateToAlertPermission : () -> Unit,
+    navigateToAlertPermission: () -> Unit,
     navigateToStartScreenScreen: () -> Unit = {},
     navigateToHome: () -> Unit = {},
     onClickBack: () -> Unit = {}
 ) {
+    composable(OnBoardingRoute.PreOnboarding1) {
+        PreOnboardingScreen1(onNavigateToNextScreen = navigateToPreOnboarding2Screen)
+    }
+    composable(OnBoardingRoute.PreOnboarding2) {
+        PreOnboardingScreen2(onNavigateToOnboarding = navigateToOnboardingScreen)
+    }
 
     composable(OnBoardingRoute.Onboarding) {
         OnboardingScreen(navigateToScreenTimePermissionScreen = navigateToScreenTimePermissionScreen)
     }
     composable(OnBoardingRoute.ScreenTimePermission) {
         RightHorizontalEnterAnimation {
-            ScreenTimePermissionScreen(navigateToAccessPermission = navigateToAccessPermissionScreen)
+            ScreenTimePermissionScreen(
+                onClickBack = onClickBack,
+                navigateToAccessPermission = navigateToAccessPermissionScreen
+            )
         }
     }
     composable(OnBoardingRoute.AccessPermission) {
         RightHorizontalEnterAnimation {
-            AccessPermissionScreen(navigateToAlertPermission = navigateToAlertPermission)
+            AccessPermissionScreen(
+                navigateToAlertPermission = navigateToAlertPermission,
+                onClickBack = onClickBack
+            )
         }
         // 👇 여기에 BackHandler 추가
-        BackHandler(enabled = true){}
+        BackHandler(enabled = true) {}
     }
-    composable(OnBoardingRoute.AlertPermission){
+    composable(OnBoardingRoute.AlertPermission) {
         AlarmPermissionScreen(navigateToManageApp = navigateToManageAppScreen)
-        BackHandler(enabled = true){}
+        BackHandler(enabled = true) {}
     }
     composable(OnBoardingRoute.ManageApp) {
         RightHorizontalEnterAnimation {
             ManageAppScreen(navigateToStart = navigateToStartScreenScreen)
         }
-        BackHandler(enabled = true){}
+        BackHandler(enabled = true) {}
     }
     composable(OnBoardingRoute.StartScreen) {
         RightHorizontalEnterAnimation {

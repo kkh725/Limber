@@ -7,14 +7,20 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.UUID
+import androidx.core.content.edit
+import dagger.Binds
+
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataStoreModule {
+abstract class DataSourceModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideLocalDataSource(): LocalDataSource {
-        return LocalDataSourceImpl()
-    }
+    abstract fun localDataSource(
+        impl: LocalDataSourceImpl
+    ): LocalDataSource
 }

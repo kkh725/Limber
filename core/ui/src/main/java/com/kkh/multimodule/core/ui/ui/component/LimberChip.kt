@@ -49,8 +49,9 @@ fun LimberChip(
     contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
 ) {
     val borderColor by animateColorAsState(if (isSelected) Primary_Main else Gray300)
-    val backgroundColor by animateColorAsState(if (isSelected) Primary_Main else Color.Transparent)
+    val backgroundColor by animateColorAsState(if (isSelected) LimberColorStyle.Primary_Vivid else Color.Transparent)
     val textColor by animateColorAsState(if (isSelected) Color.White else Gray500)
+    val textStyle = if (isSelected) LimberTextStyle.Heading5 else LimberTextStyle.Body1
 
     Button(
         modifier = modifier,
@@ -65,7 +66,7 @@ fun LimberChip(
     ) {
         Image(painter = painterResource(imageResId), contentDescription = null)
         Spacer(modifier = Modifier.width(6.dp))
-        Text(text)
+        Text(text=text,style = textStyle)
     }
 }
 
